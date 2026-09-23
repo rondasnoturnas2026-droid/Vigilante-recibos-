@@ -14,8 +14,8 @@ jobs:
         uses: actions/checkout@v4
 
       -       name: Descompactar projeto
-        run: |
-          base64 -d vigilante_recibos_base_12.b64 > projeto.zip 
+        run: 
+          base64 -d vigilante_recibos_base_12.b64 > projeto.zip
           unzip -q projeto.zip -d projeto
           
       - name: Configurar Java

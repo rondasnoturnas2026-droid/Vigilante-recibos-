@@ -1,0 +1,60 @@
+:
+name: Gerar APK e AAB
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+          cache: true
+
+      - name: Criar estrutura Android
+        run: |
+          if [ ! -d "android" ]; then
+            flutter create --platforms=android .
+          fi
+
+      - name: Limpar projeto
+        run: flutter clean
+
+      - name: Instalar dependencias
+        run: flutter pub get
+
+      - name: Gerar APK
+        run: flutter build apk --release
+
+      - name: Gerar AAB
+        run: flutter build appbundle --release
+
+      - name: Salvar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vigilante-Recibos-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Salvar AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vigilante-Recibos-AAB
+          path: build/app/outputs/bundle/release/app-release.aab
+Só faça isso agora: copie e cole esse código naquela área branca. Depois me mande a foto.

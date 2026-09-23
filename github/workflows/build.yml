@@ -1,0 +1,60 @@
+name: Gerar APK e AAB
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      -       name: Descompactar projeto
+        run: |
+          base64 -d vigilante_recibos_base_12.b64 > projeto.zip
+          unzip -q projeto.zip -d projeto
+          
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.2"
+          channel: stable
+
+      - name: Preparar Android
+        run: |
+          cd projeto/vigilante_recibos_base_12
+          flutter create --platforms=android --org br.com.vigilanterecibos --project-name vigilante_recibos .
+          python3 tool/prepare_android.py
+          flutter pub get
+
+      - name: Gerar APK
+        run: |
+          cd projeto/vigilante_recibos_base_12
+          flutter build apk --release
+
+      - name: Gerar AAB
+        run: |
+          cd projeto/vigilante_recibos_base_12
+          flutter build appbundle --release
+
+      - name: Salvar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vigilante-Recibos-APK
+          path: projeto/vigilante_recibos_base_12/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Salvar AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vigilante-Recibos-AAB
+          path: projeto/vigilante_recibos_base_12/build/app/outputs/bundle/release/app-release.aab

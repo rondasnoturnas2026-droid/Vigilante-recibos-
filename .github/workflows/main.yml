@@ -31,8 +31,8 @@ jobs:
       - name: Criar estrutura Android
         run: |
           if [ ! -d "android" ]; then
-            flutter create --platforms=android .
-          fi
+            flutter create --platforms=android --project-name vigilante_recibos .
+      
 
       - name: Limpar projeto
         run: flutter clean

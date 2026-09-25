@@ -357,7 +357,7 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
             subtitle: Text('Nome e contato'),
             trailing: Icon(Icons.chevron_right),
       onTap: () {},
-
+),
           const Divider(),
           const ListTile(
             leading: Icon(Icons.print_outlined),

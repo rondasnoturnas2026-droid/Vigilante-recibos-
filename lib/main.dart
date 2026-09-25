@@ -351,7 +351,7 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
       ),
       body: ListView(
         children: [
-          const ListTile(
+          ListTile(
             leading: Icon(Icons.security),
             title: Text('Dados do vigilante'),
             subtitle: Text('Nome e contato'),

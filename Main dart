@@ -154,5 +154,4 @@ class ConfiguracoesPage extends StatelessWidget {
     );
   }
 }
-Agora faça somente isso: copie todo o código, cole onde o cursor está piscando e não altere nada.
-Depois me mande uma foto da tela com o código colado. Aí fazemos o próximo passo, um por vez.
+

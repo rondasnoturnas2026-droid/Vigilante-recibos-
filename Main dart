@@ -1,5 +1,3 @@
-Pronto. Passo 1: você vai colar o código abaixo nessa tela vazia do Main.dart.
-Importante: o nome correto no projeto Flutter depois será lib/main.dart. Primeiro vamos colocar o código e depois eu te guio para salvar no lugar certo.
 import 'package:flutter/material.dart';
 
 void main() {

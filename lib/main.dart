@@ -356,7 +356,11 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
             title: Text('Dados do vigilante'),
             subtitle: Text('Nome e contato'),
             trailing: Icon(Icons.chevron_right),
-          ),
+          onPressed: () {
+  if (fatura['status'] == 'RECEBIDO') {
+    gerarRecibo(fatura);
+  }
+},
           const Divider(),
           const ListTile(
             leading: Icon(Icons.print_outlined),

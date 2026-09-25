@@ -365,4 +365,13 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
             trailing: Icon(Icons.chevron_right),
           ),
           const Divider(),
-          Switch
+          SwitchListTile(
+  title: const Text('Tema escuro'),
+  subtitle: const Text('Ativar ou desativar'),
+  value: temaEscuro,
+  onChanged: (valor) {
+    setState(() {
+      temaEscuro = valor;
+    });
+  },
+),

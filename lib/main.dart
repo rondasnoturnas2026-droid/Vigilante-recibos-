@@ -373,10 +373,11 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
     setState(() {
       temaEscuro = valor;
     });
-  },            ),
-          ],
-        ),
-      );
-    }
-}
-),
+               },
+          ),
+        ],
+      ),
+    );
+  }
+}       
+

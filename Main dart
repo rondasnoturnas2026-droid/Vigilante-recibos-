@@ -14,7 +14,7 @@ class VigilanteRecibosApp extends StatelessWidget {
       title: 'Vigilante Recibos',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+          seedColor: Colors.indigo,
         ),
         useMaterial3: true,
       ),
@@ -23,135 +23,69 @@ class VigilanteRecibosApp extends StatelessWidget {
   }
 }
 
-class TelaInicial extends StatefulWidget {
+class TelaInicial extends StatelessWidget {
   const TelaInicial({super.key});
-
-  @override
-  State<TelaInicial> createState() => _TelaInicialState();
-}
-
-class _TelaInicialState extends State<TelaInicial> {
-  int pagina = 0;
-
-  final List<Widget> paginas = const [
-    FaturasPage(),
-    MoradoresPage(),
-    RelatorioPage(),
-    ConfiguracoesPage(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: paginas[pagina],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: pagina,
-        onDestinationSelected: (index) {
-          setState(() {
-            pagina = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.receipt_long),
-            label: 'Faturas',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.people),
-            label: 'Moradores',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bar_chart),
-            label: 'Relatório',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Config.',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class FaturasPage extends StatelessWidget {
-  const FaturasPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vigilante Recibos'),
-      ),
-      body: const Center(
-        child: Text(
-          'Faturas Pendentes',
+        title: const Text(
+          'Vigilante Recibos',
           style: TextStyle(
-            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
+        centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        icon: const Icon(Icons.add),
-        label: const Text('Nova fatura'),
-      ),
-    );
-  }
-}
 
-class MoradoresPage extends StatelessWidget {
-  const MoradoresPage({super.key});
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.receipt_long,
+              size: 80,
+              color: Colors.grey,
+            ),
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Text(
-            'Moradores',
-            style: TextStyle(fontSize: 24),
-          ),
+            const SizedBox(height: 20),
+
+            const Text(
+              'Nenhum recibo cadastrado',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            const Text(
+              'Adicione seu primeiro recibo para começar.',
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            ElevatedButton.icon(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Cadastro de recibo será o próximo passo.',
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Adicionar recibo'),
+            ),
+          ],
         ),
       ),
     );
   }
 }
-
-class RelatorioPage extends StatelessWidget {
-  const RelatorioPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Text(
-            'Relatório Mensal',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ConfiguracoesPage extends StatelessWidget {
-  const ConfiguracoesPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Text(
-            'Configurações',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-      ),
-    );
-  }
-}
-

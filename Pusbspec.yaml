@@ -7,7 +7,7 @@ version: 1.0.0+1
 environment:
   sdk: ">=3.9.0 <4.0.0"
 
-dependencies:  print_bluetooth_thermal: ^1.2.4
+dependencies:  
   flutter:
     sdk: flutter
 

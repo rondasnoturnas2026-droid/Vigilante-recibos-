@@ -440,3 +440,88 @@ class _DadosVigilantePageState extends State<DadosVigilantePage> {
     );
   }
 }
+class ImpressoraBluetoothService {
+  static Future<List<BluetoothInfo>> buscarImpressoras() async {
+    final bluetoothLigado =
+        await PrintBluetoothThermal.bluetoothEnabled;
+
+    if (!bluetoothLigado) {
+      return [];
+    }
+
+    return await PrintBluetoothThermal.pairedBluetooths;
+  }
+
+  static Future<bool> conectar(String enderecoMac) async {
+    try {
+      return await PrintBluetoothThermal.connect(
+        macPrinterAddress: enderecoMac,
+      );
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> estaConectada() async {
+    return await PrintBluetoothThermal.connectionStatus;
+  }
+
+  static Future<bool> desconectar() async {
+    return await PrintBluetoothThermal.disconnect;
+  }
+
+  static Future<bool> imprimirRecibo({
+    required String nomeMorador,
+    required String valor,
+    required String formaPagamento,
+    required String vencimento,
+    required String dataRecebimento,
+    String observacao = '',
+  }) async {
+    final conectado =
+        await PrintBluetoothThermal.connectionStatus;
+
+    if (!conectado) {
+      return false;
+    }
+
+    final recibo = '''
+================================
+       VIGILANTE RECIBOS
+================================
+
+Morador: $nomeMorador
+
+Valor: R\$ $valor
+
+Pagamento: $formaPagamento
+
+Vencimento: $vencimento
+
+Recebido em: $dataRecebimento
+
+Status: RECEBIDO
+
+${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
+--------------------------------
+        PAGAMENTO RECEBIDO
+--------------------------------
+
+
+''';
+
+    final resultado =
+        await PrintBluetoothThermal.writeString(
+      printText: PrintTextSize(
+        size: 1,
+        text: recibo,
+      ),
+    );
+
+    await PrintBluetoothThermal.writeBytes(
+      '\n\n\n'.codeUnits,
+    );
+
+    return resultado;
+  }
+}

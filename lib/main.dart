@@ -540,9 +540,41 @@ ${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
       '\n\n\n'.codeUnits,
     );
 
-    return resultado;
-  }
-}class AppStore {
+    class Bairro {
+  Bairro({
+    required this.id,
+    required this.nome,
+  });
+
+  final int id;
+  String nome;
+  final List<String> ruas = [];
+}
+
+class Morador {
+  Morador({
+    required this.id,
+    required this.nome,
+    required this.bairro,
+    required this.rua,
+    required this.numero,
+  });
+
+  final int id;
+  String nome;
+  String bairro;
+  String rua;
+  String numero;
+}
+
+class AppStore {
   String vigilanteNome = '';
   String vigilanteContato = '';
+
+  final List<Bairro> bairros = [];
+  final List<Morador> moradores = [];
+
+  int proximoBairroId = 1;
+  int proximoMoradorId = 1;
+}
 }

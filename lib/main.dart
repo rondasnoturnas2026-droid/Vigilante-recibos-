@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+euimport 'package:flutter/material.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 void main() {
   runApp(const VigilanteRecibosApp());
@@ -267,7 +267,7 @@ class TelaMoradores extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _novoMorador,
+        onPressed: () {},
         icon: const Icon(Icons.person_add),
         label: const Text('Novo morador'),
       ),

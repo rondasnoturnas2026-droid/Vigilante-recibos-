@@ -33,12 +33,21 @@ class TelaPrincipal extends StatefulWidget {
 class _TelaPrincipalState extends State<TelaPrincipal> {
   int paginaAtual = 0;
 
-  final List<Widget> paginas = const [
-    TelaFaturas(),
-    TelaMoradores(),
-    TelaRelatorio(),
-    TelaConfiguracoes(),
+  final AppStore store = AppStore();
+
+late final List<Widget> paginas;
+
+@override
+void initState() {
+  super.initState();
+
+  paginas = [
+    const TelaFaturas(),
+    const TelaMoradores(),
+    const TelaRelatorio(),
+    TelaConfiguracoes(store: store),
   ];
+}
 
   @override
   Widget build(BuildContext context) {

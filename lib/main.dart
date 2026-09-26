@@ -381,4 +381,62 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
     );
   }
 }       
+class DadosVigilantePage extends StatefulWidget {
+  const DadosVigilantePage({super.key, required this.store});
 
+  final AppStore store;
+
+  @override
+  State<DadosVigilantePage> createState() => _DadosVigilantePageState();
+}
+
+class _DadosVigilantePageState extends State<DadosVigilantePage> {
+  late final TextEditingController nome;
+  late final TextEditingController contato;
+
+  @override
+  void initState() {
+    super.initState();
+    nome = TextEditingController(text: widget.store.vigilanteNome);
+    contato = TextEditingController(text: widget.store.vigilanteContato);
+  }
+
+  @override
+  void dispose() {
+    nome.dispose();
+    contato.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Dados do vigilante')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          TextField(
+            controller: nome,
+            decoration: const InputDecoration(labelText: 'Nome'),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: contato,
+            keyboardType: TextInputType.phone,
+            decoration: const InputDecoration(labelText: 'Contato'),
+          ),
+          const SizedBox(height: 24),
+          FilledButton.icon(
+            onPressed: () {
+              widget.store.vigilanteNome = nome.text.trim();
+              widget.store.vigilanteContato = contato.text.trim();
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.save),
+            label: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+}

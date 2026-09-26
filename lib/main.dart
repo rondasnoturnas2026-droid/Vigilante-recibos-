@@ -42,7 +42,7 @@ void initState() {
   super.initState();
 
   paginas = [
-    TelaMoradores(store: store),
+    const TelaFaturas(),
     const TelaMoradores(),
     const TelaRelatorio(),
     TelaConfiguracoes(store: store),

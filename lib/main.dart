@@ -542,4 +542,7 @@ ${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
 
     return resultado;
   }
+}class AppStore {
+  String vigilanteNome = '';
+  String vigilanteContato = '';
 }

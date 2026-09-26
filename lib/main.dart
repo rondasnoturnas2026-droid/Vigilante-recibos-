@@ -362,7 +362,7 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (_) => DadosVigilantePage(store: store),
+      builder: (_) => DadosVigilantePage(store: widget.store)
     ),
   );
 },

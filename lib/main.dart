@@ -358,7 +358,14 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
             title: Text('Dados do vigilante'),
             subtitle: Text('Nome e contato'),
             trailing: Icon(Icons.chevron_right),
-      onTap: () {},
+      onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => DadosVigilantePage(store: store),
+    ),
+  );
+},
 ),
           const Divider(),
           const ListTile(

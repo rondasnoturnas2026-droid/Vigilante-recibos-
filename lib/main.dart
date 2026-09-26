@@ -331,7 +331,9 @@ class TelaRelatorio extends StatelessWidget {
 }
 
 class TelaConfiguracoes extends StatefulWidget {
-  const TelaConfiguracoes({super.key});
+  const TelaConfiguracoes({super.key, required this.store});
+
+  final AppStore store;
 
   @override
   State<TelaConfiguracoes> createState() => _TelaConfiguracoesState();

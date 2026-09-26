@@ -538,7 +538,8 @@ ${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
 
     await PrintBluetoothThermal.writeBytes(
       '\n\n\n'.codeUnits,
-    );
+    return resultado;
+      }
 
     class Bairro {
   Bairro({

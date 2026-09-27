@@ -588,4 +588,4 @@ class AppStore {
   int proximoBairroId = 1;
   int proximoMoradorId = 1;
 }
-}
+

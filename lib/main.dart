@@ -44,6 +44,7 @@ void initState() {
 
   paginas = [
     
+  paginas = [
   const TelaFaturas(),
   TelaMoradores(store: store),
   const TelaRelatorio(),

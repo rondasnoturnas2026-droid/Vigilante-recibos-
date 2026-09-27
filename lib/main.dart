@@ -41,7 +41,7 @@ late final List<Widget> paginas;
 @override
 void initState() {
   super.initState();
-
+store.carregarDadosVigilante();
   
     
   paginas = [

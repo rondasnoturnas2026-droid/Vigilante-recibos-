@@ -465,7 +465,7 @@ TextField(
     labelText: 'CPF ou CNPJ',
   ),
 ),
-          const SizedBox(height: 24),
+          ),const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: () {
               widget.store.vigilanteNome = nome.text.trim();

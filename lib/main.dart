@@ -598,7 +598,8 @@ class Morador {
 
 class AppStore {
   String vigilanteNome = '';
-String vigilanteEndereco = '';  String vigilanteContato = '';
+String vigilanteEndereco = '';
+String vigilanteContato = '';
 String vigilanteCpfCnpj = '';
 String vigilanteTipoWhatsapp = 'WhatsApp Padrão';
 String vigilanteChavePix = '';

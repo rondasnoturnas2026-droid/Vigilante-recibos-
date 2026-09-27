@@ -482,15 +482,26 @@ TextField(
 ),
           const SizedBox(height: 24),
           FilledButton.icon(
-            onPressed: () {
-              widget.store.vigilanteNome = nome.text.trim();
-widget.store.vigilanteContato = contato.text.trim();
-widget.store.vigilanteCpfCnpj = cpfCnpj.text.trim();              
-widget.store.vigilanteEndereco = endereco.text.trim();
-widget.store.vigilanteChavePix = chavePix.text.trim();
-widget.store.vigilanteTipoChavePix = tipoChavePix.text.trim();
-              Navigator.pop(context);
-            },
+            onPressed: () async {
+  widget.store.vigilanteNome = nome.text.trim();
+  widget.store.vigilanteContato = contato.text.trim();
+  widget.store.vigilanteCpfCnpj = cpfCnpj.text.trim();
+  widget.store.vigilanteEndereco = endereco.text.trim();
+  widget.store.vigilanteChavePix = chavePix.text.trim();
+  widget.store.vigilanteTipoChavePix = tipoChavePix.text.trim();
+
+  await widget.store.salvarDadosVigilante();
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Dados salvos com sucesso'),
+    ),
+  );
+
+  Navigator.pop(context);
+},
             icon: const Icon(Icons.save),
             label: const Text('Salvar'),
           ),

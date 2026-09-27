@@ -456,8 +456,14 @@ tipoChavePix = TextEditingController(text: widget.store.vigilanteTipoChavePix);}
           TextField(
             controller: contato,
             keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(labelText: 'Contato'),
-       const SizedBox(height: 12),
+            TextField(
+  controller: contato,
+  keyboardType: TextInputType.phone,
+  decoration: const InputDecoration(
+    labelText: 'Contato',
+  ),
+),
+const SizedBox(height: 12),
 TextField(
   controller: cpfCnpj,
   keyboardType: TextInputType.number,

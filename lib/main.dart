@@ -1,4 +1,4 @@
-euimport 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 void main() {
   runApp(const VigilanteRecibosApp());

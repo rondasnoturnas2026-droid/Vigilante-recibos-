@@ -626,5 +626,31 @@ String vigilanteLogo = '';
 
   int proximoBairroId = 1;
   int proximoMoradorId = 1;
+Future<void> salvarDadosVigilante() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString('vigilanteNome', vigilanteNome);
+  await prefs.setString('vigilanteEndereco', vigilanteEndereco);
+  await prefs.setString('vigilanteContato', vigilanteContato);
+  await prefs.setString('vigilanteCpfCnpj', vigilanteCpfCnpj);
+  await prefs.setString('vigilanteTipoWhatsapp', vigilanteTipoWhatsapp);
+  await prefs.setString('vigilanteChavePix', vigilanteChavePix);
+  await prefs.setString('vigilanteTipoChavePix', vigilanteTipoChavePix);
+  await prefs.setString('vigilanteLogo', vigilanteLogo);
 }
+
+Future<void> carregarDadosVigilante() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  vigilanteNome = prefs.getString('vigilanteNome') ?? '';
+  vigilanteEndereco = prefs.getString('vigilanteEndereco') ?? '';
+  vigilanteContato = prefs.getString('vigilanteContato') ?? '';
+  vigilanteCpfCnpj = prefs.getString('vigilanteCpfCnpj') ?? '';
+  vigilanteTipoWhatsapp =
+      prefs.getString('vigilanteTipoWhatsapp') ?? 'WhatsApp Padrão';
+  vigilanteChavePix = prefs.getString('vigilanteChavePix') ?? '';
+  vigilanteTipoChavePix =
+      prefs.getString('vigilanteTipoChavePix') ?? 'Telefone';
+  vigilanteLogo = prefs.getString('vigilanteLogo') ?? '';
+}}
 

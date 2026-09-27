@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+tôimport 'package:flutter/material.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 void main() {
   runApp(const VigilanteRecibosApp());
@@ -539,8 +539,11 @@ ${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
     );
 
     await PrintBluetoothThermal.writeBytes(
-      '\n\n\n'.codeUnits,
-    return resultado;
+  '\n\n\n'.codeUnits,
+);
+
+return resultado;
+  }
       }
 
     class Bairro {

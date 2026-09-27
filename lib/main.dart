@@ -583,7 +583,11 @@ class Morador {
 class AppStore {
   String vigilanteNome = '';
   String vigilanteContato = '';
-
+String vigilanteCpfCnpj = '';
+String vigilanteTipoWhatsapp = 'WhatsApp Padrão';
+String vigilanteChavePix = '';
+String vigilanteTipoChavePix = 'Telefone';
+String vigilanteLogo = '';
   final List<Bairro> bairros = [];
   final List<Morador> moradores = [];
 

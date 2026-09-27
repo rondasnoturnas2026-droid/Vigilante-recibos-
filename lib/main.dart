@@ -471,7 +471,7 @@ TextField(
               widget.store.vigilanteNome = nome.text.trim();
               widget.store.vigilanteContato = contato.text.trim();widget.store.vigilanteCpfCnpj = cpfCnpj.text.trim();
 widget.store.vigilanteEndereco = endereco.text.trim();
-widget.store.vigilanteChavePix = chavePix.text.trim();
+String vigilanteEndereco = '';widget.store.vigilanteChavePix = chavePix.text.trim();
 widget.store.vigilanteTipoChavePix = tipoChavePix.text.trim();
               Navigator.pop(context);
             },

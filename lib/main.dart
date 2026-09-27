@@ -1,5 +1,10 @@
-tôimport 'package:flutter/material.dart';
-import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+class TelaMoradores extends StatelessWidget {
+  const TelaMoradores({
+    super.key,
+    required this.store,
+  });
+
+  final AppStore store;
 void main() {
   runApp(const VigilanteRecibosApp());
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+euimport 'package:flutter/material.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 void main() {
   runApp(const VigilanteRecibosApp());
@@ -42,10 +42,12 @@ void initState() {
   super.initState();
 
   paginas = [
-    class TelaMoradores extends StatelessWidget {
-  const TelaMoradores({super.key, required this.store});
-
-  final AppStore store;
+    paginas = [
+  const TelaFaturas(),
+  TelaMoradores(store: store),
+  const TelaRelatorio(),
+  TelaConfiguracoes(store: store),
+];
   ];
 }
 

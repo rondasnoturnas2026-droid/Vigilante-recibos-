@@ -462,9 +462,7 @@ tipoChavePix = TextEditingController(text: widget.store.vigilanteTipoChavePix);}
   ),
 ),
 const SizedBox(height: 12),
-TextField(
-  controller: cpfCnpj,
-  TextField(
+
   controller: contato,
   keyboardType: TextInputType.phone,
   inputFormatters: [

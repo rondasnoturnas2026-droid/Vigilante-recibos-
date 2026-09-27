@@ -469,7 +469,10 @@ TextField(
           FilledButton.icon(
             onPressed: () {
               widget.store.vigilanteNome = nome.text.trim();
-              widget.store.vigilanteContato = contato.text.trim();
+              widget.store.vigilanteContato = contato.text.trim();widget.store.vigilanteCpfCnpj = cpfCnpj.text.trim();
+widget.store.vigilanteEndereco = endereco.text.trim();
+widget.store.vigilanteChavePix = chavePix.text.trim();
+widget.store.vigilanteTipoChavePix = tipoChavePix.text.trim();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.save),

@@ -42,7 +42,7 @@ late final List<Widget> paginas;
 void initState() {
   super.initState();
 
-  paginas = [
+  
     
   paginas = [
   const TelaFaturas(),

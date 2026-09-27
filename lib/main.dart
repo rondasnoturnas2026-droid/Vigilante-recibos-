@@ -464,7 +464,7 @@ TextField(
   decoration: const InputDecoration(
     labelText: 'CPF ou CNPJ',
   ),
-
+),
           const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: () {

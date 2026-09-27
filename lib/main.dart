@@ -420,7 +420,10 @@ class DadosVigilantePage extends StatefulWidget {
 class _DadosVigilantePageState extends State<DadosVigilantePage> {
   late final TextEditingController nome;
   late final TextEditingController contato;
-
+late final TextEditingController cpfCnpj;
+late final TextEditingController tipoWhatsapp;
+late final TextEditingController chavePix;
+late final TextEditingController tipoChavePix;
   @override
   void initState() {
     super.initState();

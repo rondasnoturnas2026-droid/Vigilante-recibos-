@@ -480,7 +480,13 @@ TextField(
     labelText: 'CPF ou CNPJ',
   ),
 ),
-          const SizedBox(height: 24),
+         const SizedBox(height: 12),
+TextField(
+  controller: endereco,
+  decoration: const InputDecoration(
+    labelText: 'Endereço',
+  ),
+), const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: () async {
   widget.store.vigilanteNome = nome.text.trim();

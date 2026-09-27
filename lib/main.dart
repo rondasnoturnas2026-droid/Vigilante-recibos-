@@ -42,10 +42,10 @@ void initState() {
   super.initState();
 
   paginas = [
-    const TelaFaturas(),
-    TelaMoradores(store: store),
-    const TelaRelatorio(),
-    TelaConfiguracoes(store: store),
+    class TelaMoradores extends StatelessWidget {
+  const TelaMoradores({super.key, required this.store});
+
+  final AppStore store;
   ];
 }
 

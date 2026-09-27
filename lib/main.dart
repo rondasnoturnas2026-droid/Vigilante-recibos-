@@ -486,7 +486,75 @@ TextField(
   decoration: const InputDecoration(
     labelText: 'Endereço',
   ),
-), const SizedBox(height: 24),
+),
+const SizedBox(height: 12),
+
+DropdownButtonFormField<String>(
+  initialValue: widget.store.vigilanteTipoWhatsapp,
+  decoration: const InputDecoration(
+    labelText: 'Tipo de WhatsApp',
+  ),
+  items: const [
+    DropdownMenuItem(
+      value: 'WhatsApp Padrão',
+      child: Text('WhatsApp Padrão'),
+    ),
+    DropdownMenuItem(
+      value: 'WhatsApp Business',
+      child: Text('WhatsApp Business'),
+    ),
+  ],
+  onChanged: (valor) {
+    if (valor != null) {
+      widget.store.vigilanteTipoWhatsapp = valor;
+    }
+  },
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: chavePix,
+  decoration: const InputDecoration(
+    labelText: 'Chave Pix',
+  ),
+),
+
+const SizedBox(height: 12),
+
+DropdownButtonFormField<String>(
+  initialValue: tipoChavePix.text.isEmpty
+      ? 'Telefone'
+      : tipoChavePix.text,
+  decoration: const InputDecoration(
+    labelText: 'Tipo da chave Pix',
+  ),
+  items: const [
+    DropdownMenuItem(
+      value: 'Telefone',
+      child: Text('Telefone'),
+    ),
+    DropdownMenuItem(
+      value: 'CPF/CNPJ',
+      child: Text('CPF/CNPJ'),
+    ),
+    DropdownMenuItem(
+      value: 'E-mail',
+      child: Text('E-mail'),
+    ),
+    DropdownMenuItem(
+      value: 'Aleatória',
+      child: Text('Aleatória'),
+    ),
+  ],
+  onChanged: (valor) {
+    if (valor != null) {
+      tipoChavePix.text = valor;
+    }
+  },
+),
+
+const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: () async {
   widget.store.vigilanteNome = nome.text.trim();

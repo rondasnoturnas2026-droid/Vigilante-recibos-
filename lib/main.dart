@@ -435,11 +435,15 @@ chavePix = TextEditingController(text: widget.store.vigilanteChavePix);
 tipoChavePix = TextEditingController(text: widget.store.vigilanteTipoChavePix);}
 
   @override
-  void dispose() {
-    nome.dispose();
-    contato.dispose();
-    super.dispose();
-  }
+void dispose() {
+  nome.dispose();
+  contato.dispose();
+  cpfCnpj.dispose();
+  endereco.dispose();
+  chavePix.dispose();
+  tipoChavePix.dispose();
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {

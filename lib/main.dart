@@ -421,7 +421,7 @@ class _DadosVigilantePageState extends State<DadosVigilantePage> {
   late final TextEditingController nome;
   late final TextEditingController contato;
 late final TextEditingController cpfCnpj;
-late final TextEditingController tipoWhatsapp;
+late final TextEditingController endereco;
 late final TextEditingController chavePix;
 late final TextEditingController tipoChavePix;
   @override

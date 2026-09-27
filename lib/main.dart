@@ -241,7 +241,12 @@ class _TelaFaturasState extends State<TelaFaturas> {
 }
 
 class TelaMoradores extends StatelessWidget {
-  const TelaMoradores({super.key});
+  final AppStore store;
+
+  const TelaMoradores({
+    super.key,
+    required this.store,
+  });
 
   @override
   Widget build(BuildContext context) {

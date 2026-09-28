@@ -781,7 +781,28 @@ Future<void> salvarDadosVigilante() async {
   await prefs.setString('vigilanteTipoWhatsapp', vigilanteTipoWhatsapp);
   await prefs.setString('vigilanteChavePix', vigilanteChavePix);
   await prefs.setString('vigilanteTipoChavePix', vigilanteTipoChavePix);
-  await prefs.setString('vigilanteLogo', vigilanteLogo);
+  await prefs.setString('vigilanteLogo', vigilanteLogo);await prefs.setString('vigilanteNomeFantasia', vigilanteNomeFantasia);
+await prefs.setString('vigilanteSegmentoMercado', vigilanteSegmentoMercado);
+await prefs.setString('vigilanteServicoPrestado', vigilanteServicoPrestado);
+await prefs.setString('vigilanteSite', vigilanteSite);
+await prefs.setString('vigilanteCredencial', vigilanteCredencial);
+
+await prefs.setString('vigilanteHorarioInicio', vigilanteHorarioInicio);
+await prefs.setString('vigilanteHorarioFim', vigilanteHorarioFim);
+await prefs.setString('vigilanteObservacaoHorario', vigilanteObservacaoHorario);
+
+await prefs.setBool('vigilanteSegunda', vigilanteSegunda);
+await prefs.setBool('vigilanteTerca', vigilanteTerca);
+await prefs.setBool('vigilanteQuarta', vigilanteQuarta);
+await prefs.setBool('vigilanteQuinta', vigilanteQuinta);
+await prefs.setBool('vigilanteSexta', vigilanteSexta);
+await prefs.setBool('vigilanteSabado', vigilanteSabado);
+await prefs.setBool('vigilanteDomingo', vigilanteDomingo);
+
+await prefs.setString(
+  'vigilanteLogoPretoBranco',
+  vigilanteLogoPretoBranco,
+);
 }
 
 Future<void> carregarDadosVigilante() async {

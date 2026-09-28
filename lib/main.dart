@@ -1456,6 +1456,7 @@ class _TelaImpressoraState extends State<TelaImpressora> {
     );
   }
 }
+class ImpressoraBluetoothService {
   static Future<List<BluetoothInfo>> buscarImpressoras() async {
     final bluetoothLigado =
         await PrintBluetoothThermal.bluetoothEnabled;

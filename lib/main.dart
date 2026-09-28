@@ -418,7 +418,7 @@ const Divider(),
       builder: (context) => const TelaImpressora(),
     ),
   );
-   
+  }, 
 
             trailing: FutureBuilder<bool>(
   future: PrintBluetoothThermal.connectionStatus,

@@ -450,7 +450,7 @@ void dispose() {
   endereco.dispose();
   chavePix.dispose();
   tipoChavePix.dispose();
-  super.dispose();nomeFantasia.dispose();
+  nomeFantasia.dispose();
 segmentoMercado.dispose();
 servicoPrestado.dispose();
 site.dispose();

@@ -889,6 +889,17 @@ const SizedBox(height: 12),
 Card(
   child: ListTile(
     child: ListTile(
+      onTap: () async {
+  final XFile? imagem = await ImagePicker().pickImage(
+    source: ImageSource.gallery,
+  );
+
+  if (imagem != null) {
+    setState(() {
+      widget.store.vigilanteLogoPretoBranco = imagem.path;
+    });
+  }
+},
   onTap: () async {
     final ImagePicker picker = ImagePicker();
     final XFile? imagem =

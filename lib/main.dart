@@ -423,7 +423,10 @@ class _DadosVigilantePageState extends State<DadosVigilantePage> {
 late final TextEditingController cpfCnpj;
 late final TextEditingController endereco;
 late final TextEditingController chavePix;
-late final TextEditingController tipoChavePix;
+late final TextEditingController tipoChavePix;late final TextEditingController nomeFantasia;
+late final TextEditingController segmentoMercado;
+late final TextEditingController servicoPrestado;
+late final TextEditingController site;
   @override
   void initState() {
     super.initState();

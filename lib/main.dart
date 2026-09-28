@@ -419,30 +419,84 @@ class DadosVigilantePage extends StatefulWidget {
 
 class _DadosVigilantePageState extends State<DadosVigilantePage> {
   late final TextEditingController nome;
-  late final TextEditingController contato;
+late final TextEditingController contato;
 late final TextEditingController cpfCnpj;
 late final TextEditingController endereco;
 late final TextEditingController chavePix;
-late final TextEditingController tipoChavePix;late final TextEditingController nomeFantasia;
+late final TextEditingController tipoChavePix;
+
+late final TextEditingController nomeFantasia;
 late final TextEditingController segmentoMercado;
 late final TextEditingController servicoPrestado;
 late final TextEditingController site;
-  @override
-  void initState() {
-    super.initState();
-    nome = TextEditingController(text: widget.store.vigilanteNome);
-    contato = TextEditingController(text: widget.store.vigilanteContato);
-  cpfCnpj = TextEditingController(text: widget.store.vigilanteCpfCnpj);
-endereco = TextEditingController(text: widget.store.vigilanteEndereco);
-chavePix = TextEditingController(text: widget.store.vigilanteChavePix);
-tipoChavePix = TextEditingController(text: widget.store.vigilanteTipoChavePix);
-nomeFantasia = TextEditingController();
-segmentoMercado = TextEditingController();
-servicoPrestado = TextEditingController();
-site = TextEditingController();
-  }
+late final TextEditingController credencial;
 
-  @override
+late final TextEditingController horarioInicio;
+late final TextEditingController horarioFim;
+late final TextEditingController observacaoHorario;
+
+@override
+void initState() {
+  super.initState();
+
+  nome = TextEditingController(
+    text: widget.store.vigilanteNome,
+  );
+
+  contato = TextEditingController(
+    text: widget.store.vigilanteContato,
+  );
+
+  cpfCnpj = TextEditingController(
+    text: widget.store.vigilanteCpfCnpj,
+  );
+
+  endereco = TextEditingController(
+    text: widget.store.vigilanteEndereco,
+  );
+
+  chavePix = TextEditingController(
+    text: widget.store.vigilanteChavePix,
+  );
+
+  tipoChavePix = TextEditingController(
+    text: widget.store.vigilanteTipoChavePix,
+  );
+
+  nomeFantasia = TextEditingController(
+    text: widget.store.vigilanteNomeFantasia,
+  );
+
+  segmentoMercado = TextEditingController(
+    text: widget.store.vigilanteSegmentoMercado,
+  );
+
+  servicoPrestado = TextEditingController(
+    text: widget.store.vigilanteServicoPrestado,
+  );
+
+  site = TextEditingController(
+    text: widget.store.vigilanteSite,
+  );
+
+  credencial = TextEditingController(
+    text: widget.store.vigilanteCredencial,
+  );
+
+  horarioInicio = TextEditingController(
+    text: widget.store.vigilanteHorarioInicio,
+  );
+
+  horarioFim = TextEditingController(
+    text: widget.store.vigilanteHorarioFim,
+  );
+
+  observacaoHorario = TextEditingController(
+    text: widget.store.vigilanteObservacaoHorario,
+  );
+}
+
+@override
 void dispose() {
   nome.dispose();
   contato.dispose();
@@ -450,10 +504,18 @@ void dispose() {
   endereco.dispose();
   chavePix.dispose();
   tipoChavePix.dispose();
+
   nomeFantasia.dispose();
-segmentoMercado.dispose();
-servicoPrestado.dispose();
-site.dispose();
+  segmentoMercado.dispose();
+  servicoPrestado.dispose();
+  site.dispose();
+  credencial.dispose();
+
+  horarioInicio.dispose();
+  horarioFim.dispose();
+  observacaoHorario.dispose();
+
+  super.dispose();
 }
 
   @override

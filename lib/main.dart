@@ -1325,6 +1325,61 @@ bool vigilanteDomingo = false;
 String vigilanteLogoPretoBranco = '';
   final List<Bairro> bairros = [];
   final List<Morador> moradores = [];
+  Future<void> salvarBairrosERuas() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final dados = bairros.map((bairro) {
+    return {
+      'id': bairro.id,
+      'nome': bairro.nome,
+      'ruas': bairro.ruas,
+    };
+  }).toList();
+
+  await prefs.setString(
+    'bairros_ruas',
+    jsonEncode(dados),
+  );
+}
+
+Future<void> carregarBairrosERuas() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final texto = prefs.getString('bairros_ruas');
+
+  if (texto == null || texto.isEmpty) {
+    return;
+  }
+
+  final List<dynamic> dados = jsonDecode(texto);
+
+  bairros.clear();
+
+  int maiorId = 0;
+
+  for (final item in dados) {
+    final bairro = Bairro(
+      id: item['id'],
+      nome: item['nome'],
+    );
+
+    final ruas = item['ruas'];
+
+    if (ruas != null) {
+      bairro.ruas.addAll(
+        List<String>.from(ruas),
+      );
+    }
+
+    bairros.add(bairro);
+
+    if (bairro.id > maiorId) {
+      maiorId = bairro.id;
+    }
+  }
+
+  _proximoBairro = maiorId + 1;
+}
 
   int proximoBairroId = 1;
   int proximoMoradorId = 1;

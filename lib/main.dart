@@ -1214,6 +1214,248 @@ const SizedBox(height: 24),
   }
 }
 class ImpressoraBluetoothService {
+  class TelaImpressora extends StatefulWidget {
+  const TelaImpressora({super.key});
+
+  @override
+  State<TelaImpressora> createState() => _TelaImpressoraState();
+}
+
+class _TelaImpressoraState extends State<TelaImpressora> {
+  List<BluetoothInfo> impressoras = [];
+  bool carregando = false;
+  bool conectada = false;
+  String? macConectado;
+
+  @override
+  void initState() {
+    super.initState();
+    _verificarConexao();
+    _buscarImpressoras();
+  }
+
+  Future<void> _verificarConexao() async {
+    final status = await ImpressoraBluetoothService.estaConectada();
+
+    if (!mounted) return;
+
+    setState(() {
+      conectada = status;
+    });
+  }
+
+  Future<void> _buscarImpressoras() async {
+    setState(() {
+      carregando = true;
+    });
+
+    final lista =
+        await ImpressoraBluetoothService.buscarImpressoras();
+
+    if (!mounted) return;
+
+    setState(() {
+      impressoras = lista;
+      carregando = false;
+    });
+  }
+
+  Future<void> _conectar(BluetoothInfo impressora) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Conectando em ${impressora.name}...',
+        ),
+      ),
+    );
+
+    final sucesso =
+        await ImpressoraBluetoothService.conectar(
+      impressora.macAdress,
+    );
+
+    if (!mounted) return;
+
+    if (sucesso) {
+      setState(() {
+        conectada = true;
+        macConectado = impressora.macAdress;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Conectado em ${impressora.name}',
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Não foi possível conectar à impressora',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _desconectar() async {
+    final sucesso =
+        await ImpressoraBluetoothService.desconectar();
+
+    if (!mounted) return;
+
+    if (sucesso) {
+      setState(() {
+        conectada = false;
+        macConectado = null;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Impressora desconectada'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _testeImpressao() async {
+    final sucesso =
+        await ImpressoraBluetoothService.imprimirRecibo(
+      nomeMorador: 'TESTE',
+      valor: '10,00',
+      formaPagamento: 'Pix',
+      vencimento: 'Teste',
+      dataRecebimento: 'Teste',
+      observacao: 'Impressao de teste',
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          sucesso
+              ? 'Teste enviado para a impressora'
+              : 'Impressora não conectada',
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Impressora térmica'),
+      ),
+      body: RefreshIndicator(
+        onRefresh: _buscarImpressoras,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Card(
+              child: ListTile(
+                leading: Icon(
+                  conectada
+                      ? Icons.print
+                      : Icons.print_outlined,
+                  color: conectada ? Colors.green : null,
+                ),
+                title: Text(
+                  conectada
+                      ? 'Impressora conectada'
+                      : 'Nenhuma impressora conectada',
+                ),
+                subtitle: const Text(
+                  'Bluetooth 58 mm',
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            if (conectada) ...[
+              FilledButton.icon(
+                onPressed: _testeImpressao,
+                icon: const Icon(Icons.receipt_long),
+                label: const Text('Imprimir teste'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _desconectar,
+                icon: const Icon(Icons.bluetooth_disabled),
+                label: const Text('Desconectar'),
+              ),
+              const SizedBox(height: 20),
+            ],
+
+            const Text(
+              'Impressoras pareadas',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            if (carregando)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            else if (impressoras.isEmpty)
+              const Card(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text(
+                    'Nenhum dispositivo Bluetooth pareado encontrado.\n\n'
+                    'Pareie primeiro a impressora nas configurações '
+                    'Bluetooth do celular.',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+            else
+              ...impressoras.map(
+                (impressora) => Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.bluetooth),
+                    title: Text(
+                      impressora.name.isEmpty
+                          ? 'Dispositivo Bluetooth'
+                          : impressora.name,
+                    ),
+                    subtitle: Text(impressora.macAdress),
+                    trailing:
+                        macConectado == impressora.macAdress &&
+                                conectada
+                            ? const Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                              )
+                            : const Icon(Icons.chevron_right),
+                    onTap: () => _conectar(impressora),
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 20),
+
+            OutlinedButton.icon(
+              onPressed: _buscarImpressoras,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Atualizar lista'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
   static Future<List<BluetoothInfo>> buscarImpressoras() async {
     final bluetoothLigado =
         await PrintBluetoothThermal.bluetoothEnabled;

@@ -888,29 +888,27 @@ const SizedBox(height: 12),
 
 Card(
   child: ListTile(
-    child: ListTile(
-      onTap: () async {
-  final XFile? imagem = await ImagePicker().pickImage(
-    source: ImageSource.gallery,
-  );
+    onTap: () async {
+      final ImagePicker picker = ImagePicker();
+      final XFile? imagem =
+          await picker.pickImage(source: ImageSource.gallery);
 
-  if (imagem != null) {
-    setState(() {
-      widget.store.vigilanteLogoPretoBranco = imagem.path;
-    });
-  }
-},
-  onTap: () async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? imagem =
-        await picker.pickImage(source: ImageSource.gallery);
-
-    if (imagem != null) {
-      setState(() {
-        widget.store.vigilanteLogoPretoBranco = imagem.path;
-      });
-    }
-  },
+      if (imagem != null) {
+        setState(() {
+          widget.store.vigilanteLogoPretoBranco = imagem.path;
+        });
+      }
+    },
+    leading: const Icon(Icons.monochrome_photos_outlined),
+    title: const Text('Escolher imagem'),
+    subtitle: Text(
+      widget.store.vigilanteLogoPretoBranco.isEmpty
+          ? 'Nenhuma imagem selecionada'
+          : 'Imagem selecionada',
+    ),
+    trailing: const Icon(Icons.chevron_right),
+  ),
+),
   leading: const Icon(Icons.monochrome_photos_outlined),
     leading: const Icon(Icons.monochrome_photos_outlined),
     title: const Text('Escolher imagem'),

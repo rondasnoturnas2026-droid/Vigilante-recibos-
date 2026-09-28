@@ -539,7 +539,7 @@ if (!mounted) return;
 setState(() {});
 
 _aviso('Salvo com sucesso');
-
+}
   Future<void> _adicionarRua(Bairro bairro) async {
     final controller = TextEditingController();
 

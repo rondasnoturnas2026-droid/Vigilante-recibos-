@@ -428,6 +428,160 @@ const Divider(),
   }
 }       
 class DadosVigilantePage extends StatefulWidget {
+
+  class BairrosRuasPage extends StatefulWidget {
+  const BairrosRuasPage({super.key, required this.store});
+
+  final AppStore store;
+
+  @override
+  State<BairrosRuasPage> createState() => _BairrosRuasPageState();
+}
+
+class _BairrosRuasPageState extends State<BairrosRuasPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bairros e Ruas'),
+      ),
+      body: widget.store.bairros.isEmpty
+          ? const Center(
+              child: Text('Nenhum bairro cadastrado'),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: widget.store.bairros.length,
+              itemBuilder: (context, index) {
+                final bairro = widget.store.bairros[index];
+
+                return Card(
+                  child: ExpansionTile(
+                    leading: const Icon(Icons.location_on_outlined),
+                    title: Text(bairro.nome),
+                    subtitle: Text('${bairro.ruas.length} rua(s)'),
+                    children: [
+                      ...bairro.ruas.map(
+                        (rua) => ListTile(
+                          leading: const Icon(Icons.signpost_outlined),
+                          title: Text(rua),
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.add_road),
+                        title: const Text('Adicionar rua'),
+                        onTap: () => _adicionarRua(bairro),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _adicionarBairro,
+        icon: const Icon(Icons.add_location_alt_outlined),
+        label: const Text('Adicionar novo bairro'),
+      ),
+    );
+  }
+
+  Future<void> _adicionarBairro() async {
+    final controller = TextEditingController();
+
+    final nome = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Novo bairro'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Nome do bairro',
+            hintText: 'Ex.: Centro',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final texto = controller.text.trim();
+
+              if (texto.isNotEmpty) {
+                Navigator.pop(context, texto);
+              }
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+
+    if (nome == null || nome.isEmpty) return;
+
+    final existe = widget.store.bairros.any(
+      (bairro) => bairro.nome.toLowerCase() == nome.toLowerCase(),
+    );
+
+    if (existe) {
+      _aviso('Esse bairro já está cadastrado');
+      return;
+    }
+
+    setState(() {
+      widget.store.adicionarBairro(nome);
+    });
+  }
+
+  Future<void> _adicionarRua(Bairro bairro) async {
+    final controller = TextEditingController();
+
+    final nome = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Nova rua em ${bairro.nome}'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Nome da Rua',
+            hintText: 'Ex.: Av. Principal',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final texto = controller.text.trim();
+
+              if (texto.isNotEmpty) {
+                Navigator.pop(context, texto);
+              }
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+
+    if (nome == null || nome.isEmpty) return;
+
+    setState(() {
+      widget.store.adicionarRua(bairro, nome);
+    });
+  }
+
+  void _aviso(String mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(mensagem)),
+    );
+  }
+}
   const DadosVigilantePage({super.key, required this.store});
 
   final AppStore store;

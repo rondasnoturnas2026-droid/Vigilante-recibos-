@@ -411,6 +411,8 @@ const Divider(),
             leading: Icon(Icons.print_outlined),
             title: Text('Impressora térmica'),
             subtitle: Text('Impressora Bluetooth 58 mm'),
+            413  subtitle: Text('Impressora Bluetooth 58 mm'),
+414  trailing: FutureBuilder<bool>(
             trailing: FutureBuilder<bool>(
   future: PrintBluetoothThermal.connectionStatus,
   builder: (context, snapshot) {

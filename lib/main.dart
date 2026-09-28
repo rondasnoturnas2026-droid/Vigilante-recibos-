@@ -909,16 +909,7 @@ Card(
     trailing: const Icon(Icons.chevron_right),
   ),
 ),
-  leading: const Icon(Icons.monochrome_photos_outlined),
-    leading: const Icon(Icons.monochrome_photos_outlined),
-    title: const Text('Escolher imagem'),
-    subtitle: Text(
-      widget.store.vigilanteLogoPretoBranco.isEmpty
-          ? 'Nenhuma imagem selecionada'
-          : 'Imagem selecionada',
-    ),
-    trailing: const Icon(Icons.chevron_right),
-  ),
+  
 ),
 
 const SizedBox(height: 24),        

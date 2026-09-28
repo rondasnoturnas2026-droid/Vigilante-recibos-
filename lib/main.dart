@@ -532,10 +532,13 @@ class _BairrosRuasPageState extends State<BairrosRuasPage> {
       return;
     }
 
-    setState(() {
-      widget.store.adicionarBairro(nome);
-    });
-  }
+    await widget.store.adicionarBairro(nome);
+
+if (!mounted) return;
+
+setState(() {});
+
+_aviso('Salvo com sucesso');
 
   Future<void> _adicionarRua(Bairro bairro) async {
     final controller = TextEditingController();

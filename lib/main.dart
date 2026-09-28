@@ -38,9 +38,7 @@ class TelaPrincipal extends StatefulWidget {
 class _TelaPrincipalState extends State<TelaPrincipal> {
   int paginaAtual = 0;
 
-  final AppStore store = AppStore();
-
-late final List<Widget> paginas;
+store.carregarDadosVigilante();
 
 @override
 void initState() {

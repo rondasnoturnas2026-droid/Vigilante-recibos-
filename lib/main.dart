@@ -411,7 +411,14 @@ const Divider(),
             leading: Icon(Icons.print_outlined),
             title: Text('Impressora térmica'),
             subtitle: Text('Impressora Bluetooth 58 mm'),
-            
+   onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const TelaImpressora(),
+    ),
+  );
+},         
 414  trailing: FutureBuilder<bool>(
             trailing: FutureBuilder<bool>(
   future: PrintBluetoothThermal.connectionStatus,

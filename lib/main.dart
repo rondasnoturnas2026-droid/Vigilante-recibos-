@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+tôimport 'package:flutter/material.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:flutter/services.dart';import 'package:shared_preferences/shared_preferences.dart';
 void main() {
@@ -525,27 +525,211 @@ void dispose() {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          TextField(
-            controller: nome,
-            decoration: const InputDecoration(labelText: 'Nome'),
-          ),
-          const SizedBox(height: 12),
-        
-            TextField(
-  controller: contato,inputFormatters: [
-  FilteringTextInputFormatter.digitsOnly,
-  LengthLimitingTextInputFormatter(11),
-],
-  keyboardType: TextInputType.phone,
-  decoration: const InputDecoration(
-    labelText: 'Contato',
+          // ===============================
+// DADOS GERAIS DO SERVIÇO
+// ===============================
+const Text(
+  'Dados Geral do serviço',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
   ),
 ),
+
+const SizedBox(height: 16),
+
+TextField(
+  controller: nomeFantasia,
+  decoration: const InputDecoration(
+    labelText: 'Nome Fantasia',
+    border: OutlineInputBorder(),
+  ),
+),
+
 const SizedBox(height: 12),
 
-  
+TextField(
+  controller: segmentoMercado,
+  decoration: const InputDecoration(
+    labelText: 'Segmento de mercado',
+    border: OutlineInputBorder(),
+  ),
+),
 
 const SizedBox(height: 12),
+
+TextField(
+  controller: servicoPrestado,
+  decoration: const InputDecoration(
+    labelText: 'Serviço prestado',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: site,
+  keyboardType: TextInputType.url,
+  decoration: const InputDecoration(
+    labelText: 'Site (opcional)',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: endereco,
+  decoration: const InputDecoration(
+    labelText: 'Endereço (opcional)',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 28),
+
+// ===============================
+// HORÁRIO DE SERVIÇO
+// ===============================
+const Text(
+  'Horário de Serviço (opcional)',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 16),
+
+Wrap(
+  spacing: 8,
+  runSpacing: 8,
+  children: [
+    FilterChip(
+      label: const Text('Seg'),
+      selected: widget.store.vigilanteSegunda,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteSegunda = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Ter'),
+      selected: widget.store.vigilanteTerca,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteTerca = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Qua'),
+      selected: widget.store.vigilanteQuarta,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteQuarta = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Qui'),
+      selected: widget.store.vigilanteQuinta,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteQuinta = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Sex'),
+      selected: widget.store.vigilanteSexta,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteSexta = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Sáb'),
+      selected: widget.store.vigilanteSabado,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteSabado = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Dom'),
+      selected: widget.store.vigilanteDomingo,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteDomingo = valor;
+        });
+      },
+    ),
+  ],
+),
+
+const SizedBox(height: 16),
+
+TextField(
+  controller: horarioInicio,
+  decoration: const InputDecoration(
+    labelText: 'Horário de início',
+    hintText: 'Ex.: 18:00',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: horarioFim,
+  decoration: const InputDecoration(
+    labelText: 'Horário de fim',
+    hintText: 'Ex.: 06:00',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: observacaoHorario,
+  maxLines: 2,
+  decoration: const InputDecoration(
+    labelText: 'Observação (opcional)',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 28),
+
+// ===============================
+// PERFIL 1
+// ===============================
+const Text(
+  'Perfil 1 (obrigatório)',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 16),
+
+TextField(
+  controller: nome,
+  decoration: const InputDecoration(
+    labelText: 'Nome do vigilante',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
 TextField(
   controller: cpfCnpj,
   keyboardType: TextInputType.number,
@@ -555,21 +739,32 @@ TextField(
   ],
   decoration: const InputDecoration(
     labelText: 'CPF ou CNPJ',
+    border: OutlineInputBorder(),
   ),
 ),
-         const SizedBox(height: 12),
+
+const SizedBox(height: 12),
+
 TextField(
-  controller: endereco,
+  controller: contato,
+  keyboardType: TextInputType.phone,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+    LengthLimitingTextInputFormatter(11),
+  ],
   decoration: const InputDecoration(
-    labelText: 'Endereço',
+    labelText: 'Telefone',
+    border: OutlineInputBorder(),
   ),
 ),
+
 const SizedBox(height: 12),
 
 DropdownButtonFormField<String>(
   initialValue: widget.store.vigilanteTipoWhatsapp,
   decoration: const InputDecoration(
     labelText: 'Tipo de WhatsApp',
+    border: OutlineInputBorder(),
   ),
   items: const [
     DropdownMenuItem(
@@ -594,17 +789,18 @@ TextField(
   controller: chavePix,
   decoration: const InputDecoration(
     labelText: 'Chave Pix',
+    border: OutlineInputBorder(),
   ),
 ),
 
 const SizedBox(height: 12),
 
 DropdownButtonFormField<String>(
-  initialValue: tipoChavePix.text.isEmpty
-      ? 'Telefone'
-      : tipoChavePix.text,
+  initialValue:
+      tipoChavePix.text.isEmpty ? 'Telefone' : tipoChavePix.text,
   decoration: const InputDecoration(
     labelText: 'Tipo da chave Pix',
+    border: OutlineInputBorder(),
   ),
   items: const [
     DropdownMenuItem(
@@ -631,7 +827,15 @@ DropdownButtonFormField<String>(
   },
 ),
 
-const SizedBox(height: 24),
+const SizedBox(height: 12),
+
+TextField(
+  controller: credencial,
+  decoration: const InputDecoration(
+    labelText: 'Número da credencial/carteirinha (opcional)',
+    border: OutlineInputBorder(),
+  ),
+),
           FilledButton.icon(
             onPressed: () async {  String? erro;
 

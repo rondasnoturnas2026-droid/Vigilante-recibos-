@@ -560,7 +560,33 @@ DropdownButtonFormField<String>(
 
 const SizedBox(height: 24),
           FilledButton.icon(
-            onPressed: () async {
+            onPressed: () async {  String? erro;
+
+  if (nome.text.trim().isEmpty) {
+    erro = 'Preencha o nome do vigilante';
+  } else if (cpfCnpj.text.trim().isEmpty) {
+    erro = 'Preencha o CPF ou CNPJ';
+  } else if (cpfCnpj.text.trim().length != 11 &&
+      cpfCnpj.text.trim().length != 14) {
+    erro = 'Digite um CPF com 11 números ou CNPJ com 14 números';
+  } else if (contato.text.trim().isEmpty) {
+    erro = 'Preencha o telefone';
+  } else if (contato.text.trim().length < 10) {
+    erro = 'Digite um telefone válido com DDD';
+  } else if (widget.store.vigilanteTipoWhatsapp.trim().isEmpty) {
+    erro = 'Escolha o tipo de WhatsApp';
+  } else if (chavePix.text.trim().isEmpty) {
+    erro = 'Preencha a Chave Pix';
+  } else if (tipoChavePix.text.trim().isEmpty) {
+    erro = 'Escolha o tipo da Chave Pix';
+  }
+
+  if (erro != null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(erro)),
+    );
+    return;
+  }
   widget.store.vigilanteNome = nome.text.trim();
   widget.store.vigilanteContato = contato.text.trim();
   widget.store.vigilanteCpfCnpj = cpfCnpj.text.trim();

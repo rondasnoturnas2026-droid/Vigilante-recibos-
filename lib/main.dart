@@ -1408,5 +1408,26 @@ Future<void> carregarDadosVigilante() async {
 
     vigilanteLogoPretoBranco =
         prefs.getString('vigilanteLogoPretoBranco') ?? '';
-}}
+}
+
+void adicionarBairro(String nome) {
+  bairros.add(
+    Bairro(
+      id: proximoBairroId++,
+      nome: nome,
+    ),
+  );
+}
+
+void adicionarRua(Bairro bairro, String nome) {
+  final existe = bairro.ruas.any(
+    (rua) => rua.toLowerCase() == nome.toLowerCase(),
+  );
+
+  if (!existe) {
+    bairro.ruas.add(nome);
+  }
+}
+
+}
 

@@ -888,6 +888,19 @@ const SizedBox(height: 12),
 
 Card(
   child: ListTile(
+    child: ListTile(
+  onTap: () async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? imagem =
+        await picker.pickImage(source: ImageSource.gallery);
+
+    if (imagem != null) {
+      setState(() {
+        widget.store.vigilanteLogoPretoBranco = imagem.path;
+      });
+    }
+  },
+  leading: const Icon(Icons.monochrome_photos_outlined),
     leading: const Icon(Icons.monochrome_photos_outlined),
     title: const Text('Escolher imagem'),
     subtitle: Text(

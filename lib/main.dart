@@ -852,6 +852,17 @@ const SizedBox(height: 12),
 
 Card(
   child: ListTile(
+    onTap: () async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? imagem =
+      await picker.pickImage(source: ImageSource.gallery);
+
+  if (imagem != null) {
+    setState(() {
+      widget.store.vigilanteLogo = imagem.path;
+    });
+  }
+},
     leading: const Icon(Icons.image_outlined),
     title: const Text('Escolher imagem'),
     subtitle: Text(

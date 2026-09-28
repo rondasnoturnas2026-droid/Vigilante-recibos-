@@ -582,7 +582,7 @@ class _BairrosRuasPageState extends State<BairrosRuasPage> {
     );
   }
 }
-  }
+  
 
 class DadosVigilantePage extends StatefulWidget {
   const DadosVigilantePage({super.key, required this.store});

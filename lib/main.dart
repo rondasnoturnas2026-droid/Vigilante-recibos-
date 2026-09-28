@@ -411,7 +411,17 @@ const Divider(),
             leading: Icon(Icons.print_outlined),
             title: Text('Impressora térmica'),
             subtitle: Text('Impressora Bluetooth 58 mm'),
-            trailing: Icon(Icons.chevron_right),
+            trailing: FutureBuilder<bool>(
+  future: PrintBluetoothThermal.connectionStatus,
+  builder: (context, snapshot) {
+    final conectada = snapshot.data ?? false;
+
+    return Icon(
+      Icons.chevron_right,
+      color: conectada ? Colors.green : null,
+    );
+  },
+),
             
 
 

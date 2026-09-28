@@ -1213,7 +1213,7 @@ const SizedBox(height: 24),
     );
   }
 }
-class ImpressoraBluetoothService {
+
   class TelaImpressora extends StatefulWidget {
   const TelaImpressora({super.key});
 

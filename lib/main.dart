@@ -592,13 +592,7 @@ class DadosVigilantePage extends StatefulWidget {
   @override
   State<DadosVigilantePage> createState() => _DadosVigilantePageState();
 }
-  const DadosVigilantePage({super.key, required this.store});
-
-  final AppStore store;
-
-  @override
-  State<DadosVigilantePage> createState() => _DadosVigilantePageState();
-}
+  
 
 class _DadosVigilantePageState extends State<DadosVigilantePage> {
   late final TextEditingController nome;

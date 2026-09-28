@@ -419,7 +419,7 @@ const Divider(),
     ),
   );
 },         
-414  trailing: FutureBuilder<bool>(
+
             trailing: FutureBuilder<bool>(
   future: PrintBluetoothThermal.connectionStatus,
   builder: (context, snapshot) {

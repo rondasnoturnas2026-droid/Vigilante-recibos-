@@ -576,10 +576,13 @@ _aviso('Salvo com sucesso');
 
     if (nome == null || nome.isEmpty) return;
 
-    setState(() {
-      widget.store.adicionarRua(bairro, nome);
-    });
-  }
+    await widget.store.adicionarRua(bairro, nome);
+
+if (!mounted) return;
+
+setState(() {});
+
+_aviso('Salvo com sucesso');
 
   void _aviso(String mensagem) {
     ScaffoldMessenger.of(context).showSnackBar(

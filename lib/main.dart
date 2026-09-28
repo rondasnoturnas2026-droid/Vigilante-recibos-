@@ -450,7 +450,7 @@ class _BairrosRuasPageState extends State<BairrosRuasPage> {
               child: Text('Nenhum bairro cadastrado'),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 120),
               itemCount: widget.store.bairros.length,
               itemBuilder: (context, index) {
                 final bairro = widget.store.bairros[index];

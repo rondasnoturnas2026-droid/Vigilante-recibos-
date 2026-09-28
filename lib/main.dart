@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:flutter/services.dart';import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
 void main() {
   runApp(const VigilanteRecibosApp());
 }

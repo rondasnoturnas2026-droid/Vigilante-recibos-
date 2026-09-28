@@ -412,6 +412,1504 @@ const Divider(),
             title: Text('Impressora térmica'),
             subtitle: Text('Impressora Bluetooth 58 mm'),
             trailing: Icon(Icons.chevron_right),
+            
+import 'package:flutter/material.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'dart:io';
+void main() {
+  
+  runApp(const VigilanteRecibosApp());
+}
+
+class VigilanteRecibosApp extends StatelessWidget {
+  const VigilanteRecibosApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Vigilante Recibos',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+        ),
+        useMaterial3: true,
+      ),
+      home: const TelaPrincipal(),
+    );
+  }
+}
+
+class TelaPrincipal extends StatefulWidget {
+  const TelaPrincipal({super.key});
+
+  @override
+  State<TelaPrincipal> createState() => _TelaPrincipalState();
+}
+
+class _TelaPrincipalState extends State<TelaPrincipal> {
+  int paginaAtual = 0;
+
+final AppStore store = AppStore();
+late final List<Widget> paginas;
+
+@override
+void initState() {
+  super.initState();
+store.carregarDadosVigilante();
+ store.carregarBairrosERuas(); 
+    
+  paginas = [
+  const TelaFaturas(),
+  TelaMoradores(store: store),
+  const TelaRelatorio(),
+  TelaConfiguracoes(store: store),
+];
+  
+}
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: paginas[paginaAtual],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: paginaAtual,
+        onDestinationSelected: (index) {
+          setState(() {
+            paginaAtual = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long),
+            label: 'Faturas',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.people_outline),
+            selectedIcon: Icon(Icons.people),
+            label: 'Moradores',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bar_chart_outlined),
+            selectedIcon: Icon(Icons.bar_chart),
+            label: 'Relatório',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Config.',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TelaFaturas extends StatefulWidget {
+  const TelaFaturas({super.key});
+
+  @override
+  State<TelaFaturas> createState() => _TelaFaturasState();
+}
+
+class _TelaFaturasState extends State<TelaFaturas> {
+  int abaAtual = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Vigilante Recibos',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: FilterChip(
+                    label: const Text('Pendentes'),
+                    selected: abaAtual == 0,
+                    onSelected: (_) {
+                      setState(() {
+                        abaAtual = 0;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: FilterChip(
+                    label: const Text('Recebidas'),
+                    selected: abaAtual == 1,
+                    onSelected: (_) {
+                      setState(() {
+                        abaAtual = 1;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: FilterChip(
+                    label: const Text('Inativos'),
+                    selected: abaAtual == 2,
+                    onSelected: (_) {
+                      setState(() {
+                        abaAtual = 2;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Icon(Icons.location_on_outlined),
+                          Text('Bairro'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Icon(Icons.calendar_today_outlined),
+                          Text('Dia'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Icon(Icons.payments_outlined),
+                          Text('Pagamento'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    abaAtual == 0
+                        ? Icons.receipt_long_outlined
+                        : abaAtual == 1
+                            ? Icons.check_circle_outline
+                            : Icons.person_off_outlined,
+                    size: 70,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    abaAtual == 0
+                        ? 'Nenhuma fatura pendente'
+                        : abaAtual == 1
+                            ? 'Nenhuma fatura recebida'
+                            : 'Nenhum cliente inativo',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        icon: const Icon(Icons.add),
+        label: const Text('Nova fatura'),
+      ),
+    );
+  }
+}
+
+class TelaMoradores extends StatelessWidget {
+  final AppStore store;
+
+  const TelaMoradores({
+    super.key,
+    required this.store,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Moradores',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.people_outline,
+              size: 70,
+              color: Colors.grey,
+            ),
+            SizedBox(height: 15),
+            Text(
+              'Nenhum morador cadastrado',
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        icon: const Icon(Icons.person_add),
+        label: const Text('Novo morador'),
+      ),
+    );
+  }
+}
+
+class TelaRelatorio extends StatelessWidget {
+  const TelaRelatorio({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Relatório mensal',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: const Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.check_circle_outline),
+                title: Text('Recebido'),
+                trailing: Text(
+                  'R\$ 0,00',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.pending_actions),
+                title: Text('Pendente'),
+                trailing: Text(
+                  'R\$ 0,00',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.pix),
+                title: Text('Pix'),
+                trailing: Text('R\$ 0,00'),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.money),
+                title: Text('Dinheiro'),
+                trailing: Text('R\$ 0,00'),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.credit_card),
+                title: Text('Cartão'),
+                trailing: Text('R\$ 0,00'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TelaConfiguracoes extends StatefulWidget {
+  const TelaConfiguracoes({super.key, required this.store});
+
+  final AppStore store;
+
+  @override
+  State<TelaConfiguracoes> createState() => _TelaConfiguracoesState();
+}
+
+class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
+  bool temaEscuro = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Configurações',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: ListView(
+        children: [
+          ListTile(
+            leading: Icon(Icons.security),
+            title: Text('Dados do vigilante'),
+            subtitle: Text('Nome e contato'),
+            trailing: Icon(Icons.chevron_right),
+      onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => DadosVigilantePage(store: widget.store)
+    ),
+  );
+},
+),
+          const Divider(),
+ListTile(
+  leading: const Icon(Icons.location_on_outlined),
+  title: const Text('Bairros e Ruas'),
+  subtitle: const Text('Cadastrar bairros e ruas'),
+  trailing: const Icon(Icons.chevron_right),
+  onTap: () async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BairrosRuasPage(store: widget.store),
+      ),
+    );
+    setState(() {});
+  },
+),
+const Divider(),
+          const ListTile(
+            leading: Icon(Icons.print_outlined),
+            title: Text('Impressora térmica'),
+            subtitle: Text('Impressora Bluetooth 58 mm'),
+            trailing: Icon(Icons.chevron_right),
+          ),
+          const Divider(),
+          SwitchListTile(
+  title: const Text('Tema escuro'),
+  subtitle: const Text('Ativar ou desativar'),
+  value: temaEscuro,
+  onChanged: (valor) {
+    setState(() {
+      temaEscuro = valor;
+    });
+               },
+          ),
+        ],
+      ),
+    );
+  }
+}       
+
+
+  class BairrosRuasPage extends StatefulWidget {
+  const BairrosRuasPage({super.key, required this.store});
+
+  final AppStore store;
+
+  @override
+  State<BairrosRuasPage> createState() => _BairrosRuasPageState();
+}
+
+class _BairrosRuasPageState extends State<BairrosRuasPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bairros e Ruas'),
+      ),
+      body: widget.store.bairros.isEmpty
+          ? const Center(
+              child: Text('Nenhum bairro cadastrado'),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 120),
+              itemCount: widget.store.bairros.length,
+              itemBuilder: (context, index) {
+                final bairro = widget.store.bairros[index];
+
+                return Card(
+                  child: ExpansionTile(
+                    leading: const Icon(Icons.location_on_outlined),
+                    title: Text(bairro.nome),
+                    subtitle: Text('${bairro.ruas.length} rua(s)'),
+                    children: [
+                      ...bairro.ruas.map(
+                        (rua) => ListTile(
+                          leading: const Icon(Icons.signpost_outlined),
+                          title: Text(rua),
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.add_road),
+                        title: const Text('Adicionar rua'),
+                        onTap: () => _adicionarRua(bairro),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _adicionarBairro,
+        icon: const Icon(Icons.add_location_alt_outlined),
+        label: const Text('Adicionar novo bairro'),
+      ),
+    );
+  }
+
+  Future<void> _adicionarBairro() async {
+    final controller = TextEditingController();
+
+    final nome = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Novo bairro'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Nome do bairro',
+            hintText: 'Ex.: Centro',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final texto = controller.text.trim();
+
+              if (texto.isNotEmpty) {
+                Navigator.pop(context, texto);
+              }
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+
+    if (nome == null || nome.isEmpty) return;
+
+    final existe = widget.store.bairros.any(
+      (bairro) => bairro.nome.toLowerCase() == nome.toLowerCase(),
+    );
+
+    if (existe) {
+      _aviso('Esse bairro já está cadastrado');
+      return;
+    }
+
+    await widget.store.adicionarBairro(nome);
+
+if (!mounted) return;
+
+setState(() {});
+
+_aviso('Salvo com sucesso');
+}
+  Future<void> _adicionarRua(Bairro bairro) async {
+    final controller = TextEditingController();
+
+    final nome = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Nova rua em ${bairro.nome}'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Nome da Rua',
+            hintText: 'Ex.: Av. Principal',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final texto = controller.text.trim();
+
+              if (texto.isNotEmpty) {
+                Navigator.pop(context, texto);
+              }
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+
+    if (nome == null || nome.isEmpty) return;
+
+    await widget.store.adicionarRua(bairro, nome);
+
+if (!mounted) return;
+
+setState(() {});
+
+_aviso('Salvo com sucesso');
+}
+  void _aviso(String mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(mensagem)),
+    );
+  }
+}
+  
+
+class DadosVigilantePage extends StatefulWidget {
+  const DadosVigilantePage({super.key, required this.store});
+
+  final AppStore store;
+
+  @override
+  State<DadosVigilantePage> createState() => _DadosVigilantePageState();
+}
+  
+
+class _DadosVigilantePageState extends State<DadosVigilantePage> {
+  late final TextEditingController nome;
+late final TextEditingController contato;
+late final TextEditingController cpfCnpj;
+late final TextEditingController endereco;
+late final TextEditingController chavePix;
+late final TextEditingController tipoChavePix;
+
+late final TextEditingController nomeFantasia;
+late final TextEditingController segmentoMercado;
+late final TextEditingController servicoPrestado;
+late final TextEditingController site;
+late final TextEditingController credencial;
+
+late final TextEditingController horarioInicio;
+late final TextEditingController horarioFim;
+late final TextEditingController observacaoHorario;
+
+@override
+void initState() {
+  super.initState();
+
+  nome = TextEditingController(
+    text: widget.store.vigilanteNome,
+  );
+
+  contato = TextEditingController(
+    text: widget.store.vigilanteContato,
+  );
+
+  cpfCnpj = TextEditingController(
+    text: widget.store.vigilanteCpfCnpj,
+  );
+
+  endereco = TextEditingController(
+    text: widget.store.vigilanteEndereco,
+  );
+
+  chavePix = TextEditingController(
+    text: widget.store.vigilanteChavePix,
+  );
+
+  tipoChavePix = TextEditingController(
+    text: widget.store.vigilanteTipoChavePix,
+  );
+
+  nomeFantasia = TextEditingController(
+    text: widget.store.vigilanteNomeFantasia,
+  );
+
+  segmentoMercado = TextEditingController(
+    text: widget.store.vigilanteSegmentoMercado,
+  );
+
+  servicoPrestado = TextEditingController(
+    text: widget.store.vigilanteServicoPrestado,
+  );
+
+  site = TextEditingController(
+    text: widget.store.vigilanteSite,
+  );
+
+  credencial = TextEditingController(
+    text: widget.store.vigilanteCredencial,
+  );
+
+  horarioInicio = TextEditingController(
+    text: widget.store.vigilanteHorarioInicio,
+  );
+
+  horarioFim = TextEditingController(
+    text: widget.store.vigilanteHorarioFim,
+  );
+
+  observacaoHorario = TextEditingController(
+    text: widget.store.vigilanteObservacaoHorario,
+  );
+}
+
+@override
+void dispose() {
+  nome.dispose();
+  contato.dispose();
+  cpfCnpj.dispose();
+  endereco.dispose();
+  chavePix.dispose();
+  tipoChavePix.dispose();
+
+  nomeFantasia.dispose();
+  segmentoMercado.dispose();
+  servicoPrestado.dispose();
+  site.dispose();
+  credencial.dispose();
+
+  horarioInicio.dispose();
+  horarioFim.dispose();
+  observacaoHorario.dispose();
+
+  super.dispose();
+}
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Dados do vigilante')),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+        children: [
+          // ===============================
+// DADOS GERAIS DO SERVIÇO
+// ===============================
+const Text(
+  'Dados Geral do serviço',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 16),
+
+TextField(
+  controller: nomeFantasia,
+  decoration: const InputDecoration(
+    labelText: 'Nome Fantasia',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: segmentoMercado,
+  decoration: const InputDecoration(
+    labelText: 'Segmento de mercado',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: servicoPrestado,
+  decoration: const InputDecoration(
+    labelText: 'Serviço prestado',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: site,
+  keyboardType: TextInputType.url,
+  decoration: const InputDecoration(
+    labelText: 'Site (opcional)',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: endereco,
+  decoration: const InputDecoration(
+    labelText: 'Endereço (opcional)',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 28),
+
+// ===============================
+// HORÁRIO DE SERVIÇO
+// ===============================
+const Text(
+  'Horário de Serviço (opcional)',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 16),
+
+Wrap(
+  spacing: 8,
+  runSpacing: 8,
+  children: [
+    FilterChip(
+      label: const Text('Seg'),
+      selected: widget.store.vigilanteSegunda,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteSegunda = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Ter'),
+      selected: widget.store.vigilanteTerca,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteTerca = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Qua'),
+      selected: widget.store.vigilanteQuarta,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteQuarta = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Qui'),
+      selected: widget.store.vigilanteQuinta,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteQuinta = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Sex'),
+      selected: widget.store.vigilanteSexta,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteSexta = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Sáb'),
+      selected: widget.store.vigilanteSabado,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteSabado = valor;
+        });
+      },
+    ),
+    FilterChip(
+      label: const Text('Dom'),
+      selected: widget.store.vigilanteDomingo,
+      onSelected: (valor) {
+        setState(() {
+          widget.store.vigilanteDomingo = valor;
+        });
+      },
+    ),
+  ],
+),
+
+const SizedBox(height: 16),
+
+TextField(
+  controller: horarioInicio,
+  decoration: const InputDecoration(
+    labelText: 'Horário de início',
+    hintText: 'Ex.: 18:00',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: horarioFim,
+  decoration: const InputDecoration(
+    labelText: 'Horário de fim',
+    hintText: 'Ex.: 06:00',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: observacaoHorario,
+  maxLines: 2,
+  decoration: const InputDecoration(
+    labelText: 'Observação (opcional)',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 28),
+
+// ===============================
+// PERFIL 1
+// ===============================
+const Text(
+  'Perfil 1 (obrigatório)',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 16),
+
+TextField(
+  controller: nome,
+  decoration: const InputDecoration(
+    labelText: 'Nome do vigilante',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: cpfCnpj,
+  keyboardType: TextInputType.number,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+    LengthLimitingTextInputFormatter(14),
+  ],
+  decoration: const InputDecoration(
+    labelText: 'CPF ou CNPJ',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: contato,
+  keyboardType: TextInputType.phone,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+    LengthLimitingTextInputFormatter(11),
+  ],
+  decoration: const InputDecoration(
+    labelText: 'Telefone',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+DropdownButtonFormField<String>(
+  initialValue: widget.store.vigilanteTipoWhatsapp,
+  decoration: const InputDecoration(
+    labelText: 'Tipo de WhatsApp',
+    border: OutlineInputBorder(),
+  ),
+  items: const [
+    DropdownMenuItem(
+      value: 'WhatsApp Padrão',
+      child: Text('WhatsApp Padrão'),
+    ),
+    DropdownMenuItem(
+      value: 'WhatsApp Business',
+      child: Text('WhatsApp Business'),
+    ),
+  ],
+  onChanged: (valor) {
+    if (valor != null) {
+      widget.store.vigilanteTipoWhatsapp = valor;
+    }
+  },
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: chavePix,
+  decoration: const InputDecoration(
+    labelText: 'Chave Pix',
+    border: OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 12),
+
+DropdownButtonFormField<String>(
+  initialValue:
+      tipoChavePix.text.isEmpty ? 'Telefone' : tipoChavePix.text,
+  decoration: const InputDecoration(
+    labelText: 'Tipo da chave Pix',
+    border: OutlineInputBorder(),
+  ),
+  items: const [
+    DropdownMenuItem(
+      value: 'Telefone',
+      child: Text('Telefone'),
+    ),
+    DropdownMenuItem(
+      value: 'CPF/CNPJ',
+      child: Text('CPF/CNPJ'),
+    ),
+    DropdownMenuItem(
+      value: 'E-mail',
+      child: Text('E-mail'),
+    ),
+    DropdownMenuItem(
+      value: 'Aleatória',
+      child: Text('Aleatória'),
+    ),
+  ],
+  onChanged: (valor) {
+    if (valor != null) {
+      tipoChavePix.text = valor;
+    }
+  },
+),
+
+const SizedBox(height: 12),
+
+TextField(
+  controller: credencial,
+  decoration: const InputDecoration(
+    labelText: 'Número da credencial/carteirinha (opcional)',
+    border: OutlineInputBorder(),
+  ),
+),
+  const SizedBox(height: 28),
+
+const Text(
+  'Imagem padrão (Logo)',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 12),
+
+Card(
+  child: ListTile(
+    onTap: () async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? imagem =
+      await picker.pickImage(source: ImageSource.gallery);
+
+  if (imagem != null) {
+    setState(() {
+      widget.store.vigilanteLogo = imagem.path;
+    });
+  }
+},
+    leading: widget.store.vigilanteLogo.isEmpty
+    ? const Icon(Icons.image_outlined)
+    : ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: Image.file(
+          File(widget.store.vigilanteLogo),
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.broken_image_outlined);
+          },
+        ),
+      ),
+    title: const Text('Escolher imagem'),
+    subtitle: Text(
+      widget.store.vigilanteLogo.isEmpty
+          ? 'Nenhuma imagem selecionada'
+          : 'Imagem selecionada',
+    ),
+    trailing: const Icon(Icons.chevron_right),
+  ),
+),
+
+const SizedBox(height: 20),
+
+const Text(
+  'Imagem em Preto e Branco (Impressão)',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 12),
+
+Card(
+  child: ListTile(
+    onTap: () async {
+      final ImagePicker picker = ImagePicker();
+      final XFile? imagem =
+          await picker.pickImage(source: ImageSource.gallery);
+
+      if (imagem != null) {
+        setState(() {
+          widget.store.vigilanteLogoPretoBranco = imagem.path;
+        });
+      }
+    },
+    leading: widget.store.vigilanteLogoPretoBranco.isEmpty
+    ? const Icon(Icons.monochrome_photos_outlined)
+    : ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: Image.file(
+          File(widget.store.vigilanteLogoPretoBranco),
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.broken_image_outlined);
+          },
+        ),
+      ),
+    title: const Text('Escolher imagem'),
+    subtitle: Text(
+      widget.store.vigilanteLogoPretoBranco.isEmpty
+          ? 'Nenhuma imagem selecionada'
+          : 'Imagem selecionada',
+    ),
+    trailing: const Icon(Icons.chevron_right),
+  ),
+),
+  
+
+
+const SizedBox(height: 24),
+          
+          
+          FilledButton.icon(
+
+            onPressed: () async {  String? erro;
+
+  if (nome.text.trim().isEmpty) {
+    erro = 'Preencha o nome do vigilante';
+  } else if (cpfCnpj.text.trim().isEmpty) {
+    erro = 'Preencha o CPF ou CNPJ';
+  } else if (cpfCnpj.text.trim().length != 11 &&
+      cpfCnpj.text.trim().length != 14) {
+    erro = 'Digite um CPF com 11 números ou CNPJ com 14 números';
+  } else if (contato.text.trim().isEmpty) {
+    erro = 'Preencha o telefone';
+  } else if (contato.text.trim().length < 10) {
+    erro = 'Digite um telefone válido com DDD';
+  } else if (widget.store.vigilanteTipoWhatsapp.trim().isEmpty) {
+    erro = 'Escolha o tipo de WhatsApp';
+  } else if (chavePix.text.trim().isEmpty) {
+    erro = 'Preencha a Chave Pix';
+  } else if (tipoChavePix.text.trim().isEmpty) {
+    erro = 'Escolha o tipo da Chave Pix';
+  }
+
+  if (erro != null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(erro)),
+    );
+    return;
+  }
+  widget.store.vigilanteNome = nome.text.trim();
+  widget.store.vigilanteContato = contato.text.trim();
+  widget.store.vigilanteCpfCnpj = cpfCnpj.text.trim();
+  widget.store.vigilanteEndereco = endereco.text.trim();
+  widget.store.vigilanteChavePix = chavePix.text.trim();
+  widget.store.vigilanteTipoChavePix = tipoChavePix.text.trim();
+  widget.store.vigilanteNomeFantasia = nomeFantasia.text.trim();
+  widget.store.vigilanteSegmentoMercado = segmentoMercado.text.trim();
+  widget.store.vigilanteServicoPrestado = servicoPrestado.text.trim();
+  widget.store.vigilanteSite = site.text.trim();
+  widget.store.vigilanteCredencial = credencial.text.trim();
+
+  widget.store.vigilanteHorarioInicio = horarioInicio.text.trim();
+  widget.store.vigilanteHorarioFim = horarioFim.text.trim();
+  widget.store.vigilanteObservacaoHorario =
+      observacaoHorario.text.trim();
+  await widget.store.salvarDadosVigilante();
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Dados salvos com sucesso'),
+    ),
+  );
+
+  Navigator.pop(context);
+},
+            icon: const Icon(Icons.save),
+            label: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+class ImpressoraBluetoothService {
+  static Future<List<BluetoothInfo>> buscarImpressoras() async {
+    final bluetoothLigado =
+        await PrintBluetoothThermal.bluetoothEnabled;
+
+    if (!bluetoothLigado) {
+      return [];
+    }
+
+    return await PrintBluetoothThermal.pairedBluetooths;
+  }
+
+  static Future<bool> conectar(String enderecoMac) async {
+    try {
+      return await PrintBluetoothThermal.connect(
+        macPrinterAddress: enderecoMac,
+      );
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> estaConectada() async {
+    return await PrintBluetoothThermal.connectionStatus;
+  }
+
+  static Future<bool> desconectar() async {
+    return await PrintBluetoothThermal.disconnect;
+  }
+
+  static Future<bool> imprimirRecibo({
+    required String nomeMorador,
+    required String valor,
+    required String formaPagamento,
+    required String vencimento,
+    required String dataRecebimento,
+    String observacao = '',
+  }) async {
+    final conectado =
+        await PrintBluetoothThermal.connectionStatus;
+
+    if (!conectado) {
+      return false;
+    }
+
+    final recibo = '''
+================================
+       VIGILANTE RECIBOS
+================================
+
+Morador: $nomeMorador
+
+Valor: R\$ $valor
+
+Pagamento: $formaPagamento
+
+Vencimento: $vencimento
+
+Recebido em: $dataRecebimento
+
+Status: RECEBIDO
+
+${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
+--------------------------------
+        PAGAMENTO RECEBIDO
+--------------------------------
+
+
+''';
+
+    final resultado =
+        await PrintBluetoothThermal.writeString(
+      printText: PrintTextSize(
+        size: 1,
+        text: recibo,
+      ),
+    );
+
+    await PrintBluetoothThermal.writeBytes(
+  '\n\n\n'.codeUnits,
+);
+
+return resultado;
+  }
+      }
+
+    class Bairro {
+  Bairro({
+    required this.id,
+    required this.nome,
+  });
+
+  final int id;
+  String nome;
+  final List<String> ruas = [];
+}
+
+class Morador {
+  Morador({
+    required this.id,
+    required this.nome,
+    required this.bairro,
+    required this.rua,
+    required this.numero,
+  });
+
+  final int id;
+  String nome;
+  String bairro;
+  String rua;
+  String numero;
+}
+
+class AppStore {
+  String vigilanteNome = '';
+String vigilanteEndereco = '';
+String vigilanteContato = '';
+String vigilanteCpfCnpj = '';
+String vigilanteTipoWhatsapp = 'WhatsApp Padrão';
+String vigilanteChavePix = '';
+String vigilanteTipoChavePix = 'Telefone';
+String vigilanteLogo = '';
+  String vigilanteNomeFantasia = '';
+String vigilanteSegmentoMercado = '';
+String vigilanteServicoPrestado = '';
+String vigilanteSite = '';
+String vigilanteCredencial = '';
+
+String vigilanteHorarioInicio = '';
+String vigilanteHorarioFim = '';
+String vigilanteObservacaoHorario = '';
+
+bool vigilanteSegunda = false;
+bool vigilanteTerca = false;
+bool vigilanteQuarta = false;
+bool vigilanteQuinta = false;
+bool vigilanteSexta = false;
+bool vigilanteSabado = false;
+bool vigilanteDomingo = false;
+
+String vigilanteLogoPretoBranco = '';
+  final List<Bairro> bairros = [];
+  final List<Morador> moradores = [];
+  Future<void> salvarBairrosERuas() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final dados = bairros.map((bairro) {
+    return {
+      'id': bairro.id,
+      'nome': bairro.nome,
+      'ruas': bairro.ruas,
+    };
+  }).toList();
+
+  await prefs.setString(
+    'bairros_ruas',
+    jsonEncode(dados),
+  );
+}
+
+Future<void> carregarBairrosERuas() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final texto = prefs.getString('bairros_ruas');
+
+  if (texto == null || texto.isEmpty) {
+    return;
+  }
+
+  final List<dynamic> dados = jsonDecode(texto);
+
+  bairros.clear();
+
+  int maiorId = 0;
+
+  for (final item in dados) {
+    final bairro = Bairro(
+      id: item['id'],
+      nome: item['nome'],
+    );
+
+    final ruas = item['ruas'];
+
+    if (ruas != null) {
+      bairro.ruas.addAll(
+        List<String>.from(ruas),
+      );
+    }
+
+    bairros.add(bairro);
+
+    if (bairro.id > maiorId) {
+      maiorId = bairro.id;
+    }
+  }
+
+  proximoBairroId = maiorId + 1;
+}
+
+  int proximoBairroId = 1;
+  int proximoMoradorId = 1;
+Future<void> salvarDadosVigilante() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString('vigilanteNome', vigilanteNome);
+  await prefs.setString('vigilanteEndereco', vigilanteEndereco);
+  await prefs.setString('vigilanteContato', vigilanteContato);
+  await prefs.setString('vigilanteCpfCnpj', vigilanteCpfCnpj);
+  await prefs.setString('vigilanteTipoWhatsapp', vigilanteTipoWhatsapp);
+  await prefs.setString('vigilanteChavePix', vigilanteChavePix);
+  await prefs.setString('vigilanteTipoChavePix', vigilanteTipoChavePix);
+  await prefs.setString('vigilanteLogo', vigilanteLogo);await prefs.setString('vigilanteNomeFantasia', vigilanteNomeFantasia);
+await prefs.setString('vigilanteSegmentoMercado', vigilanteSegmentoMercado);
+await prefs.setString('vigilanteServicoPrestado', vigilanteServicoPrestado);
+await prefs.setString('vigilanteSite', vigilanteSite);
+await prefs.setString('vigilanteCredencial', vigilanteCredencial);
+
+await prefs.setString('vigilanteHorarioInicio', vigilanteHorarioInicio);
+await prefs.setString('vigilanteHorarioFim', vigilanteHorarioFim);
+await prefs.setString('vigilanteObservacaoHorario', vigilanteObservacaoHorario);
+
+await prefs.setBool('vigilanteSegunda', vigilanteSegunda);
+await prefs.setBool('vigilanteTerca', vigilanteTerca);
+await prefs.setBool('vigilanteQuarta', vigilanteQuarta);
+await prefs.setBool('vigilanteQuinta', vigilanteQuinta);
+await prefs.setBool('vigilanteSexta', vigilanteSexta);
+await prefs.setBool('vigilanteSabado', vigilanteSabado);
+await prefs.setBool('vigilanteDomingo', vigilanteDomingo);
+
+await prefs.setString(
+  'vigilanteLogoPretoBranco',
+  vigilanteLogoPretoBranco,
+);
+}
+
+Future<void> carregarDadosVigilante() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  vigilanteNome = prefs.getString('vigilanteNome') ?? '';
+  vigilanteEndereco = prefs.getString('vigilanteEndereco') ?? '';
+  vigilanteContato = prefs.getString('vigilanteContato') ?? '';
+  vigilanteCpfCnpj = prefs.getString('vigilanteCpfCnpj') ?? '';
+  vigilanteTipoWhatsapp =
+      prefs.getString('vigilanteTipoWhatsapp') ?? 'WhatsApp Padrão';
+  vigilanteChavePix = prefs.getString('vigilanteChavePix') ?? '';
+  vigilanteTipoChavePix =
+      prefs.getString('vigilanteTipoChavePix') ?? 'Telefone';
+  vigilanteLogo = prefs.getString('vigilanteLogo') ?? '';    vigilanteNomeFantasia =
+        prefs.getString('vigilanteNomeFantasia') ?? '';
+    vigilanteSegmentoMercado =
+        prefs.getString('vigilanteSegmentoMercado') ?? '';
+    vigilanteServicoPrestado =
+        prefs.getString('vigilanteServicoPrestado') ?? '';
+    vigilanteSite =
+        prefs.getString('vigilanteSite') ?? '';
+    vigilanteCredencial =
+        prefs.getString('vigilanteCredencial') ?? '';
+
+    vigilanteHorarioInicio =
+        prefs.getString('vigilanteHorarioInicio') ?? '';
+    vigilanteHorarioFim =
+        prefs.getString('vigilanteHorarioFim') ?? '';
+    vigilanteObservacaoHorario =
+        prefs.getString('vigilanteObservacaoHorario') ?? '';
+
+    vigilanteSegunda =
+        prefs.getBool('vigilanteSegunda') ?? false;
+    vigilanteTerca =
+        prefs.getBool('vigilanteTerca') ?? false;
+    vigilanteQuarta =
+        prefs.getBool('vigilanteQuarta') ?? false;
+    vigilanteQuinta =
+        prefs.getBool('vigilanteQuinta') ?? false;
+    vigilanteSexta =
+        prefs.getBool('vigilanteSexta') ?? false;
+    vigilanteSabado =
+        prefs.getBool('vigilanteSabado') ?? false;
+    vigilanteDomingo =
+        prefs.getBool('vigilanteDomingo') ?? false;
+
+    vigilanteLogoPretoBranco =
+        prefs.getString('vigilanteLogoPretoBranco') ?? '';
+}
+
+Future<void> adicionarBairro(String nome) async {
+  bairros.add(
+    Bairro(
+      id: proximoBairroId++,
+      nome: nome,
+    ),
+  );
+
+  await salvarBairrosERuas();
+}
+
+Future<void> adicionarRua(Bairro bairro, String nome) async {
+  final existe = bairro.ruas.any(
+    (rua) => rua.toLowerCase() == nome.toLowerCase(),
+  );
+
+  if (!existe) {
+    bairro.ruas.add(nome);
+    await salvarBairrosERuas();
+  }
+}
+
+}
           ),
           const Divider(),
           SwitchListTile(

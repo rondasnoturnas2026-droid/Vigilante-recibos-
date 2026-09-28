@@ -836,7 +836,59 @@ TextField(
     border: OutlineInputBorder(),
   ),
 ),
+  const SizedBox(height: 28),
+
+const Text(
+  'Imagem padrão (Logo)',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 12),
+
+Card(
+  child: ListTile(
+    leading: const Icon(Icons.image_outlined),
+    title: const Text('Escolher imagem'),
+    subtitle: Text(
+      widget.store.vigilanteLogo.isEmpty
+          ? 'Nenhuma imagem selecionada'
+          : 'Imagem selecionada',
+    ),
+    trailing: const Icon(Icons.chevron_right),
+  ),
+),
+
+const SizedBox(height: 20),
+
+const Text(
+  'Imagem em Preto e Branco (Impressão)',
+  style: TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 12),
+
+Card(
+  child: ListTile(
+    leading: const Icon(Icons.monochrome_photos_outlined),
+    title: const Text('Escolher imagem'),
+    subtitle: Text(
+      widget.store.vigilanteLogoPretoBranco.isEmpty
+          ? 'Nenhuma imagem selecionada'
+          : 'Imagem selecionada',
+    ),
+    trailing: const Icon(Icons.chevron_right),
+  ),
+),
+
+const SizedBox(height: 24),        
           FilledButton.icon(
+
             onPressed: () async {  String? erro;
 
   if (nome.text.trim().isEmpty) {

@@ -747,6 +747,25 @@ String vigilanteTipoWhatsapp = 'WhatsApp Padrão';
 String vigilanteChavePix = '';
 String vigilanteTipoChavePix = 'Telefone';
 String vigilanteLogo = '';
+  String vigilanteNomeFantasia = '';
+String vigilanteSegmentoMercado = '';
+String vigilanteServicoPrestado = '';
+String vigilanteSite = '';
+String vigilanteCredencial = '';
+
+String vigilanteHorarioInicio = '';
+String vigilanteHorarioFim = '';
+String vigilanteObservacaoHorario = '';
+
+bool vigilanteSegunda = false;
+bool vigilanteTerca = false;
+bool vigilanteQuarta = false;
+bool vigilanteQuinta = false;
+bool vigilanteSexta = false;
+bool vigilanteSabado = false;
+bool vigilanteDomingo = false;
+
+String vigilanteLogoPretoBranco = '';
   final List<Bairro> bairros = [];
   final List<Morador> moradores = [];
 

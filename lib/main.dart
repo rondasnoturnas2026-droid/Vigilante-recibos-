@@ -913,7 +913,20 @@ Card(
         });
       }
     },
-    leading: const Icon(Icons.monochrome_photos_outlined),
+    leading: widget.store.vigilanteLogoPretoBranco.isEmpty
+    ? const Icon(Icons.monochrome_photos_outlined)
+    : ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: Image.file(
+          File(widget.store.vigilanteLogoPretoBranco),
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.broken_image_outlined);
+          },
+        ),
+      ),
     title: const Text('Escolher imagem'),
     subtitle: Text(
       widget.store.vigilanteLogoPretoBranco.isEmpty

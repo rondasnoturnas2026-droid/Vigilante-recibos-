@@ -817,6 +817,40 @@ Future<void> carregarDadosVigilante() async {
   vigilanteChavePix = prefs.getString('vigilanteChavePix') ?? '';
   vigilanteTipoChavePix =
       prefs.getString('vigilanteTipoChavePix') ?? 'Telefone';
-  vigilanteLogo = prefs.getString('vigilanteLogo') ?? '';
+  vigilanteLogo = prefs.getString('vigilanteLogo') ?? '';    vigilanteNomeFantasia =
+        prefs.getString('vigilanteNomeFantasia') ?? '';
+    vigilanteSegmentoMercado =
+        prefs.getString('vigilanteSegmentoMercado') ?? '';
+    vigilanteServicoPrestado =
+        prefs.getString('vigilanteServicoPrestado') ?? '';
+    vigilanteSite =
+        prefs.getString('vigilanteSite') ?? '';
+    vigilanteCredencial =
+        prefs.getString('vigilanteCredencial') ?? '';
+
+    vigilanteHorarioInicio =
+        prefs.getString('vigilanteHorarioInicio') ?? '';
+    vigilanteHorarioFim =
+        prefs.getString('vigilanteHorarioFim') ?? '';
+    vigilanteObservacaoHorario =
+        prefs.getString('vigilanteObservacaoHorario') ?? '';
+
+    vigilanteSegunda =
+        prefs.getBool('vigilanteSegunda') ?? false;
+    vigilanteTerca =
+        prefs.getBool('vigilanteTerca') ?? false;
+    vigilanteQuarta =
+        prefs.getBool('vigilanteQuarta') ?? false;
+    vigilanteQuinta =
+        prefs.getBool('vigilanteQuinta') ?? false;
+    vigilanteSexta =
+        prefs.getBool('vigilanteSexta') ?? false;
+    vigilanteSabado =
+        prefs.getBool('vigilanteSabado') ?? false;
+    vigilanteDomingo =
+        prefs.getBool('vigilanteDomingo') ?? false;
+
+    vigilanteLogoPretoBranco =
+        prefs.getString('vigilanteLogoPretoBranco') ?? '';
 }}
 

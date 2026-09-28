@@ -427,7 +427,7 @@ const Divider(),
     );
   }
 }       
-class DadosVigilantePage extends StatefulWidget {
+
 
   class BairrosRuasPage extends StatefulWidget {
   const BairrosRuasPage({super.key, required this.store});

@@ -47,7 +47,7 @@ late final List<Widget> paginas;
 void initState() {
   super.initState();
 store.carregarDadosVigilante();
-  
+ store.carregarBairrosERuas(); 
     
   paginas = [
   const TelaFaturas(),

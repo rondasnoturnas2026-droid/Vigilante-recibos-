@@ -389,6 +389,22 @@ class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
 },
 ),
           const Divider(),
+ListTile(
+  leading: const Icon(Icons.location_on_outlined),
+  title: const Text('Bairros e Ruas'),
+  subtitle: const Text('Cadastrar bairros e ruas'),
+  trailing: const Icon(Icons.chevron_right),
+  onTap: () async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BairrosRuasPage(store: widget.store),
+      ),
+    );
+    setState(() {});
+  },
+),
+const Divider(),
           const ListTile(
             leading: Icon(Icons.print_outlined),
             title: Text('Impressora térmica'),

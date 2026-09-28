@@ -1378,7 +1378,7 @@ Future<void> carregarBairrosERuas() async {
     }
   }
 
-  _proximoBairro = maiorId + 1;
+  proximoBairroId = maiorId + 1;
 }
 
   int proximoBairroId = 1;

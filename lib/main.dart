@@ -413,7 +413,7 @@ const Divider(),
             subtitle: Text('Impressora Bluetooth 58 mm'),
             trailing: Icon(Icons.chevron_right),
             
-import 'package:flutter/material.dart';
+
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';

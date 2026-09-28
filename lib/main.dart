@@ -407,7 +407,7 @@ ListTile(
   },
 ),
 const Divider(),
-          const ListTile(
+          ListTile(
             leading: Icon(Icons.print_outlined),
             title: Text('Impressora térmica'),
             subtitle: Text('Impressora Bluetooth 58 mm'),

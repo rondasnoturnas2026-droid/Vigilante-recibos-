@@ -864,7 +864,20 @@ Card(
     });
   }
 },
-    leading: const Icon(Icons.image_outlined),
+    leading: widget.store.vigilanteLogo.isEmpty
+    ? const Icon(Icons.image_outlined)
+    : ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: Image.file(
+          File(widget.store.vigilanteLogo),
+          width: 50,
+          height: 50,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.broken_image_outlined);
+          },
+        ),
+      ),
     title: const Text('Escolher imagem'),
     subtitle: Text(
       widget.store.vigilanteLogo.isEmpty

@@ -435,7 +435,12 @@ late final TextEditingController site;
   cpfCnpj = TextEditingController(text: widget.store.vigilanteCpfCnpj);
 endereco = TextEditingController(text: widget.store.vigilanteEndereco);
 chavePix = TextEditingController(text: widget.store.vigilanteChavePix);
-tipoChavePix = TextEditingController(text: widget.store.vigilanteTipoChavePix);}
+tipoChavePix = TextEditingController(text: widget.store.vigilanteTipoChavePix);
+nomeFantasia = TextEditingController();
+segmentoMercado = TextEditingController();
+servicoPrestado = TextEditingController();
+site = TextEditingController();
+  }
 
   @override
 void dispose() {

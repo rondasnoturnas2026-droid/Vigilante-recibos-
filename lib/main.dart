@@ -525,7 +525,7 @@ void dispose() {
     return Scaffold(
       appBar: AppBar(title: const Text('Dados do vigilante')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
         children: [
           // ===============================
 // DADOS GERAIS DO SERVIÇO

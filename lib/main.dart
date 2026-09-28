@@ -870,7 +870,16 @@ TextField(
   widget.store.vigilanteEndereco = endereco.text.trim();
   widget.store.vigilanteChavePix = chavePix.text.trim();
   widget.store.vigilanteTipoChavePix = tipoChavePix.text.trim();
+  widget.store.vigilanteNomeFantasia = nomeFantasia.text.trim();
+  widget.store.vigilanteSegmentoMercado = segmentoMercado.text.trim();
+  widget.store.vigilanteServicoPrestado = servicoPrestado.text.trim();
+  widget.store.vigilanteSite = site.text.trim();
+  widget.store.vigilanteCredencial = credencial.text.trim();
 
+  widget.store.vigilanteHorarioInicio = horarioInicio.text.trim();
+  widget.store.vigilanteHorarioFim = horarioFim.text.trim();
+  widget.store.vigilanteObservacaoHorario =
+      observacaoHorario.text.trim();
   await widget.store.salvarDadosVigilante();
 
   if (!mounted) return;

@@ -111,7 +111,7 @@ store.carregarDadosVigilante();
           NavigationDestination(
             icon: Icon(Icons.people_outline),
             selectedIcon: Icon(Icons.people),
-            label: 'Moradores',
+            label: 'Clientes',
           ),
           NavigationDestination(
             icon: Icon(Icons.bar_chart_outlined),

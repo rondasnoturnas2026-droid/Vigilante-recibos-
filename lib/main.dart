@@ -721,7 +721,10 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
     ),
   ],
 ),
-
+    ),
+  );
+}
+              }
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});
 

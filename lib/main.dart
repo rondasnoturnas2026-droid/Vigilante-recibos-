@@ -6,8 +6,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'dart:io';
-void main() {
-  
+final ValueNotifier<ThemeMode> temaApp =
+    ValueNotifier<ThemeMode>(ThemeMode.system);
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  final temaSalvo = prefs.getString('temaApp') ?? 'automatico';
+
+  if (temaSalvo == 'escuro') {
+    temaApp.value = ThemeMode.dark;
+  } else if (temaSalvo == 'claro') {
+    temaApp.value = ThemeMode.light;
+  } else {
+    temaApp.value = ThemeMode.system;
+  }
+
   runApp(const VigilanteRecibosApp());
 }
 
@@ -16,16 +31,34 @@ class VigilanteRecibosApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Vigilante Recibos',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-        ),
-        useMaterial3: true,
-      ),
-      home: const TelaPrincipal(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: temaApp,
+      builder: (context, modoTema, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Vigilante Recibos',
+
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.light,
+            ),
+            useMaterial3: true,
+          ),
+
+          darkTheme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.dark,
+            ),
+            useMaterial3: true,
+          ),
+
+          themeMode: modoTema,
+
+          home: const TelaPrincipal(),
+        );
+      },
     );
   }
 }

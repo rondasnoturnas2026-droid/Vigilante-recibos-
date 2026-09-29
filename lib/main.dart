@@ -478,13 +478,7 @@ const Divider(),
   trailing: const Icon(Icons.chevron_right),
   onTap: _abrirTema,
 ),
-  title: const Text('Tema escuro'),
-  subtitle: const Text('Ativar ou desativar'),
-  value: temaEscuro,
-  onChanged: (valor) {
-    setState(() {
-      temaEscuro = valor;
-    });
+  
                },
           ),
         ],

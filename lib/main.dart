@@ -666,8 +666,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                           ),
                           validator: (v) {
                             final d = int.tryParse(v ?? '');
-                            if (d == null || d < 1 || d > 31) {
-                              return '
+                        
 
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});

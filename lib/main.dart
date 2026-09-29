@@ -723,18 +723,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
 ),
     ),
   );
-class CadastroClientePage extends StatefulWidget {
-  const CadastroClientePage({
-    super.key,
-    required this.store,
-  });
 
-  final AppStore store;
-
-  @override
-  State<CadastroClientePage> createState() =>
-      _CadastroClientePageState();
-}
 
 
               

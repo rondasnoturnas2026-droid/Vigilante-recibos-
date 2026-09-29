@@ -1262,18 +1262,49 @@ class _TelaImpressoraState extends State<TelaImpressora> {
   }
 
   Future<void> _buscarImpressoras() async {
-    setState(() {
-      carregando = true;
-    });
+  if (carregando) return;
 
-    final lista =
-        await ImpressoraBluetoothService.buscarImpressoras();
+  setState(() {
+    carregando = true;
+  });
+
+  try {
+    final lista = await ImpressoraBluetoothService
+        .buscarImpressoras()
+        .timeout(const Duration(seconds: 10));
 
     if (!mounted) return;
-setState(() {
-  impressoras = lista;
-  carregando = false;
-});
+
+    setState(() {
+      impressoras = lista;
+    });
+
+    if (lista.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Nenhuma impressora pareada foi encontrada.',
+          ),
+        ),
+      );
+    }
+  } catch (e) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Não foi possível buscar as impressoras. Verifique o Bluetooth.',
+        ),
+      ),
+    );
+  } finally {
+    if (mounted) {
+      setState(() {
+        carregando = false;
+      });
+    }
+  }
   }
     Future<void> _conectar(BluetoothInfo impressora) async {
   ScaffoldMessenger.of(context).showSnackBar(

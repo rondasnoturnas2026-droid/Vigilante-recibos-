@@ -307,7 +307,8 @@ class TelaClientes extends StatelessWidget {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              class CadastroClientePage
+  builder: (_) => const CadastroClientePage(),
+),
             ),
           );
         },

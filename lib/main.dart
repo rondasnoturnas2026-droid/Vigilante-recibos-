@@ -667,7 +667,62 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                           validator: (v) {
                             final d = int.tryParse(v ?? '');
                         
-
+              if (d == null || d < 1 || d > 31) {
+                return 'Informe um dia de 1 a 31';
+              }
+              return null;
+            },
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: TextFormField(
+            controller: valor,
+            keyboardType:
+                const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              labelText: 'Valor mensal *',
+              hintText: 'R\$ 0,00',
+              prefixIcon: Icon(Icons.attach_money_outlined),
+              border: OutlineInputBorder(),
+            ),
+            validator: (v) {
+              final n =
+                  double.tryParse((v ?? '').replaceAll(',', '.'));
+              if (n == null || n <= 0) {
+                return 'Informe um valor válido';
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 12),
+    DropdownButtonFormField<String>(
+      value: formaPagamento,
+      decoration: const InputDecoration(
+        labelText: 'Forma de pagamento habitual',
+        prefixIcon: Icon(Icons.account_balance_wallet_outlined),
+        border: OutlineInputBorder(),
+      ),
+      items: ['Pix', 'Dinheiro', 'Cartão']
+          .map(
+            (p) => DropdownMenuItem<String>(
+              value: p,
+              child: Text(p),
+            ),
+          )
+          .toList(),
+      onChanged: (p) {
+        if (p != null) {
+          setState(() => formaPagamento = p);
+        }
+      },
+    ),
+  ],
+),
+),
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});
 

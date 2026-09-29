@@ -510,26 +510,21 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                     'Informações principais',
                   ),
                   TextFormField(
-                    controller: nome,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      validator: (v) {
-  if (v == null || v.trim().isEmpty) {
-    return 'Informe o nome do cliente';
-  }
-  return null;
-},
-                      hintText: 'Ex.: João da Silva',
-                      prefixIcon: Icon(Icons.person_outline),
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) {
-                        return 'Informe o nome do cliente';
-                      }
-                      return null;
-                    },
-                  ),
+  controller: nome,
+  textCapitalization: TextCapitalization.words,
+  decoration: const InputDecoration(
+    labelText: 'Nome do cliente',
+    hintText: 'Ex.: João da Silva',
+    prefixIcon: Icon(Icons.person_outline),
+    border: OutlineInputBorder(),
+  ),
+  validator: (v) {
+    if (v == null || v.trim().isEmpty) {
+      return 'Informe o nome do cliente';
+    }
+    return null;
+  },
+),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: telefone,

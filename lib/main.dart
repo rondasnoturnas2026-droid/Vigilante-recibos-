@@ -280,12 +280,7 @@ class _TelaFaturasState extends State<TelaFaturas> {
 }
 
 
-        icon: const Icon(Icons.person_add),
-        label: const Text('Novo cliente'),
-      ),
-    );
-  }
-}
+        
 
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});

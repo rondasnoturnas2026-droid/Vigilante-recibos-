@@ -280,7 +280,7 @@ class _TelaFaturasState extends State<TelaFaturas> {
 }
 
 class TelaClientes extends StatelessWidget {
-
+final AppStore store;
   const TelaClientes({
     super.key,
     required this.store,

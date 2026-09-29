@@ -292,7 +292,7 @@ class TelaMoradores extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Moradores',
+          'Clientes',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),

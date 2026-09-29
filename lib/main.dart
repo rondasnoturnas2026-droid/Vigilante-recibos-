@@ -331,18 +331,343 @@ class CadastroClientePage extends StatefulWidget {
 }
 
 class _CadastroClientePageState extends State<CadastroClientePage> {
+    final formKey = GlobalKey<FormState>();
+
+  final nome = TextEditingController();
+  final numero = TextEditingController();
+  final complemento = TextEditingController();
+  final dia = TextEditingController();
+  final valor = TextEditingController();
+  final telefone = TextEditingController();
+  final contato2Nome = TextEditingController();
+  final contato2Telefone = TextEditingController();
+  final contato2Relacao = TextEditingController();
+
+  String? bairro;
+  String? rua;
+  String formaPagamento = 'Pix';
+
+  List<String> get ruasDoBairro {
+    for (final b in widget.store.bairros) {
+      if (b.nome == bairro) return b.ruas;
+    }
+    return [];
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Novo cliente'),
-      ),
-      body: const Center(
-        child: Text('Cadastro de cliente'),
+  void dispose() {
+    nome.dispose();
+    numero.dispose();
+    complemento.dispose();
+    dia.dispose();
+    valor.dispose();
+    telefone.dispose();
+    contato2Nome.dispose();
+    contato2Telefone.dispose();
+    contato2Relacao.dispose();
+    super.dispose();
+  }
+
+  Widget _tituloSecao(
+    BuildContext context,
+    IconData icone,
+    String titulo,
+    String subtitulo,
+  ) {
+    final cores = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: cores.primaryContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icone,
+              color: cores.onPrimaryContainer,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titulo,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitulo,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
-}
+
+  Widget _card({
+    required BuildContext context,
+    required Widget child,
+  }) {
+    final cores = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cores.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: cores.outlineVariant.withOpacity(0.5),
+        ),
+      ),
+      child: child,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cores = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Novo cliente',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: Form(
+        key: formKey,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(18),
+              margin: const EdgeInsets.only(bottom: 18),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    cores.primaryContainer,
+                    cores.secondaryContainer,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(22),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 27,
+                    backgroundColor: cores.surface,
+                    child: Icon(
+                      Icons.person_add_alt_1_rounded,
+                      size: 28,
+                      color: cores.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Cadastrar novo cliente',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Organize os dados para facilitar cobranças e recibos.',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            _card(
+              context: context,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _tituloSecao(
+                    context,
+                    Icons.badge_outlined,
+                    'Dados do cliente',
+                    'Informações principais',
+                  ),
+                  TextFormField(
+                    controller: nome,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(
+                      labelText: 'Nome do cliente *',
+                      hintText: 'Ex.: João da Silva',
+                      prefixIcon: Icon(Icons.person_outline),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) {
+                        return 'Informe o nome do cliente';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: telefone,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(11),
+                    ],
+                    decoration: const InputDecoration(
+                      labelText: 'Telefone / WhatsApp',
+                      hintText: '(DD) 99999-9999',
+                      prefixIcon: Icon(Icons.phone_outlined),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            _card(
+              context: context,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _tituloSecao(
+                    context,
+                    Icons.location_on_outlined,
+                    'Endereço',
+                    'Selecione o bairro e a rua cadastrados',
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: bairro,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Bairro *',
+                      prefixIcon: Icon(Icons.location_city_outlined),
+                      border: OutlineInputBorder(),
+                    ),
+                    items: widget.store.bairros
+                        .map(
+                          (b) => DropdownMenuItem(
+                            value: b.nome,
+                            child: Text(b.nome),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (valor) {
+                      setState(() {
+                        bairro = valor;
+                        rua = null;
+                      });
+                    },
+                    validator: (v) =>
+                        v == null ? 'Selecione o bairro' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value:
+                        ruasDoBairro.contains(rua) ? rua : null,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Rua *',
+                      prefixIcon: Icon(Icons.signpost_outlined),
+                      border: OutlineInputBorder(),
+                    ),
+                    items: ruasDoBairro
+                        .map(
+                          (r) => DropdownMenuItem(
+                            value: r,
+                            child: Text(r),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: bairro == null
+                        ? null
+                        : (valor) => setState(() => rua = valor),
+                    validator: (v) =>
+                        v == null ? 'Selecione a rua' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: numero,
+                          keyboardType: TextInputType.streetAddress,
+                          decoration: const InputDecoration(
+                            labelText: 'Número',
+                            prefixIcon: Icon(Icons.numbers),
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextFormField(
+                          controller: complemento,
+                          decoration: const InputDecoration(
+                            labelText: 'Complemento',
+                            hintText: 'Casa, bloco...',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            _card(
+              context: context,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _tituloSecao(
+                    context,
+                    Icons.payments_outlined,
+                    'Cobrança',
+                    'Dados usados nas faturas do cliente',
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: dia,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: 'Dia *',
+                            hintText: '10',
+                            prefixIcon:
+                                Icon(Icons.calendar_today_outlined),
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (v) {
+                            final d = int.tryParse(v ?? '');
+                            if (d == null || d < 1 || d > 31) {
+                              return '
 
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});

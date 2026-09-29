@@ -1270,7 +1270,11 @@ class _TelaImpressoraState extends State<TelaImpressora> {
         await ImpressoraBluetoothService.buscarImpressoras();
 
     if (!mounted) return;
-
+setState(() {
+  impressoras = lista;
+  carregando = false;
+});
+  }
     Future<void> _conectar(BluetoothInfo impressora) async {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(

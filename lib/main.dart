@@ -396,7 +396,91 @@ class TelaConfiguracoes extends StatefulWidget {
 }
 
 class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
-  bool temaEscuro = false;
+  String get nomeTema {
+  switch (temaApp.value) {
+    case ThemeMode.light:
+      return 'Claro';
+    case ThemeMode.dark:
+      return 'Escuro';
+    case ThemeMode.system:
+      return 'Automático';
+  }
+}
+
+Future<void> _abrirTema() async {
+  final temaAtual = temaApp.value;
+
+  final novoTema = await showDialog<ThemeMode>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Tema do aplicativo'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.brightness_auto),
+              title: const Text('Automático'),
+              subtitle: const Text('Usar o tema do celular'),
+              trailing: temaAtual == ThemeMode.system
+                  ? const Icon(Icons.check_circle)
+                  : null,
+              onTap: () {
+                Navigator.pop(context, ThemeMode.system);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.light_mode_outlined),
+              title: const Text('Claro'),
+              trailing: temaAtual == ThemeMode.light
+                  ? const Icon(Icons.check_circle)
+                  : null,
+              onTap: () {
+                Navigator.pop(context, ThemeMode.light);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.dark_mode_outlined),
+              title: const Text('Escuro'),
+              trailing: temaAtual == ThemeMode.dark
+                  ? const Icon(Icons.check_circle)
+                  : null,
+              onTap: () {
+                Navigator.pop(context, ThemeMode.dark);
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+
+  if (novoTema == null || novoTema == temaAtual) {
+    return;
+  }
+
+  final prefs = await SharedPreferences.getInstance();
+
+  if (novoTema == ThemeMode.dark) {
+    await prefs.setString('temaApp', 'escuro');
+  } else if (novoTema == ThemeMode.light) {
+    await prefs.setString('temaApp', 'claro');
+  } else {
+    await prefs.setString('temaApp', 'automatico');
+  }
+
+  temaApp.value = novoTema;
+
+  if (!mounted) return;
+
+  setState(() {});
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Salvo com sucesso'),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {

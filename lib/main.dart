@@ -471,7 +471,13 @@ const Divider(),
 
           ),
           const Divider(),
-          SwitchListTile(
+          ListTile(
+  leading: const Icon(Icons.palette_outlined),
+  title: const Text('Tema do aplicativo'),
+  subtitle: Text(nomeTema),
+  trailing: const Icon(Icons.chevron_right),
+  onTap: _abrirTema,
+),
   title: const Text('Tema escuro'),
   subtitle: const Text('Ativar ou desativar'),
   value: temaEscuro,

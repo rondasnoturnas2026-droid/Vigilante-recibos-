@@ -332,6 +332,7 @@ class CadastroClientePage extends StatefulWidget {
 
 
 class _CadastroClientePageState extends State<CadastroClientePage> {
+    
   @override
   Widget build(BuildContext context) {
     return Scaffold(

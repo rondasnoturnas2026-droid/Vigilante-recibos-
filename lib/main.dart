@@ -331,7 +331,19 @@ class CadastroClientePage extends StatefulWidget {
 }
 
 
-
+class _CadastroClientePageState extends State<CadastroClientePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Novo cliente'),
+      ),
+      body: const Center(
+        child: Text('Cadastro de cliente'),
+      ),
+    );
+  }
+}
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});
 

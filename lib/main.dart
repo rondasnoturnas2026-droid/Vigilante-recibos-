@@ -1235,13 +1235,30 @@ class _TelaImpressoraState extends State<TelaImpressora> {
   }
 
   Future<void> _verificarConexao() async {
-    final status = await ImpressoraBluetoothService.estaConectada();
+  final prefs = await SharedPreferences.getInstance();
+  final macSalvo = prefs.getString('impressoraMac');
 
-    if (!mounted) return;
+  bool status =
+      await ImpressoraBluetoothService.estaConectada();
 
-    setState(() {
-      conectada = status;
-    });
+  if (!status &&
+      macSalvo != null &&
+      macSalvo.isNotEmpty) {
+    status =
+        await ImpressoraBluetoothService.conectar(
+      macSalvo,
+    );
+  }
+
+  if (!mounted) return;
+
+  setState(() {
+    conectada = status;
+
+    if (status && macSalvo != null) {
+      macConectado = macSalvo;
+    }
+  });
   }
 
   Future<void> _buscarImpressoras() async {

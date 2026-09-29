@@ -281,7 +281,7 @@ class _TelaFaturasState extends State<TelaFaturas> {
 
 class TelaClientes extends StatelessWidget {
 
-  const TelaMoradores({
+  const TelaClientes({
     super.key,
     required this.store,
   });

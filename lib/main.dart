@@ -1324,12 +1324,7 @@ class _TelaImpressoraState extends State<TelaImpressora> {
     );
   }
 }
-          content: Text(
-            'Não foi possível conectar à impressora',
-          ),
-        ),
-      );
-    }
+          
   }
 
   Future<void> _desconectar() async {

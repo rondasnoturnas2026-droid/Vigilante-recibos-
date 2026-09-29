@@ -331,7 +331,8 @@ class CadastroClientePage extends StatefulWidget {
 }
 
 
-} TelaRelatorio extends StatelessWidget {
+
+class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});
 
   @override

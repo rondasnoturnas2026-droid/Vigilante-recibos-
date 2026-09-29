@@ -279,8 +279,7 @@ class _TelaFaturasState extends State<TelaFaturas> {
   }
 }
 
-class TelaMoradores extends StatelessWidget {
-  final AppStore store;
+class TelaClientes extends StatelessWidget {
 
   const TelaMoradores({
     super.key,

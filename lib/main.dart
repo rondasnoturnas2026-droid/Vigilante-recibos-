@@ -316,7 +316,7 @@ class TelaMoradores extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
         icon: const Icon(Icons.person_add),
-        label: const Text('Novo morador'),
+        label: const Text('Novo cliente'),
       ),
     );
   }

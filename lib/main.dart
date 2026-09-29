@@ -1271,44 +1271,59 @@ class _TelaImpressoraState extends State<TelaImpressora> {
 
     if (!mounted) return;
 
-    setState(() {
-      impressoras = lista;
-      carregando = false;
-    });
-  }
-
-  Future<void> _conectar(BluetoothInfo impressora) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Conectando em ${impressora.name}...',
-        ),
+    Future<void> _conectar(BluetoothInfo impressora) async {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        'Conectando em ${impressora.name}...',
       ),
+    ),
+  );
+
+  final sucesso =
+      await ImpressoraBluetoothService.conectar(
+    impressora.macAdress,
+  );
+
+  if (!mounted) return;
+
+  if (sucesso) {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(
+      'impressoraMac',
+      impressora.macAdress,
     );
 
-    final sucesso =
-        await ImpressoraBluetoothService.conectar(
-      impressora.macAdress,
+    await prefs.setString(
+      'impressoraNome',
+      impressora.name,
     );
 
     if (!mounted) return;
 
-    if (sucesso) {
-      setState(() {
-        conectada = true;
-        macConectado = impressora.macAdress;
-      });
+    setState(() {
+      conectada = true;
+      macConectado = impressora.macAdress;
+    });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Conectado em ${impressora.name}',
-          ),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Impressora ${impressora.name} conectada e salva com sucesso',
         ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+      ),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Não foi possível conectar à impressora',
+        ),
+      ),
+    );
+  }
+}
           content: Text(
             'Não foi possível conectar à impressora',
           ),

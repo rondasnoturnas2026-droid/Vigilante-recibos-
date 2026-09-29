@@ -722,7 +722,9 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
   ],
 ),
     ),
-  );
+          ),
+      ),
+    );
 
 
 

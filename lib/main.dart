@@ -307,7 +307,7 @@ class TelaMoradores extends StatelessWidget {
             ),
             SizedBox(height: 15),
             Text(
-              'Nenhum morador cadastrado',
+              'Nenhum cliente cadastrado',
               style: TextStyle(fontSize: 18),
             ),
           ],

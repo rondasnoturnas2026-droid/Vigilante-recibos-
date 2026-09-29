@@ -314,7 +314,14 @@ final AppStore store;
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => CadastroMoradorPage(store: store),
+    ),
+  );
+},
         icon: const Icon(Icons.person_add),
         label: const Text('Novo cliente'),
       ),

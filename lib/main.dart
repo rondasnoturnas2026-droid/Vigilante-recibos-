@@ -279,49 +279,7 @@ class _TelaFaturasState extends State<TelaFaturas> {
   }
 }
 
-class TelaClientes extends StatelessWidget {
-    
-final AppStore store;
-  const TelaClientes({
-    super.key,
-    required this.store,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Clientes',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.people_outline,
-              size: 70,
-              color: Colors.grey,
-            ),
-            SizedBox(height: 15),
-            Text(
-              'Nenhum cliente cadastrado',
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      CadastroClientePage
-    ),
-  );
-},
         icon: const Icon(Icons.person_add),
         label: const Text('Novo cliente'),
       ),

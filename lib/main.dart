@@ -318,7 +318,7 @@ final AppStore store;
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (_) => CadastroMoradorPage(store: store),
+      CadastroClientePage
     ),
   );
 },

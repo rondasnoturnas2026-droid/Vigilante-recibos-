@@ -318,7 +318,31 @@ class TelaClientes extends StatelessWidget {
     );
   }
 }
-class TelaRelatorio extends StatelessWidget {
+class CadastroClientePage extends StatefulWidget {
+  const CadastroClientePage({
+    super.key,
+    required this.store,
+  });
+
+  final AppStore store;
+
+  @override
+  State<CadastroClientePage> createState() => _CadastroClientePageState();
+}
+
+class _CadastroClientePageState extends State<CadastroClientePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Novo cliente'),
+      ),
+      body: const Center(
+        child: Text('Cadastro de cliente'),
+      ),
+    );
+  }
+} TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});
 
   @override

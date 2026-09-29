@@ -1360,7 +1360,7 @@ class _TelaImpressoraState extends State<TelaImpressora> {
   }
 }
           
-  }
+  
 
   Future<void> _desconectar() async {
     final sucesso =

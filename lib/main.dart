@@ -281,7 +281,42 @@ class _TelaFaturasState extends State<TelaFaturas> {
 
 
         
+class TelaClientes extends StatelessWidget {
+  final AppStore store;
 
+  const TelaClientes({
+    super.key,
+    required this.store,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Clientes'),
+      ),
+      body: Center(
+        child: Text(
+          store.moradores.isEmpty
+              ? 'Nenhum cliente cadastrado'
+              : '${store.moradores.length} cliente(s) cadastrado(s)',
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CadastroMoradorPage(store: store),
+            ),
+          );
+        },
+        icon: const Icon(Icons.person_add),
+        label: const Text('Novo cliente'),
+      ),
+    );
+  }
+}
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});
 

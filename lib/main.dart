@@ -304,13 +304,12 @@ class TelaClientes extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-  builder: (_) => CadastroClientePage(store: store),
-),
-            ),
-          );
+    await Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => CadastroClientePage(store: store),
+  ),
+);
         },
         icon: const Icon(Icons.person_add),
         label: const Text('Novo cliente'),

@@ -2238,6 +2238,26 @@ bool vigilanteDomingo = false;
 String vigilanteLogoPretoBranco = '';
   final List<Bairro> bairros = [];
   final List<Morador> moradores = [];
+    final List<Map<String, String>> clientes = [];
+
+Future<void> salvarClientes() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('clientes', jsonEncode(clientes));
+}
+
+Future<void> carregarClientes() async {
+  final prefs = await SharedPreferences.getInstance();
+  final texto = prefs.getString('clientes');
+
+  if (texto == null || texto.isEmpty) return;
+
+  final List<dynamic> dados = jsonDecode(texto);
+  clientes
+    ..clear()
+    ..addAll(
+      dados.map((item) => Map<String, String>.from(item as Map)),
+    );
+}
   Future<void> salvarBairrosERuas() async {
   final prefs = await SharedPreferences.getInstance();
 

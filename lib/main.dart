@@ -715,10 +715,34 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
           .toList(),
       onChanged: (p) {
         if (p != null) {
-          setState(() => formaPagamento = p);
-        }
-      },
-    ),
+                            const SizedBox(height: 12),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            FilledButton.icon(
+              onPressed: () {
+                if (!formKey.currentState!.validate()) {
+                  return;
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Salvo com sucesso'),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.save),
+              label: const Text('Salvar cliente'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
   ],
 ),
                     ),

@@ -713,11 +713,14 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
               child: Text(p),
             ),
           )
-          .toList(),
-      onChanged: (p) {
-  setState(() {
-    formaPagamento = p;
-  });
+          
+  });onChanged: (p) {
+  if (p != null) {
+    setState(() {
+      formaPagamento = p;
+    });
+  }
+},
 },
 ),
                ],

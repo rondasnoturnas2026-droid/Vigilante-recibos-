@@ -714,6 +714,11 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
           )
           .toList(),
       onChanged: (p) {
+  setState(() {
+    formaPagamento = p;
+  });
+},
+),
                
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});

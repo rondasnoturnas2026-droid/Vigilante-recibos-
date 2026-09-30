@@ -791,15 +791,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
     );
   }
 }
-        },
-        icon: const Icon(Icons.person_add),
-        label: const Text('Novo cliente'),
-      ),
-    );
-  }
-} 
-}
-}              
+                
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});
 

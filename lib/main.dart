@@ -436,7 +436,8 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
     );
   }
 
-  @override
+@override
+
   Widget build(BuildContext context) {
     final cores = Theme.of(context).colorScheme;
 

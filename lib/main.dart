@@ -607,117 +607,190 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                     value:
                         ruasDoBairro.contains(rua) ? rua : null,
                     isExpanded: true,
-                   class TelaClientes extends StatefulWidget {
-  final AppStore store;
-
-  const TelaClientes({
-    super.key,
-    required this.store,
-  });
-
-  @override
-  State<TelaClientes> createState() => _TelaClientesState();
-}
-
-class _TelaClientesState extends State<TelaClientes> {
-  @override
-  void initState() {
-    super.initState();
-    _carregarClientes();
-  }
-
-  Future<void> _carregarClientes() async {
-    await widget.store.carregarClientes();
-
-    if (!mounted) return;
-    setState(() {});
-  }
-
-  String _formatarTelefone(String? telefone) {
-    final numeros = (telefone ?? '').replaceAll(RegExp(r'\D'), '');
-
-    if (numeros.length == 11) {
-      return '(${numeros.substring(0, 2)}) '
-          '${numeros.substring(2, 7)}-${numeros.substring(7)}';
-    }
-
-    if (numeros.length == 10) {
-      return '(${numeros.substring(0, 2)}) '
-          '${numeros.substring(2, 6)}-${numeros.substring(6)}';
-    }
-
-    return telefone ?? '';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final clientes = widget.store.clientes;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Clientes'),
-      ),
-      body: clientes.isEmpty
-          ? const Center(
-              child: Text('Nenhum cliente cadastrado'),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 100),
-              itemCount: clientes.length,
-              itemBuilder: (context, index) {
-                final cliente = clientes[index];
-
-                final endereco = [
-                  cliente['bairro'],
-                  cliente['rua'],
-                  cliente['numero'],
-                  cliente['complemento'],
-                ]
-                    .where((parte) => (parte ?? '').trim().isNotEmpty)
-                    .join(', ');
-
-                final telefone = _formatarTelefone(cliente['telefone']);
-
-                final cobranca = [
-                  if ((cliente['dia'] ?? '').isNotEmpty)
-                    'Dia ${cliente['dia']}',
-                  if ((cliente['valor'] ?? '').isNotEmpty)
-                    'R\$ ${cliente['valor']}',
-                  if ((cliente['formaPagamento'] ?? '').isNotEmpty)
-                    cliente['formaPagamento'],
-                ].join(' • ');
-
-                return Card(
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.person_outline),
+                                    decoration: const InputDecoration(
+                      labelText: 'Rua *',
+                      prefixIcon: Icon(Icons.signpost_outlined),
+                      border: OutlineInputBorder(),
                     ),
-                    title: Text(
-                      (cliente['nome'] ?? '').isEmpty
-                          ? 'Cliente'
-                          : cliente['nome']!,
+                    items: ruasDoBairro
+                        .map(
+                          (r) => DropdownMenuItem(
+                            value: r,
+                            child: Text(r),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: bairro == null
+                        ? null
+                        : (valor) => setState(() => rua = valor),
+                    validator: (v) =>
+                        v == null ? 'Selecione a rua' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: numero,
+                          keyboardType: TextInputType.streetAddress,
+                          decoration: const InputDecoration(
+                            labelText: 'Número',
+                            prefixIcon: Icon(Icons.numbers),
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextFormField(
+                          controller: complemento,
+                          decoration: const InputDecoration(
+                            labelText: 'Complemento',
+                            hintText: 'Casa, bloco...',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            _card(
+              context: context,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _tituloSecao(
+                    context,
+                    Icons.payments_outlined,
+                    'Cobrança',
+                    'Dados usados nas faturas do cliente',
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: dia,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: 'Dia *',
+                            hintText: '10',
+                            prefixIcon:
+                                Icon(Icons.calendar_today_outlined),
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (v) {
+                            final d = int.tryParse(v ?? '');
+                            if (d == null || d < 1 || d > 31) {
+                              return 'Informe um dia de 1 a 31';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextFormField(
+                          controller: valor,
+                          keyboardType:
+                              const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Valor mensal *',
+                            hintText: 'R\$ 0,00',
+                            prefixIcon:
+                                Icon(Icons.attach_money_outlined),
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (v) {
+                            final n = double.tryParse(
+                              (v ?? '').replaceAll(',', '.'),
+                            );
+                            if (n == null || n <= 0) {
+                              return 'Informe um valor válido';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: formaPagamento,
+                    decoration: const InputDecoration(
+                      labelText: 'Forma de pagamento habitual',
+                      prefixIcon:
+                          Icon(Icons.account_balance_wallet_outlined),
+                      border: OutlineInputBorder(),
                     ),
-                    subtitle: Text([
-                      if (endereco.isNotEmpty) endereco,
-                      if (telefone.isNotEmpty) 'Telefone: $telefone',
-                      if (cobranca.isNotEmpty) cobranca,
-                    ].join('\n')),
-                    isThreeLine: true,
+                    items: ['Pix', 'Dinheiro', 'Cartão']
+                        .map(
+                          (p) => DropdownMenuItem<String>(
+                            value: p,
+                            child: Text(p),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (p) {
+                      if (p != null) {
+                        setState(() {
+                          formaPagamento = p;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            FilledButton.icon(
+              onPressed: () async {
+                if (!formKey.currentState!.validate()) return;
+
+                widget.store.clientes.add({
+                  'nome': nome.text.trim(),
+                  'bairro': bairro ?? '',
+                  'rua': rua ?? '',
+                  'numero': numero.text.trim(),
+                  'complemento': complemento.text.trim(),
+                  'dia': dia.text.trim(),
+                  'valor': valor.text.trim(),
+                  'formaPagamento': formaPagamento,
+                  'telefone': telefone.text.trim(),
+                  'contato2Nome': contato2Nome.text.trim(),
+                  'contato2Telefone': contato2Telefone.text.trim(),
+                  'contato2Relacao': contato2Relacao.text.trim(),
+                });
+
+                await widget.store.salvarClientes();
+
+                if (!context.mounted) return;
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Salvo com sucesso'),
                   ),
                 );
               },
+              icon: const Icon(Icons.save),
+              label: const Text('Salvar cliente'),
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => CadastroClientePage(store: widget.store),
-            ),
-          );
-
-          if (!mounted) return;
-          setState(() {});
+          ],
+        ),
+      ),
+    );
+  }
+}
         },
         icon: const Icon(Icons.person_add),
         label: const Text('Novo cliente'),

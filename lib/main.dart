@@ -297,9 +297,9 @@ class TelaClientes extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          store.moradores.isEmpty
-              ? 'Nenhum cliente cadastrado'
-              : '${store.moradores.length} cliente(s) cadastrado(s)',
+          
+            store.clientes.isEmpty  ? 'Nenhum cliente cadastrado'
+            : '${store.clientes.length} cliente(s) cadastrado(s)',
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

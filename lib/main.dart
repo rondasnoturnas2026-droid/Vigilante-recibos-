@@ -281,13 +281,31 @@ class _TelaFaturasState extends State<TelaFaturas> {
 
 
         
-class TelaClientes extends StatelessWidget {
+class TelaClientes extends StatefulWidget {
   final AppStore store;
 
   const TelaClientes({
     super.key,
     required this.store,
   });
+
+  @override
+  State<TelaClientes> createState() => _TelaClientesState();
+}
+
+class _TelaClientesState extends State<TelaClientes> {
+  @override
+  void initState() {
+    super.initState();
+    _carregarClientes();
+  }
+
+  Future<void> _carregarClientes() async {
+    await widget.store.carregarClientes();
+
+    if (!mounted) return;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -297,19 +315,22 @@ class TelaClientes extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          
-            store.clientes.isEmpty  ? 'Nenhum cliente cadastrado'
-            : '${store.clientes.length} cliente(s) cadastrado(s)',
+          widget.store.clientes.isEmpty
+              ? 'Nenhum cliente cadastrado'
+              : '${widget.store.clientes.length} cliente(s) cadastrado(s)',
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-    await Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => CadastroClientePage(store: store),
-  ),
-);
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CadastroClientePage(store: widget.store),
+            ),
+          );
+
+          if (!mounted) return;
+          setState(() {});
         },
         icon: const Icon(Icons.person_add),
         label: const Text('Novo cliente'),

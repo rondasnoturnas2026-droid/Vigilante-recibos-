@@ -720,7 +720,33 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
   });
 },
 ),
-               
+               ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          FilledButton.icon(
+            onPressed: () {
+              if (!formKey.currentState!.validate()) {
+                return;
+              }
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Cliente pronto para salvar'),
+                ),
+              );
+            },
+            icon: const Icon(Icons.save),
+            label: const Text('Salvar cliente'),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+}              
 class TelaRelatorio extends StatelessWidget {
   const TelaRelatorio({super.key});
 

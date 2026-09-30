@@ -727,18 +727,33 @@ onChanged: (p) {
           const SizedBox(height: 24),
 
           FilledButton.icon(
-            onPressed: () {
-              if (!formKey.currentState!.validate()) {
-                return;
-              }
+        
+          onPressed: () async {
+  if (!formKey.currentState!.validate()) return;
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Cliente pronto para salvar'),
-                ),
-              );
-            },
-            icon: const Icon(Icons.save),
+  widget.store.clientes.add({
+    'nome': nome.text.trim(),
+    'bairro': bairro ?? '',
+    'rua': rua ?? '',
+    'numero': numero.text.trim(),
+    'complemento': complemento.text.trim(),
+    'dia': dia.text.trim(),
+    'valor': valor.text.trim(),
+    'formaPagamento': formaPagamento,
+    'telefone': telefone.text.trim(),
+    'contato2Nome': contato2Nome.text.trim(),
+    'contato2Telefone': contato2Telefone.text.trim(),
+    'contato2Relacao': contato2Relacao.text.trim(),
+  });
+
+  await widget.store.salvarClientes();
+
+  if (!context.mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Salvo com sucesso')),
+  );
+},  icon: const Icon(Icons.save),
             label: const Text('Salvar cliente'),
           ),
         ],

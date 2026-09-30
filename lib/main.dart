@@ -707,20 +707,17 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
         border: OutlineInputBorder(),
       ),
       items: ['Pix', 'Dinheiro', 'Cartão']
-          .map(
-            (p) => DropdownMenuItem<String>(
-              value: p,
-              child: Text(p),
-            ),
-          )
-          
-  });onChanged: (p) onChanged: (p) {
+    .map((p) => DropdownMenuItem<String>(
+          value: p,
+          child: Text(p),
+        ))
+    .toList(),
+onChanged: (p) {
   if (p != null) {
     setState(() {
       formaPagamento = p;
     });
   }
-},
 },
 ),
                ],

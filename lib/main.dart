@@ -313,13 +313,44 @@ class _TelaClientesState extends State<TelaClientes> {
       appBar: AppBar(
         title: const Text('Clientes'),
       ),
-      body: Center(
-        child: Text(
-          widget.store.clientes.isEmpty
-              ? 'Nenhum cliente cadastrado'
-              : '${widget.store.clientes.length} cliente(s) cadastrado(s)',
-        ),
-      ),
+            body: widget.store.clientes.isEmpty
+          ? const Center(
+              child: Text('Nenhum cliente cadastrado'),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: widget.store.clientes.length,
+              itemBuilder: (context, index) {
+                final cliente = widget.store.clientes[index];
+
+                final endereco = [
+                  cliente['rua'],
+                  cliente['numero'],
+                  cliente['complemento'],
+                ]
+                    .where(
+                      (parte) => parte != null && parte.trim().isNotEmpty,
+                    )
+                    .join(', ');
+
+                final detalhes = [
+                  if ((cliente['bairro'] ?? '').isNotEmpty)
+                    cliente['bairro'],
+                  if (endereco.isNotEmpty) endereco,
+                  if ((cliente['telefone'] ?? '').isNotEmpty)
+                    'Tel: ${cliente['telefone']}',
+                  'Dia: ${cliente['dia'] ?? ''} | Pagamento: ${cliente['formaPagamento'] ?? ''}',
+                ].join('\n');
+
+                return Card(
+                  child: ListTile(
+                    title: Text(cliente['nome'] ?? 'Sem nome'),
+                    subtitle: Text(detalhes),
+                    trailing: Text('R\$ ${cliente['valor'] ?? '0,00'}'),
+                  ),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.push(

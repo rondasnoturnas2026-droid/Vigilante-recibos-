@@ -714,7 +714,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
             ),
           )
           
-  });onChanged: (p) {
+  });onChanged: (p) onChanged: (p) {
   if (p != null) {
     setState(() {
       formaPagamento = p;

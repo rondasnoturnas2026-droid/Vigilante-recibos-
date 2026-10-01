@@ -914,7 +914,24 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
             FilledButton.icon(
               onPressed: () async {
                 if (!formKey.currentState!.validate()) return;
+final nomeNovo = nome.text.trim().toLowerCase();
+final bairroNovo = (bairro ?? '').toString().trim().toLowerCase();
+final ruaNova = (rua ?? '').toString().trim().toLowerCase();
+final numeroNovo = numero.text.trim().toLowerCase();
 
+final clienteJaCadastrado = widget.store.clientes.any((cliente) {
+  return (cliente['nome'] ?? '').toString().trim().toLowerCase() == nomeNovo &&
+      (cliente['bairro'] ?? '').toString().trim().toLowerCase() == bairroNovo &&
+      (cliente['rua'] ?? '').toString().trim().toLowerCase() == ruaNova &&
+      (cliente['numero'] ?? '').toString().trim().toLowerCase() == numeroNovo;
+});
+
+if (clienteJaCadastrado) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Este cliente já está cadastrado')),
+  );
+  return;
+}
                 widget.store.clientes.add({
                   'nome': nome.text.trim(),
                   'bairro': bairro ?? '',

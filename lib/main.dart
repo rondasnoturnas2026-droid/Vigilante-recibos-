@@ -835,16 +835,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
               ),
             ),
 
-   DateTime? dataEntrada = DateTime.now();
-
-String get dataEntradaFormatada {
-  final data = dataEntrada;
-  if (data == null) return '';
-
-  return '${data.day.toString().padLeft(2, '0')}/'
-      '${data.month.toString().padLeft(2, '0')}/'
-      '${data.year}';
-}         const SizedBox(height: 24),
+   const SizedBox(height: 24),
 
             FilledButton.icon(
               onPressed: () async {

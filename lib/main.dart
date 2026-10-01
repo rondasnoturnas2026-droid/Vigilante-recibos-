@@ -373,20 +373,15 @@ class CadastroClientePage extends StatefulWidget {
   const CadastroClientePage({
     super.key,
     required this.store,
-      const CadastroClientePage({
-  super.key,
-  required this.store,
-  this.indiceEdicao,
-});
-
-final AppStore store;
-final int? indiceEdicao; 
+    this.indiceEdicao,
   });
 
   final AppStore store;
+  final int? indiceEdicao;
 
   @override
   State<CadastroClientePage> createState() => _CadastroClientePageState();
+}
 }
 
 class _CadastroClientePageState extends State<CadastroClientePage> {

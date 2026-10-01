@@ -373,6 +373,14 @@ class CadastroClientePage extends StatefulWidget {
   const CadastroClientePage({
     super.key,
     required this.store,
+      const CadastroClientePage({
+  super.key,
+  required this.store,
+  this.indiceEdicao,
+});
+
+final AppStore store;
+final int? indiceEdicao; 
   });
 
   final AppStore store;

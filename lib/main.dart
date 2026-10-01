@@ -397,7 +397,17 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
   String? bairro;
   String? rua;
   String formaPagamento = 'Pix';
+    
+  DateTime? dataEntrada = DateTime.now();
 
+  String get dataEntradaFormatada {
+    final data = dataEntrada;
+    if (data == null) return '';
+
+    return '${data.day.toString().padLeft(2, '0')}/'
+        '${data.month.toString().padLeft(2, '0')}/'
+        '${data.year}';
+  }
   List<String> get ruasDoBairro {
     for (final b in widget.store.bairros) {
       if (b.nome == bairro) return b.ruas;

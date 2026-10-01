@@ -862,51 +862,7 @@ String get dataEntradaFormatada {
                   'telefone': telefone.text.trim(),
                   'contato2Nome': contato2Nome.text.trim(),
                   'contato2Telefone': contato2Telefone.text.trim(),
-                    InputDecorator(
-  decoration: const InputDecoration(
-    labelText: 'Data de entrada',
-    border: OutlineInputBorder(),
-  ),
-  child: Row(
-    children: [
-      Expanded(
-        child: Text(
-          dataEntrada == null
-              ? 'Toque no calendário para escolher'
-              : dataEntradaFormatada,
-        ),
-      ),
-      IconButton(
-        tooltip: 'Escolher data',
-        icon: const Icon(Icons.calendar_month),
-        onPressed: () async {
-          final dataSelecionada = await showDatePicker(
-            context: context,
-            initialDate: dataEntrada ?? DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime.now(),
-          );
-
-          if (dataSelecionada != null) {
-            setState(() {
-              dataEntrada = dataSelecionada;
-            });
-          }
-        },
-      ),
-      if (dataEntrada != null)
-        IconButton(
-          tooltip: 'Apagar data',
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            setState(() {
-              dataEntrada = null;
-            });
-          },
-        ),
-    ],
-  ),
-),
+                    
                   'contato2Relacao': contato2Relacao.text.trim(),
                     
                 });

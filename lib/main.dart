@@ -382,7 +382,7 @@ class CadastroClientePage extends StatefulWidget {
   @override
   State<CadastroClientePage> createState() => _CadastroClientePageState();
 }
-}
+
 
 class _CadastroClientePageState extends State<CadastroClientePage> {
     final formKey = GlobalKey<FormState>();

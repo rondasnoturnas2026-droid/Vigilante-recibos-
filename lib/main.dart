@@ -850,6 +850,25 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                   'dia': dia.text.trim(),
                   'valor': valor.text.trim(),
                   'formaPagamento': formaPagamento,
+                    ListTile(
+  contentPadding: EdgeInsets.zero,
+  title: const Text('Data de entrada como cliente *'),
+  subtitle: Text(
+    dataEntrada == null ? 'Toque para escolher' : dataEntradaFormatada,
+  ),
+  trailing: const Icon(Icons.calendar_month),
+  onTap: () async {
+    final escolhida = await showDatePicker(
+      context: context,
+      initialDate: dataEntrada ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (escolhida != null) {
+      setState(() => dataEntrada = escolhida);
+    }
+  },
+),
                   'telefone': telefone.text.trim(),
                   'contato2Nome': contato2Nome.text.trim(),
                   'contato2Telefone': contato2Telefone.text.trim(),

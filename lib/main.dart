@@ -791,7 +791,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(2),
-                          
+                          ],
                           decoration: const InputDecoration(
                             labelText: 'Dia *',
                             hintText: '10',

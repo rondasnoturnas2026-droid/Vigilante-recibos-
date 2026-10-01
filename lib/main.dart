@@ -398,6 +398,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
   String? rua;
   String formaPagamento = 'Pix';
     
+    DateTime? dataEntrada;
   DateTime? dataEntrada = DateTime.now();
 
   String get dataEntradaFormatada {

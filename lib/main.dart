@@ -591,6 +591,49 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                       hintText: '(DD) 99999-9999',
                       prefixIcon: Icon(Icons.phone_outlined),
                       border: OutlineInputBorder(),
+                                          const SizedBox(height: 16),
+                  const Text(
+                    'Segundo contato (opcional)',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: contato2Nome,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(
+                      labelText: 'Nome do contato',
+                      prefixIcon: Icon(Icons.person_outline),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: contato2Relacao,
+                    decoration: const InputDecoration(
+                      labelText: 'Relação com o cliente',
+                      hintText: 'Ex.: esposa, filho, responsável',
+                      prefixIcon: Icon(Icons.group_outlined),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: contato2Telefone,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(11),
+                    ],
+                    decoration: const InputDecoration(
+                      labelText: 'Telefone / WhatsApp do segundo contato',
+                      hintText: '(DD) 99999-9999',
+                      prefixIcon: Icon(Icons.phone_outlined),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                     ),
                   ),
                 ],

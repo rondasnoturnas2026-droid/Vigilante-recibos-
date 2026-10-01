@@ -802,12 +802,60 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: TextFormField(
+                                        child: TextFormField(
                           controller: valor,
                           keyboardType:
                               const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
+                          inputFormatters: [
+                            TextInputFormatter.withFunction(
+                              (oldValue, newValue) {
+                                if (newValue.text.isEmpty) {
+                                  return newValue;
+                                }
+
+                                final cursorNoTexto = newValue.selection.baseOffset
+                                    .clamp(0, newValue.text.length)
+                                    .toInt();
+
+                                final digitosAntesCursor = newValue.text
+                                    .substring(0, cursorNoTexto)
+                                    .replaceAll(RegExp(r'\D'), '')
+                                    .length;
+
+                                final parteInteira = newValue.text.contains(',')
+                                    ? newValue.text.substring(
+                                        0,
+                                        newValue.text.indexOf(','),
+                                      )
+                                    : newValue.text;
+
+                                final digitos =
+                                    parteInteira.replaceAll(RegExp(r'\D'), '');
+
+                                if (digitos.isEmpty) {
+                                  return const TextEditingValue(
+                                    text: '',
+                                    selection: TextSelection.collapsed(offset: 0),
+                                  );
+                                }
+
+                                final textoFormatado = '$digitos,00';
+                                final cursor = digitosAntesCursor
+                                    .clamp(0, digitos.length)
+                                    .toInt();
+
+                                return TextEditingValue(
+                                  text: textoFormatado,
+                                  selection: TextSelection.collapsed(
+                                    offset: cursor,
+                                  ),
+                                  composing: TextRange.empty,
+                                );
+                              },
+                            ),
+                          ],
                           decoration: const InputDecoration(
                             labelText: 'Valor mensal *',
                             hintText: 'R\$ 0,00',
@@ -825,6 +873,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                             return null;
                           },
                         ),
+**Pare no fim da colagem e me mande um print antes de salvar.**
                       ),
                     ],
                   ),

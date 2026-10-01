@@ -593,7 +593,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                     controller: telefone,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
-                    inputFormatters: [
+                    
   TextInputFormatter.withFunction((oldValue, newValue) {
     final digitos = newValue.text.replaceAll(RegExp(r'\D'), '');
     if (digitos.length > 11) return oldValue;

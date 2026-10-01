@@ -324,44 +324,108 @@ class _TelaClientesState extends State<TelaClientes> {
       appBar: AppBar(
         title: const Text('Clientes'),
       ),
-            body: widget.store.clientes.isEmpty
-          ? const Center(
-              child: Text('Nenhum cliente cadastrado'),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: widget.store.clientes.length,
-              itemBuilder: (context, index) {
-                final cliente = widget.store.clientes[index];
-
-                final endereco = [
-                  cliente['rua'],
-                  cliente['numero'],
-                  cliente['complemento'],
-                ]
-                    .where(
-                      (parte) => parte != null && parte.trim().isNotEmpty,
-                    )
-                    .join(', ');
-
-                final detalhes = [
-                  if ((cliente['bairro'] ?? '').isNotEmpty)
-                    cliente['bairro'],
-                  if (endereco.isNotEmpty) endereco,
-                  if ((cliente['telefone'] ?? '').isNotEmpty)
-                    'Tel: ${cliente['telefone']}',
-                  'Dia: ${cliente['dia'] ?? ''} | Pagamento: ${cliente['formaPagamento'] ?? ''}',
-                ].join('\n');
-
-                return Card(
-                  child: ListTile(
-                    title: Text(cliente['nome'] ?? 'Sem nome'),
-                    subtitle: Text(detalhes),
-                    trailing: Text('R\$ ${cliente['valor'] ?? '0,00'}'),
-                  ),
-                );
-              },
+                  body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.payments_outlined),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Total mensal dos clientes',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            totalVisivel
+                                ? 'R\$ ${totalMensal.toStringAsFixed(2).replaceAll('.', ',')}'
+                                : '••••••',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: totalVisivel
+                          ? 'Ocultar total'
+                          : 'Mostrar total',
+                      onPressed: () {
+                        setState(() {
+                          totalVisivel = !totalVisivel;
+                        });
+                      },
+                      icon: Icon(
+                        totalVisivel
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
+          ),
+          Expanded(
+            child: widget.store.clientes.isEmpty
+                ? const Center(
+                    child: Text('Nenhum cliente cadastrado'),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                    itemCount: widget.store.clientes.length,
+                    itemBuilder: (context, index) {
+                      final cliente = widget.store.clientes[index];
+
+                      final endereco = [
+                        cliente['rua'],
+                        cliente['numero'],
+                        cliente['complemento'],
+                      ]
+                          .where(
+                            (parte) =>
+                                parte != null && parte.trim().isNotEmpty,
+                          )
+                          .join(', ');
+
+                      final detalhes = [
+                        if ((cliente['bairro'] ?? '').isNotEmpty)
+                          cliente['bairro'],
+                        if (endereco.isNotEmpty) endereco,
+                        if ((cliente['telefone'] ?? '').isNotEmpty)
+                          'Tel: ${cliente['telefone']}',
+                        'Dia: ${cliente['dia'] ?? ''} | Pagamento: ${cliente['formaPagamento'] ?? ''}',
+                      ].join('\n');
+
+                      return Card(
+                        child: ListTile(
+                          title: Text(cliente['nome'] ?? 'Sem nome'),
+                          subtitle: Text(detalhes),
+                          trailing: Text(
+                            'R\$ ${cliente['valor'] ?? '0,00'}',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.push(

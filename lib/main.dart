@@ -873,7 +873,7 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                             return null;
                           },
                         ),
-**Pare no fim da colagem e me mande um print antes de salvar.**
+
                       ),
                     ],
                   ),

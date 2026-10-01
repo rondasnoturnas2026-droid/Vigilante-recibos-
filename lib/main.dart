@@ -741,7 +741,10 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                       Expanded(
                         child: TextFormField(
                           controller: numero,
-                          keyboardType: TextInputType.streetAddress,
+                          keyboardType: TextInputType.number,
+inputFormatters: [
+  FilteringTextInputFormatter.digitsOnly,
+],
                           decoration: const InputDecoration(
                             labelText: 'Número',
                             prefixIcon: Icon(Icons.numbers),

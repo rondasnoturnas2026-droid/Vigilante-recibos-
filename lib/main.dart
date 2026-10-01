@@ -294,6 +294,17 @@ class TelaClientes extends StatefulWidget {
 }
 
 class _TelaClientesState extends State<TelaClientes> {
+      bool totalVisivel = true;
+
+  double get totalMensal {
+    return widget.store.clientes.fold<double>(0, (soma, cliente) {
+      final texto = (cliente['valor'] ?? '0')
+          .replaceAll('.', '')
+          .replaceAll(',', '.');
+
+      return soma + (double.tryParse(texto) ?? 0);
+    });
+  }
   @override
   void initState() {
     super.initState();

@@ -593,9 +593,31 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                     controller: telefone,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(11),
-                    ],
+                    inputFormatters: [
+  TextInputFormatter.withFunction((oldValue, newValue) {
+    final digitos = newValue.text.replaceAll(RegExp(r'\D'), '');
+    if (digitos.length > 11) return oldValue;
+
+    var texto = digitos;
+    if (digitos.length > 2) {
+      final ddd = digitos.substring(0, 2);
+      final numero = digitos.substring(2);
+      final tamanhoInicio = digitos.length == 11
+          ? 5
+          : (numero.length > 4 ? 4 : numero.length);
+
+      texto = '($ddd) ${numero.substring(0, tamanhoInicio)}';
+      if (numero.length > tamanhoInicio) {
+        texto += '-${numero.substring(tamanhoInicio)}';
+      }
+    }
+
+    return TextEditingValue(
+      text: texto,
+      selection: TextSelection.collapsed(offset: texto.length),
+    );
+  }),
+],
                     
                     decoration: const InputDecoration(
                       labelText: 'Telefone / WhatsApp',

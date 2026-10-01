@@ -586,12 +586,15 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(11),
                     ],
+                    
                     decoration: const InputDecoration(
                       labelText: 'Telefone / WhatsApp',
                       hintText: '(DD) 99999-9999',
                       prefixIcon: Icon(Icons.phone_outlined),
                       border: OutlineInputBorder(),
-                                          const SizedBox(height: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   const Text(
                     'Segundo contato (opcional)',
                     style: TextStyle(
@@ -634,12 +637,9 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                    ),
-                  ),
                 ],
               ),
             ),
-
             _card(
               context: context,
               child: Column(

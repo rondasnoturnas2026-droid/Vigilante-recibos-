@@ -413,13 +413,12 @@ String buscaCliente = '';
               ),
             ),
           ),
-          clientesFiltrados.isEmpty
-    ? Expanded(
-        child: Center(
+          Expanded(
+  child: clientesFiltrados.isEmpty
+      ? const Center(
           child: Text('Nenhum cliente cadastrado'),
-        ),
-      )
-    : ListView.builder(
+        )
+      : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
                     itemCount: clientesFiltrados.length,
                     itemBuilder: (context, index) {

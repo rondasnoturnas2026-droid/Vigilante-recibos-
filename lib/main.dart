@@ -1203,64 +1203,7 @@ inputFormatters: [
 
    const SizedBox(height: 24),
 
-            FilledButton.icon(
-              onPressed: () async {
-                if (!formKey.currentState!.validate()) return;
-final nomeNovo = nome.text.trim().toLowerCase();
-final bairroNovo = (bairro ?? '').toString().trim().toLowerCase();
-final ruaNova = (rua ?? '').toString().trim().toLowerCase();
-final numeroNovo = numero.text.trim().toLowerCase();
-
-final clienteJaCadastrado = widget.store.clientes.any((cliente) {
-  return (cliente['nome'] ?? '').toString().trim().toLowerCase() == nomeNovo &&
-      (cliente['bairro'] ?? '').toString().trim().toLowerCase() == bairroNovo &&
-      (cliente['rua'] ?? '').toString().trim().toLowerCase() == ruaNova &&
-      (cliente['numero'] ?? '').toString().trim().toLowerCase() == numeroNovo;
-});
-
-if (clienteJaCadastrado) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Este cliente já está cadastrado')),
-  );
-  return;
-}
-                widget.store.clientes.add({
-                  'nome': nome.text.trim(),
-                  'bairro': bairro ?? '',
-                  'rua': rua ?? '',
-                  'numero': numero.text.trim(),
-                  'complemento': complemento.text.trim(),
-                  'dia': dia.text.trim(),
-                  'valor': valor.text.trim(),
-                  'formaPagamento': formaPagamento,
-                    
-                  'telefone': telefone.text.trim(),
-                  'contato2Nome': contato2Nome.text.trim(),
-                  'contato2Telefone': contato2Telefone.text.trim(),
-                    
-                  'contato2Relacao': contato2Relacao.text.trim(),
-                    
-                });
-
-                await widget.store.salvarClientes();
-
-                if (!context.mounted) return;
-nome.clear();
-numero.clear();
-complemento.clear();
-dia.clear();
-valor.clear();
-telefone.clear();
-contato2Nome.clear();
-contato2Telefone.clear();
-contato2Relacao.clear();
-
-setState(() {
-  bairro = null;
-  rua = null;
-  formaPagamento = 'Pix';
-  dataEntrada = null;
-});
+            
 
 FilledButton.icon(
   onPressed: () {

@@ -413,9 +413,9 @@ String buscaCliente = '';
               ),
             ),
           ),
-          Expanded(
+          clientesFiltrados.isEmpty ?
             itemCount: clientesFiltrados.length,
-                ? const Center(
+                itemCount: clientesFiltrados.length,
                     child: Text('Nenhum cliente cadastrado'),
                   )
                 : ListView.builder(

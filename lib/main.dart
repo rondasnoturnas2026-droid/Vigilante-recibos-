@@ -295,7 +295,7 @@ class TelaClientes extends StatefulWidget {
 
 class _TelaClientesState extends State<TelaClientes> {
       bool totalVisivel = true;
-
+String buscaCliente = '';
   double get totalMensal {
     return widget.store.clientes.fold<double>(0, (soma, cliente) {
       final texto = (cliente['valor'] ?? '0')
@@ -326,6 +326,24 @@ class _TelaClientesState extends State<TelaClientes> {
       ),
                   body: Column(
         children: [
+            Padding(
+  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+  child: TextField(
+    onChanged: (texto) {
+      setState(() {
+        buscaCliente = texto;
+      });
+    },
+    decoration: InputDecoration(
+      hintText: 'Buscar cliente por nome ou endereço',
+      prefixIcon: const Icon(Icons.search),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+      ),
+      filled: true,
+    ),
+  ),
+),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
                         child: Container(

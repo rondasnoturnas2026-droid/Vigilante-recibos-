@@ -425,7 +425,7 @@ class _TelaClientesState extends State<TelaClientes> {
                         child: ListTile(
                           title: Text(cliente['nome'] ?? 'Sem nome'),
                           subtitle: Text(detalhes),
-                            import 'package:flutter/material.dart';
+                        
 
 
                           trailing: Text(

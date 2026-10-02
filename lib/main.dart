@@ -1087,7 +1087,7 @@ inputFormatters: [
                     onChanged: (p) {
                       if (p != null) {
                         setState(() {
-                          formaPagamento = p;
+                          formaPagamento = p ?? formaPagamento;
                         });
                       }
                     },

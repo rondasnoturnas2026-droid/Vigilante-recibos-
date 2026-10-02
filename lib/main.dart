@@ -423,7 +423,7 @@ String buscaCliente = '';
                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
                     itemCount: clientesFiltrados.length,
                     itemBuilder: (context, index) {
-                      final cliente = widget.store.clientes[index];
+                      final cliente = clientesFiltrados[index];
 
                       final endereco = [
                         cliente['rua'],

@@ -1262,15 +1262,19 @@ setState(() {
   dataEntrada = null;
 });
 
-_formKey.currentState?.reset();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Salvo com sucesso'),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.save),
-              label: const Text('Salvar cliente'),
+FilledButton.icon(
+  onPressed: () {
+    _salvarCliente(
+      cadastrarOutro: widget.indiceEdicao == null,
+    );
+  },
+  icon: const Icon(Icons.save),
+  label: Text(
+    widget.indiceEdicao == null
+        ? 'Salvar e cadastrar próximo'
+        : 'Salvar alterações',
+  ),
+),
             ),
           ],
         ),

@@ -426,12 +426,12 @@ class _TelaClientesState extends State<TelaClientes> {
                           title: Text(cliente['nome'] ?? 'Sem nome'),
                           subtitle: Text(detalhes),
                             import 'package:flutter/material.dart';
-import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
-import 'dart:io';
+
 final ValueNotifier<ThemeMode> temaApp =
     ValueNotifier<ThemeMode>(ThemeMode.system);
 

@@ -428,9 +428,49 @@ class _TelaClientesState extends State<TelaClientes> {
                         
 
 
-                          trailing: Text(
-                            'R\$ ${cliente['valor'] ?? '0,00'}',
-                          ),
+                          trailing: PopupMenuButton<String>(
+  onSelected: (acao) async {
+    if (acao != 'excluir') return;
+
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Excluir cliente?'),
+        content: Text(
+          'Deseja excluir ${cliente['nome'] ?? 'este cliente'}?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
+    widget.store.clientes.removeAt(index);
+    await widget.store.salvarClientes();
+
+    if (!mounted) return;
+    setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cliente excluído com sucesso')),
+    );
+  },
+  itemBuilder: (context) => const [
+    PopupMenuItem<String>(
+      value: 'excluir',
+      child: Text('Excluir'),
+    ),
+  ],
+),
                         ),
                       );
                     },

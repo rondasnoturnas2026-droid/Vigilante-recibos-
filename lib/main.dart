@@ -414,7 +414,7 @@ String buscaCliente = '';
             ),
           ),
           Expanded(
-            child: widget.store.clientes.isEmpty
+            itemCount: clientesFiltrados.length,
                 ? const Center(
                     child: Text('Nenhum cliente cadastrado'),
                   )

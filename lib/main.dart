@@ -1245,7 +1245,24 @@ if (clienteJaCadastrado) {
                 await widget.store.salvarClientes();
 
                 if (!context.mounted) return;
+nome.clear();
+numero.clear();
+complemento.clear();
+dia.clear();
+valor.clear();
+telefone.clear();
+contato2Nome.clear();
+contato2Telefone.clear();
+contato2Relacao.clear();
 
+setState(() {
+  bairro = null;
+  rua = null;
+  formaPagamento = 'Pix';
+  dataEntrada = null;
+});
+
+_formKey.currentState?.reset();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Salvo com sucesso'),

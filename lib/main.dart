@@ -544,7 +544,39 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
     }
     return [];
   }
+  @override
+  void initState() {
+    super.initState();
 
+    final indice = widget.indiceEdicao;
+    if (indice == null ||
+        indice < 0 ||
+        indice >= widget.store.clientes.length) {
+      return;
+    }
+
+    final cliente = widget.store.clientes[indice];
+
+    nome.text = (cliente['nome'] ?? '').toString();
+    numero.text = (cliente['numero'] ?? '').toString();
+    complemento.text = (cliente['complemento'] ?? '').toString();
+    dia.text = (cliente['dia'] ?? '').toString();
+    valor.text = (cliente['valor'] ?? '').toString();
+    telefone.text = (cliente['telefone'] ?? '').toString();
+    contato2Nome.text = (cliente['contato2Nome'] ?? '').toString();
+    contato2Telefone.text =
+        (cliente['contato2Telefone'] ?? '').toString();
+    contato2Relacao.text =
+        (cliente['contato2Relacao'] ?? '').toString();
+
+    bairro = cliente['bairro']?.toString();
+    rua = cliente['rua']?.toString();
+
+    final formaSalva = cliente['formaPagamento']?.toString();
+    if (['Pix', 'Dinheiro', 'Cartão'].contains(formaSalva)) {
+      formaPagamento = formaSalva!;
+    }
+  }
   @override
   void dispose() {
     nome.dispose();

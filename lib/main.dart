@@ -421,7 +421,7 @@ String buscaCliente = '';
       )
     : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-                    itemCount: widget.store.clientes.length,
+                    itemCount: clientesFiltrados.length,
                     itemBuilder: (context, index) {
                       final cliente = widget.store.clientes[index];
 

@@ -425,8 +425,7 @@ class _TelaClientesState extends State<TelaClientes> {
                         child: ListTile(
                           title: Text(cliente['nome'] ?? 'Sem nome'),
                           subtitle: Text(detalhes),
-                            
-import 'package:flutter/material.dart';
+                            import 'package:flutter/material.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -413,12 +413,13 @@ String buscaCliente = '';
               ),
             ),
           ),
-          clientesFiltrados.isEmpty ?
-            itemCount: clientesFiltrados.length,
-                itemCount: clientesFiltrados.length,
-                    child: Text('Nenhum cliente cadastrado'),
-                  )
-                : ListView.builder(
+          clientesFiltrados.isEmpty
+    ? Expanded(
+        child: Center(
+          child: Text('Nenhum cliente cadastrado'),
+        ),
+      )
+    : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
                     itemCount: widget.store.clientes.length,
                     itemBuilder: (context, index) {

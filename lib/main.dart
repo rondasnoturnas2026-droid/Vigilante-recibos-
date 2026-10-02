@@ -709,7 +709,87 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
       child: child,
     );
   }
+  Future<void> _salvarCliente({required bool cadastrarOutro}) async {
+    if (!formKey.currentState!.validate()) return;
 
+    final indice = widget.indiceEdicao;
+    final nomeNovo = nome.text.trim().toLowerCase();
+    final bairroNovo = (bairro ?? '').trim().toLowerCase();
+    final ruaNova = (rua ?? '').trim().toLowerCase();
+    final numeroNovo = numero.text.trim().toLowerCase();
+
+    final clienteJaCadastrado =
+        widget.store.clientes.asMap().entries.any((entrada) {
+      if (indice != null && entrada.key == indice) return false;
+      final cliente = entrada.value;
+
+      return (cliente['nome'] ?? '').trim().toLowerCase() == nomeNovo &&
+          (cliente['bairro'] ?? '').trim().toLowerCase() == bairroNovo &&
+          (cliente['rua'] ?? '').trim().toLowerCase() == ruaNova &&
+          (cliente['numero'] ?? '').trim().toLowerCase() == numeroNovo;
+    });
+
+    if (clienteJaCadastrado) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Esse cliente já existe')),
+      );
+      return;
+    }
+
+    final dadosCliente = <String, String>{
+      'nome': nome.text.trim(),
+      'bairro': bairro ?? '',
+      'rua': rua ?? '',
+      'numero': numero.text.trim(),
+      'complemento': complemento.text.trim(),
+      'dia': dia.text.trim(),
+      'valor': valor.text.trim(),
+      'formaPagamento': formaPagamento,
+      'telefone': telefone.text.trim(),
+      'contato2Nome': contato2Nome.text.trim(),
+      'contato2Telefone': contato2Telefone.text.trim(),
+      'contato2Relacao': contato2Relacao.text.trim(),
+    };
+
+    if (indice != null &&
+        indice >= 0 &&
+        indice < widget.store.clientes.length) {
+      widget.store.clientes[indice] = dadosCliente;
+    } else {
+      widget.store.clientes.add(dadosCliente);
+    }
+
+    await widget.store.salvarClientes();
+
+    if (!mounted) return;
+
+    if (cadastrarOutro) {
+      nome.clear();
+      numero.clear();
+      complemento.clear();
+      dia.clear();
+      valor.clear();
+      telefone.clear();
+      contato2Nome.clear();
+      contato2Telefone.clear();
+      contato2Relacao.clear();
+
+      setState(() {
+        bairro = null;
+        rua = null;
+        formaPagamento = 'Pix';
+        dataEntrada = null;
+      });
+
+      formKey.currentState?.reset();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cliente salvo. Cadastre o próximo.')),
+      );
+    } else {
+      Navigator.pop(context);
+    }
+  }
 @override
 
   Widget build(BuildContext context) {

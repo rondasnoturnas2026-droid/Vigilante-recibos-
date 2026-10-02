@@ -320,6 +320,11 @@ String buscaCliente = '';
 
   @override
   Widget build(BuildContext context) {
+      final clientesFiltrados = widget.store.clientes.where((cliente) {
+  final busca = buscaCliente.trim().toLowerCase();
+  final dadosCliente = cliente.values.join(' ').toLowerCase();
+  return dadosCliente.contains(busca);
+}).toList();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Clientes'),

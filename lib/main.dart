@@ -455,6 +455,25 @@ String dataFiltro = 'Todas as datas';
 
                           trailing: PopupMenuButton<String>(
   onSelected: (acao) async {
+    final indiceOriginal = widget.store.clientes.indexOf(cliente);
+    if (indiceOriginal < 0) return;
+
+    if (acao == 'editar') {
+      await Navigator.push<void>(
+        context,
+        MaterialPageRoute<void>(
+          builder: (_) => CadastroClientePage(
+            store: widget.store,
+            indiceEdicao: indiceOriginal,
+          ),
+        ),
+      );
+
+      if (!mounted) return;
+      setState(() {});
+      return;
+    }
+
     if (acao != 'excluir') return;
 
     final confirmar = await showDialog<bool>(
@@ -479,17 +498,23 @@ String dataFiltro = 'Todas as datas';
 
     if (confirmar != true) return;
 
-    widget.store.clientes.removeAt(index);
+    widget.store.clientes.removeAt(indiceOriginal);
     await widget.store.salvarClientes();
 
     if (!mounted) return;
     setState(() {});
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cliente excluído com sucesso')),
+      const SnackBar(
+        content: Text('Cliente excluído com sucesso'),
+      ),
     );
   },
   itemBuilder: (context) => const [
+    PopupMenuItem<String>(
+      value: 'editar',
+      child: Text('Editar'),
+    ),
     PopupMenuItem<String>(
       value: 'excluir',
       child: Text('Excluir'),

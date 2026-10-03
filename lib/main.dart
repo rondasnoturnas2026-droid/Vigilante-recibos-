@@ -884,12 +884,7 @@ if (cadastrarOutro) {
     prefixIcon: Icon(Icons.person_outline),
     border: OutlineInputBorder(),
   ),
-  validator: (v) {
-    if (v == null || v.trim().isEmpty) {
-      return 'Informe o nome do cliente';
-    }
-    return null;
-  },
+  
 ),
                   const SizedBox(height: 12),
                   TextFormField(

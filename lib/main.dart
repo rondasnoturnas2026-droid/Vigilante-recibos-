@@ -763,16 +763,21 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
 
     if (!mounted) return;
 
-    if (cadastrarOutro) {
-      nome.clear();
-      numero.clear();
-      complemento.clear();
-      dia.clear();
-      valor.clear();
-      telefone.clear();
-      contato2Nome.clear();
-      contato2Telefone.clear();
-      contato2Relacao.clear();
+    if (cadastrarOutro) {ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(content: Text('Salvo com sucesso')),
+);
+
+if (cadastrarOutro) {
+  Navigator.pushReplacement<void, void>(
+    context,
+    MaterialPageRoute<void>(
+      builder: (_) => CadastroClientePage(store: widget.store),
+    ),
+  );
+} else {
+  Navigator.pop(context);
+}
+      
 
       setState(() {
         bairro = null;

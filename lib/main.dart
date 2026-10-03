@@ -1065,8 +1065,8 @@ if (cadastrarOutro) {
     ),
   ],
 ),
-              ),
-            ),
+],           ),
+           ),
 
             _card(
               context: context,

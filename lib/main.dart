@@ -369,6 +369,71 @@ String dataFiltro = 'Todas as datas';
       filled: true,
     ),
   ),
+),Padding(
+  padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+  child: Row(
+    children: [
+      Expanded(
+        child: DropdownButtonFormField<String>(
+          value: bairroFiltro,
+          decoration: const InputDecoration(
+            labelText: 'Bairro',
+            border: OutlineInputBorder(),
+          ),
+          items: [
+            const DropdownMenuItem(
+              value: 'Todos os bairros',
+              child: Text('Todos os bairros'),
+            ),
+            ...widget.store.bairros.map(
+              (bairro) => DropdownMenuItem(
+                value: bairro.nome,
+                child: Text(bairro.nome),
+              ),
+            ),
+          ],
+          onChanged: (valor) {
+            if (valor == null) return;
+            setState(() {
+              bairroFiltro = valor;
+              ruaFiltro = 'Todas as ruas';
+            });
+          },
+        ),
+      ),
+      const SizedBox(width: 8),
+      Expanded(
+        child: DropdownButtonFormField<String>(
+          value: ruaFiltro == 'Todas as ruas' ||
+                  ruasDisponiveis.contains(ruaFiltro)
+              ? ruaFiltro
+              : 'Todas as ruas',
+          decoration: const InputDecoration(
+            labelText: 'Rua',
+            border: OutlineInputBorder(),
+          ),
+          items: [
+            const DropdownMenuItem(
+              value: 'Todas as ruas',
+              child: Text('Todas as ruas'),
+            ),
+            ...ruasDisponiveis.map(
+              (rua) => DropdownMenuItem(
+                value: rua,
+                child: Text(rua),
+              ),
+            ),
+          ],
+          onChanged: (valor) {
+            if (valor == null) return;
+            setState(() {
+              ruaFiltro = valor;
+            });
+          },
+        ),
+      ),
+    ],
+  ),
 ),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),

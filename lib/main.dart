@@ -1034,6 +1034,9 @@ if (cadastrarOutro) {
                     children: [
                       Expanded(
                         TextFormField(
+                            Expanded(
+  child: SEU_WIDGET_ATUAL,
+)
   controller: numero,
   keyboardType: TextInputType.number,
   inputFormatters: [

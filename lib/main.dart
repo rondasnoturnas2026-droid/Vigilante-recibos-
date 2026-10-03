@@ -326,14 +326,18 @@ String dataFiltro = 'Todas as datas';
       final clientesFiltrados = widget.store.clientes.where((cliente) {
   final busca = buscaCliente.trim().toLowerCase();
   final dadosCliente = cliente.values.join(' ').toLowerCase();
-  final bairroCliente = (cliente['bairro'] ?? '').trim();
+        final bairroCliente = (cliente['bairro'] ?? '').trim();
+      final ruaCliente = (cliente['rua'] ?? '').trim();
 
-  final correspondeBusca = dadosCliente.contains(busca);
-  final correspondeBairro =
-      bairroFiltro == 'Todos os bairros' ||
-      bairroCliente == bairroFiltro;
+      final correspondeBusca = dadosCliente.contains(busca);
+      final correspondeBairro =
+          bairroFiltro == 'Todos os bairros' ||
+          bairroCliente == bairroFiltro;
+      final correspondeRua =
+          ruaFiltro == 'Todas as ruas' ||
+          ruaCliente == ruaFiltro;
 
-  return correspondeBusca && correspondeBairro;
+      return correspondeBusca && correspondeBairro && correspondeRua;
 }).toList();
     return Scaffold(
       appBar: AppBar(

@@ -620,6 +620,8 @@ final email = TextEditingController();
         (cliente['contato2Telefone'] ?? '').toString();
     contato2Relacao.text =
         (cliente['contato2Relacao'] ?? '').toString();
+      cpf.text = (cliente['cpf'] ?? '').toString();
+email.text = (cliente['email'] ?? '').toString();
 
     bairro = cliente['bairro']?.toString();
     rua = cliente['rua']?.toString();

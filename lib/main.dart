@@ -924,7 +924,32 @@ if (cadastrarOutro) {
                       prefixIcon: Icon(Icons.phone_outlined),
                       border: OutlineInputBorder(),
                     ),
-                  ),
+                  ),const SizedBox(height: 12),
+TextFormField(
+  controller: cpf,
+  keyboardType: TextInputType.number,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+    LengthLimitingTextInputFormatter(14),
+  ],
+  decoration: const InputDecoration(
+    labelText: 'CPF (opcional)',
+    hintText: 'Somente números',
+    prefixIcon: Icon(Icons.badge_outlined),
+    border: OutlineInputBorder(),
+  ),
+),
+const SizedBox(height: 12),
+TextFormField(
+  controller: email,
+  keyboardType: TextInputType.emailAddress,
+  decoration: const InputDecoration(
+    labelText: 'E-mail (opcional)',
+    hintText: 'Ex.: cliente@email.com',
+    prefixIcon: Icon(Icons.email_outlined),
+    border: OutlineInputBorder(),
+  ),
+),
                   const SizedBox(height: 16),
                   const Text(
                     'Segundo contato (opcional)',

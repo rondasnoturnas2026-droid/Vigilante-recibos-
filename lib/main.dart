@@ -1031,11 +1031,6 @@ if (cadastrarOutro) {
                   ),
                   const SizedBox(height: 12),
                   Row(
-                    children: [
-                      Expanded(
-                        TextFormField(
-                            
-  Row(
   children: [
     Expanded(
       child: TextFormField(
@@ -1070,21 +1065,6 @@ if (cadastrarOutro) {
     ),
   ],
 ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: TextFormField(
-                          controller: complemento,
-                          decoration: const InputDecoration(
-                            labelText: 'Complemento',
-                            hintText: 'Casa, bloco...',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ),
 

@@ -1033,18 +1033,24 @@ if (cadastrarOutro) {
                   Row(
                     children: [
                       Expanded(
-                        child: TextFormField(
-                          controller: numero,
-                          keyboardType: TextInputType.number,
-inputFormatters: [
-  FilteringTextInputFormatter.digitsOnly,
-],
-                          decoration: const InputDecoration(
-                            labelText: 'Número',
-                            prefixIcon: Icon(Icons.numbers),
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
+                        TextFormField(
+  controller: numero,
+  keyboardType: TextInputType.number,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+  ],
+  decoration: const InputDecoration(
+    labelText: 'Número da casa *',
+    prefixIcon: Icon(Icons.numbers),
+    border: OutlineInputBorder(),
+  ),
+  validator: (v) {
+    if (v == null || v.trim().isEmpty) {
+      return 'Informe o número da casa';
+    }
+    return null;
+  },
+),
                       ),
                       const SizedBox(width: 10),
                       Expanded(

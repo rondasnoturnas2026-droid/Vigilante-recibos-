@@ -573,6 +573,8 @@ class _CadastroClientePageState extends State<CadastroClientePage> {
   final contato2Nome = TextEditingController();
   final contato2Telefone = TextEditingController();
   final contato2Relacao = TextEditingController();
+    final cpf = TextEditingController();
+final email = TextEditingController();
 
   String? bairro;
   String? rua;

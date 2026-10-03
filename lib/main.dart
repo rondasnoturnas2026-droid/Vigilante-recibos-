@@ -642,6 +642,8 @@ email.text = (cliente['email'] ?? '').toString();
     contato2Nome.dispose();
     contato2Telefone.dispose();
     contato2Relacao.dispose();
+      cpf.dispose();
+email.dispose();
     super.dispose();
   }
 

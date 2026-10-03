@@ -1035,24 +1035,40 @@ if (cadastrarOutro) {
                       Expanded(
                         TextFormField(
                             
-  child: SEU_WIDGET_ATUAL,
-)
-  controller: numero,
-  keyboardType: TextInputType.number,
-  inputFormatters: [
-    FilteringTextInputFormatter.digitsOnly,
+  Row(
+  children: [
+    Expanded(
+      child: TextFormField(
+        controller: numero,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+        ],
+        decoration: const InputDecoration(
+          labelText: 'Número da casa *',
+          prefixIcon: Icon(Icons.numbers),
+          border: OutlineInputBorder(),
+        ),
+        validator: (v) {
+          if (v == null || v.trim().isEmpty) {
+            return 'Informe o número da casa';
+          }
+          return null;
+        },
+      ),
+    ),
+    const SizedBox(width: 10),
+    Expanded(
+      child: TextFormField(
+        controller: complemento,
+        decoration: const InputDecoration(
+          labelText: 'Complemento',
+          hintText: 'Casa, bloco...',
+          border: OutlineInputBorder(),
+        ),
+      ),
+    ),
   ],
-  decoration: const InputDecoration(
-    labelText: 'Número da casa *',
-    prefixIcon: Icon(Icons.numbers),
-    border: OutlineInputBorder(),
-  ),
-  validator: (v) {
-    if (v == null || v.trim().isEmpty) {
-      return 'Informe o número da casa';
-    }
-    return null;
-  },
 ),
                       ),
                       const SizedBox(width: 10),

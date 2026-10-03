@@ -297,6 +297,7 @@ class _TelaClientesState extends State<TelaClientes> {
       bool totalVisivel = true;
 String buscaCliente = '';
 String bairroFiltro = 'Todos os bairros';
+    String ruaFiltro = 'Todas as ruas';
 String dataFiltro = 'Todas as datas';
   double get totalMensal {
     return widget.store.clientes.fold<double>(0, (soma, cliente) {

@@ -339,6 +339,13 @@ String dataFiltro = 'Todas as datas';
 
       return correspondeBusca && correspondeBairro && correspondeRua;
 }).toList();
+      final ruasDisponiveis = widget.store.bairros
+    .where((bairro) =>
+        bairroFiltro == 'Todos os bairros' ||
+        bairro.nome == bairroFiltro)
+    .expand((bairro) => bairro.ruas)
+    .toSet()
+    .toList();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Clientes'),

@@ -2824,6 +2824,25 @@ Future<void> carregarClientes() async {
     );
 }
   Future<void> salvarBairrosERuas() async {
+      Future<void> salvarMensalidades() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('mensalidades', jsonEncode(mensalidades));
+}
+
+Future<void> carregarMensalidades() async {
+  final prefs = await SharedPreferences.getInstance();
+  final texto = prefs.getString('mensalidades');
+
+  mensalidades.clear();
+
+  if (texto == null || texto.isEmpty) return;
+
+  final List<dynamic> dados = jsonDecode(texto);
+
+  mensalidades.addAll(
+    dados.map((item) => Map<String, dynamic>.from(item as Map)),
+  );
+}
   final prefs = await SharedPreferences.getInstance();
 
   final dados = bairros.map((bairro) {

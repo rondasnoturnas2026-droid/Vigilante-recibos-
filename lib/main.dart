@@ -2823,8 +2823,7 @@ Future<void> carregarClientes() async {
       dados.map((item) => Map<String, String>.from(item as Map)),
     );
 }
-  Future<void> salvarBairrosERuas() async {
-      Future<void> salvarMensalidades() async {
+  Future<void> salvarMensalidades() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('mensalidades', jsonEncode(mensalidades));
 }
@@ -2843,6 +2842,8 @@ Future<void> carregarMensalidades() async {
     dados.map((item) => Map<String, dynamic>.from(item as Map)),
   );
 }
+
+Future<void> salvarBairrosERuas() async {
   final prefs = await SharedPreferences.getInstance();
 
   final dados = bairros.map((bairro) {
@@ -2853,10 +2854,7 @@ Future<void> carregarMensalidades() async {
     };
   }).toList();
 
-  await prefs.setString(
-    'bairros_ruas',
-    jsonEncode(dados),
-  );
+  await prefs.setString('bairros_ruas', jsonEncode(dados));
 }
 
 Future<void> carregarBairrosERuas() async {

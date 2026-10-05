@@ -38,6 +38,11 @@ jobs:
 
     - name: Instalar dependencias
       run: flutter pub get
+            - name: Manter assinatura debug entre builds de teste
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: Vigilante-recibos-debug-keystore-v1
 
     - name: Gerar APK
       run: flutter build apk --debug

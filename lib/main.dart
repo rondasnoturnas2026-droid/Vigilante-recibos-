@@ -479,9 +479,45 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
       },
     );
 
-    if (selecionados == null || selecionados.isEmpty) {
+        if (selecionados == null || selecionados.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecione pelo menos um
+        const SnackBar(
+          content: Text('Selecione pelo menos um cliente.'),
+        ),
+      );
+      return;
+    }
+
+    for (final indiceCliente in selecionados) {
+      final cliente = widget.store.clientes[indiceCliente];
+      final agora = DateTime.now();
+
+      widget.store.mensalidades.add({
+        'nome': cliente['nome'] ?? '',
+        'bairro': cliente['bairro'] ?? '',
+        'rua': cliente['rua'] ?? '',
+        'numero': cliente['numero'] ?? '',
+        'dia': cliente['dia'] ?? '',
+        'valor': cliente['valor'] ?? '0,00',
+        'formaPagamento': cliente['formaPagamento'] ?? 'Pix',
+        'status': 'pendente',
+        'mes': agora.month,
+        'ano': agora.year,
+      });
+    }
+
+    await widget.store.salvarMensalidades();
+    await _carregarMensalidades();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${selecionados.length} mensalidade(s) criada(s).',
+        ),
+      ),
+    );
 },
         icon: const Icon(Icons.add),
         label: const Text('Nova mensalidade'),

@@ -320,7 +320,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     builder: (dialogContext) => AlertDialog(
       title: const Text('Escolher cliente'),
       content: SizedBox(
-        width: double.maxFinite,
+        height: 300,
         child: ListView.builder(
           shrinkWrap: true,
           itemCount: widget.store.clientes.length,

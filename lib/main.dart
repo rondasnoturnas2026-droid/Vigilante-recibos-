@@ -189,7 +189,7 @@ return false;
               children: [
                 Expanded(
                   child: FilterChip(
-                    label: const Text('Pendentes'),
+                    label: const Text('Em aberto'),
                     selected: abaAtual == 0,
                     onSelected: (_) {
                       setState(() {

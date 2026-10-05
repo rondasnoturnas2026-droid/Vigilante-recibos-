@@ -132,77 +132,14 @@ store.carregarDadosVigilante();
 class TelaMensalidades extends StatefulWidget {
   final AppStore store;
 
-  const TelaFaturas({super.key, required this.store});
+  const TelaMensalidades({super.key, required this.store});
 
   @override
-  State<TelaFaturas> createState() => _TelaFaturasState();
+  State<TelaMensalidades> createState() => _TelaMensalidadesState();
 }
 
-class _TelaFaturasState extends State<TelaFaturas> {
+class _TelaMensalidadesState extends State<TelaMensalidades> {
   int abaAtual = 0;
-  
-  void initState() {
-    super.initState();
-    _carregarMensalidades();
-  }
-
-  Future<void> _carregarMensalidades() async {
-    await widget.store.carregarMensalidades();
-
-    if (!mounted) return;
-    setState(() {});
-  }
-    List<Map<String, dynamic>> get mensalidadesFiltradas {
-  return widget.store.mensalidades.where((mensalidade) {
-    final status = (mensalidade['status'] ?? 'PENDENTE')
-        .toString()
-        .toUpperCase();
-
-    if (abaAtual == 0) {
-      return status == 'PENDENTE';
-    }
-
-    if (abaAtual == 1) {
-      return status == 'RECEBIDO' || status == 'RECEBIDA';
-    }
-
-    if (abaAtual == 2) {
-  return status == 'INATIVO' || status == 'INATIVA';
-}
-return false;
-  }).toList();
-    }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Vigilante Recibos',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: FilterChip(
-                    label: const Text('Em aberto'),
-                    selected: abaAtual == 0,
-                    onSelected: (_) {
-                      setState(() {
-                        abaAtual = 0;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FilterChip(
-                    label: const Text('Recebidas'),
-                    selected: abaAtual == 1,
                     onSelected: (_) {
                       setState(() {
                         abaAtual = 1;

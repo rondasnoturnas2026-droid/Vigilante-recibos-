@@ -166,7 +166,10 @@ class _TelaFaturasState extends State<TelaFaturas> {
       return status == 'RECEBIDO' || status == 'RECEBIDA';
     }
 
-    return false;
+    if (abaAtual == 2) {
+  return status == 'INATIVO' || status == 'INATIVA';
+}
+return false;
   }).toList();
     }
   @override

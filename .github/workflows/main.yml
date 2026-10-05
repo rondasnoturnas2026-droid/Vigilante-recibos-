@@ -41,7 +41,11 @@ jobs:
 
     - name: Gerar APK
       run: flutter build apk --debug
-
+      - name: Manter assinatura debug entre builds de teste
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: vigilante-recibos-debug-keystore-v1
     - name: Gerar AAB
       run: flutter build appbundle --release
 

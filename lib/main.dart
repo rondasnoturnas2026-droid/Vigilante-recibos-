@@ -249,35 +249,61 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
             ),
           ),
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    abaAtual == 0
-                        ? Icons.receipt_long_outlined
-                        : abaAtual == 1
-                            ? Icons.check_circle_outline
-                            : Icons.person_off_outlined,
-                    size: 70,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(height: 15),
-                  Text(
-                    abaAtual == 0
-                        ? 'Nenhuma mensalidade pendente'
-                        : abaAtual == 1
-                            ? 'Nenhuma mensalidade recebida'
-                            : 'Nenhuma mensalidade inativa',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+  child: Builder(
+    builder: (context) {
+      final statusDesejado = abaAtual == 0
+          ? 'pendente'
+          : abaAtual == 1
+              ? 'recebida'
+              : 'inativo';
+
+      final mensalidadesFiltradas =
+          widget.store.mensalidades.where((mensalidade) {
+        final status =
+            (mensalidade['status'] ?? '').toString().toLowerCase();
+
+        return status == statusDesejado ||
+            (abaAtual == 2 && status == 'inativa');
+      }).toList();
+
+      if (mensalidadesFiltradas.isEmpty) {
+        return Center(
+          child: Text(
+            abaAtual == 0
+                ? 'Nenhuma mensalidade pendente'
+                : abaAtual == 1
+                    ? 'Nenhuma mensalidade recebida'
+                    : 'Nenhuma mensalidade inativa',
+          ),
+        );
+      }
+
+      return ListView.builder(
+        itemCount: mensalidadesFiltradas.length,
+        itemBuilder: (context, index) {
+          final mensalidade = mensalidadesFiltradas[index];
+
+          return Card(
+            child: ListTile(
+              title: Text(
+                (mensalidade['nome'] ?? 'Cliente').toString(),
+              ),
+              subtitle: Text(
+                'Bairro: ${mensalidade['bairro'] ?? '-'}\n'
+                'Dia: ${mensalidade['dia'] ?? '-'} | '
+                'Pagamento: ${mensalidade['formaPagamento'] ?? '-'}',
+              ),
+              isThreeLine: true,
+              trailing: Text(
+                'R\$ ${mensalidade['valor'] ?? '0,00'}',
               ),
             ),
-          ),
+          );
+        },
+      );
+    },
+  ),
+),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(

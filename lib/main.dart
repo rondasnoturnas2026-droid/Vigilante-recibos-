@@ -290,9 +290,25 @@ final totalMensalidades = mensalidadesFiltradas.fold<double>(
   },
 );
       return ListView.builder(
-        itemCount: mensalidadesFiltradas.length,
-        itemBuilder: (context, index) {
-          final mensalidade = mensalidadesFiltradas[index];
+        itemCount: mensalidadesFiltradas.length + 1,
+itemBuilder: (context, index) {
+  if (index == 0) {
+    return Card(
+      margin: const EdgeInsets.all(12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          'Total das mensalidades: R$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  final mensalidade = mensalidadesFiltradas[index - 1];
 
           return Card(
             child: ListTile(

@@ -675,15 +675,24 @@ itemBuilder: (context, index) {
 
     for (final indiceCliente in selecionados) {
       final cliente = widget.store.clientes[indiceCliente];
-      final agora = DateTime.now();
-        final mensalidadeJaExiste = widget.store.mensalidades.any((mensalidade) =>
-    mensalidade['nome'] == (cliente['nome'] ?? '') &&
-    mensalidade['bairro'] == (cliente['bairro'] ?? '') &&
-    mensalidade['rua'] == (cliente['rua'] ?? '') &&
-    mensalidade['numero'] == (cliente['numero'] ?? '') &&
-    mensalidade['mes'] == agora.month &&
-    mensalidade['ano'] == agora.year);
+      final mensalidadeJaExiste =
+    widget.store.mensalidades.any((mensalidade) {
+  String normalizar(Object? valor) =>
+      (valor ?? '').toString().trim().toLowerCase();
 
+  return normalizar(mensalidade['nome']) ==
+          normalizar(cliente['nome']) &&
+      normalizar(mensalidade['bairro']) ==
+          normalizar(cliente['bairro']) &&
+      normalizar(mensalidade['rua']) ==
+          normalizar(cliente['rua']) &&
+      normalizar(mensalidade['numero']) ==
+          normalizar(cliente['numero']) &&
+      normalizar(mensalidade['mes']) == agora.month.toString() &&
+      normalizar(mensalidade['ano']) == agora.year.toString();
+});
+
+if (mensalidadeJaExiste) continue;
 if (mensalidadeJaExiste) continue;
 
       widget.store.mensalidades.add({

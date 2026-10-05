@@ -363,7 +363,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     ],
   ),
 ),
-          ),
+          
           Expanded(
   child: Builder(
     builder: (context) {

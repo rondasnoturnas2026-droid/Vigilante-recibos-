@@ -243,52 +243,125 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
                 ),
               ],
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          Icon(Icons.location_on_outlined),
-                          Text('Bairro'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          Icon(Icons.calendar_today_outlined),
-                          Text('Dia'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          Icon(Icons.payments_outlined),
-                          Text('Pagamento'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 12),
+  child: Column(
+    children: [
+      Row(
+        children: [
+          Expanded(
+            child: DropdownButtonFormField<String>(
+              value: bairroFiltro,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'Bairro',
+                border: OutlineInputBorder(),
+              ),
+              items: [
+                'Todos os bairros',
+                ...bairrosDisponiveis,
+              ].toSet().map((bairro) {
+                return DropdownMenuItem(
+                  value: bairro,
+                  child: Text(bairro, overflow: TextOverflow.ellipsis),
+                );
+              }).toList(),
+              onChanged: (valor) {
+                if (valor == null) return;
+                setState(() {
+                  bairroFiltro = valor;
+                  ruaFiltro = 'Todas as ruas';
+                });
+              },
             ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: DropdownButtonFormField<String>(
+              value: ruaFiltro,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'Rua',
+                border: OutlineInputBorder(),
+              ),
+              items: [
+                'Todas as ruas',
+                ...ruasDisponiveis,
+              ].toSet().map((rua) {
+                return DropdownMenuItem(
+                  value: rua,
+                  child: Text(rua, overflow: TextOverflow.ellipsis),
+                );
+              }).toList(),
+              onChanged: (valor) {
+                if (valor == null) return;
+                setState(() {
+                  ruaFiltro = valor;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          Expanded(
+            child: DropdownButtonFormField<String>(
+              value: diaFiltro,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'Dia',
+                border: OutlineInputBorder(),
+              ),
+              items: [
+                'Todos os dias',
+                ...diasDisponiveis,
+              ].toSet().map((dia) {
+                return DropdownMenuItem(
+                  value: dia,
+                  child: Text(dia, overflow: TextOverflow.ellipsis),
+                );
+              }).toList(),
+              onChanged: (valor) {
+                if (valor == null) return;
+                setState(() {
+                  diaFiltro = valor;
+                });
+              },
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: DropdownButtonFormField<String>(
+              value: pagamentoFiltro,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: 'Pagamento',
+                border: OutlineInputBorder(),
+              ),
+              items: [
+                'Todas as formas',
+                ...formasPagamentoDisponiveis,
+              ].toSet().map((forma) {
+                return DropdownMenuItem(
+                  value: forma,
+                  child: Text(forma, overflow: TextOverflow.ellipsis),
+                );
+              }).toList(),
+              onChanged: (valor) {
+                if (valor == null) return;
+                setState(() {
+                  pagamentoFiltro = valor;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    ],
+  ),
+),
           ),
           Expanded(
   child: Builder(

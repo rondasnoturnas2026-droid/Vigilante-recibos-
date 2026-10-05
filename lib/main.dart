@@ -129,7 +129,7 @@ store.carregarDadosVigilante();
   }
 }
 
-class TelaFaturas extends StatefulWidget {
+class TelaMensalidades extends StatefulWidget {
   final AppStore store;
 
   const TelaFaturas({super.key, required this.store});

@@ -83,7 +83,7 @@ store.carregarDadosVigilante();
  store.carregarBairrosERuas(); 
     
   paginas = [
-  const TelaFaturas(),
+  TelaFaturas(store: store),
   TelaClientes(store: store),
   const TelaRelatorio(),
   TelaConfiguracoes(store: store),

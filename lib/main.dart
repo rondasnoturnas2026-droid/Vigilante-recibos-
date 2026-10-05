@@ -672,7 +672,7 @@ itemBuilder: (context, index) {
       );
       return;
     }
-
+final agora = DateTime.now();
     for (final indiceCliente in selecionados) {
       final cliente = widget.store.clientes[indiceCliente];
       final mensalidadeJaExiste =

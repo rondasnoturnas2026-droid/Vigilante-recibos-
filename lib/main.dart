@@ -144,6 +144,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   String bairroFiltro = 'Todos os bairros';
   String ruaFiltro = 'Todas as ruas';
   String diaFiltro = 'Todos os dias';
+    String buscaMensalidade = '';
   String pagamentoFiltro = 'Todas as formas';
 
   List<String> _valoresUnicos(String chave) {

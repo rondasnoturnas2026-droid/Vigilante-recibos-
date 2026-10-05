@@ -148,9 +148,10 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   }
 
   Future<void> _carregarMensalidades() async {
-    await widget.store.carregarMensalidades();
-    if (!mounted) return;
-    setState(() {});
+  await widget.store.carregarClientes();
+  await widget.store.carregarMensalidades();
+  if (!mounted) return;
+  setState(() {});
   }
   @override
   Widget build(BuildContext context) {

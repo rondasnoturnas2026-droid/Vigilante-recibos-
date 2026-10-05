@@ -140,7 +140,48 @@ class TelaMensalidades extends StatefulWidget {
 }
 
 class _TelaMensalidadesState extends State<TelaMensalidades> {
-  int abaAtual = 0;
+    int abaAtual = 0;
+  String bairroFiltro = 'Todos os bairros';
+  String ruaFiltro = 'Todas as ruas';
+  String diaFiltro = 'Todos os dias';
+  String pagamentoFiltro = 'Todas as formas';
+
+  List<String> _valoresUnicos(String chave) {
+    final valores = widget.store.mensalidades
+        .map((mensalidade) => (mensalidade[chave] ?? '').toString().trim())
+        .where((valor) => valor.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
+    return valores;
+  }
+
+  List<String> get bairrosDisponiveis => _valoresUnicos('bairro');
+
+  List<String> get ruasDisponiveis {
+    final ruas = widget.store.mensalidades
+        .where((mensalidade) =>
+            bairroFiltro == 'Todos os bairros' ||
+            (mensalidade['bairro'] ?? '').toString() == bairroFiltro)
+        .map((mensalidade) => (mensalidade['rua'] ?? '').toString().trim())
+        .where((rua) => rua.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
+    return ruas;
+  }
+
+  List<String> get diasDisponiveis {
+    final dias = _valoresUnicos('dia');
+    dias.sort((a, b) =>
+        (int.tryParse(a) ?? 0).compareTo(int.tryParse(b) ?? 0));
+    return dias;
+  }
+
+  List<String> get formasPagamentoDisponiveis =>
+      _valoresUnicos('formaPagamento');
   @override
   void initState() {
     super.initState();

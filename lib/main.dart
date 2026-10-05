@@ -444,7 +444,8 @@ itemBuilder: (context, index) {
               title: Text(
                 (mensalidade['nome'] ?? 'Cliente').toString(),
               ),
-              subtitle: Text(
+                            subtitle: Text(
+                'Rua: ${mensalidade['rua'] ?? '-'}, Nº ${mensalidade['numero'] ?? '-'}\n'
                 'Bairro: ${mensalidade['bairro'] ?? '-'}\n'
                 'Dia: ${mensalidade['dia'] ?? '-'} | '
                 'Pagamento: ${mensalidade['formaPagamento'] ?? '-'}',

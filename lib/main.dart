@@ -81,7 +81,7 @@ void initState() {
   super.initState();
 store.carregarDadosVigilante();
  store.carregarBairrosERuas(); 
-    
+ store.carregarMensalidades();   
   paginas = [
   TelaMensalidades(store: store),
   TelaClientes(store: store),

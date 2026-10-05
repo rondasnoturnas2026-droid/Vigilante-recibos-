@@ -106,7 +106,7 @@ store.carregarDadosVigilante();
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
-            label: 'Faturas',
+            label: 'Mensalidades',
           ),
           NavigationDestination(
             icon: Icon(Icons.people_outline),

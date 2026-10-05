@@ -2804,6 +2804,7 @@ String vigilanteLogoPretoBranco = '';
   final List<Bairro> bairros = [];
   final List<Morador> moradores = [];
     final List<Map<String, String>> clientes = [];
+    final List<Map<String, dynamic>> mensalidades = [];
 
 Future<void> salvarClientes() async {
   final prefs = await SharedPreferences.getInstance();

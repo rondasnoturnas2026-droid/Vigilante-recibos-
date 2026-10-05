@@ -141,6 +141,35 @@ class TelaMensalidades extends StatefulWidget {
 
 class _TelaMensalidadesState extends State<TelaMensalidades> {
   int abaAtual = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mensalidades'),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: FilterChip(
+                    label: const Text('Pendentes'),
+                    selected: abaAtual == 0,
+                    onSelected: (_) {
+                      setState(() {
+                        abaAtual = 0;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: FilterChip(
+                    label: const Text('Recebidas'),
+                    selected: abaAtual == 1,
                     onSelected: (_) {
                       setState(() {
                         abaAtual = 1;
@@ -224,17 +253,17 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
                     color: Colors.grey,
                   ),
                   const SizedBox(height: 15),
-                Text(
-  abaAtual == 0
-      ? 'Nenhuma mensalidade pendente'
-      : abaAtual == 1
-          ? 'Nenhuma mensalidade recebida'
-          : 'Nenhuma mensalidade inativa',
-  style: const TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w500,
-  ),
-),
+                  Text(
+                    abaAtual == 0
+                        ? 'Nenhuma mensalidade pendente'
+                        : abaAtual == 1
+                            ? 'Nenhuma mensalidade recebida'
+                            : 'Nenhuma mensalidade inativa',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ],
               ),
             ),

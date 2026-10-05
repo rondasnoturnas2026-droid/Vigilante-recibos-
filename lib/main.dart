@@ -152,6 +152,23 @@ class _TelaFaturasState extends State<TelaFaturas> {
     if (!mounted) return;
     setState(() {});
   }
+    List<Map<String, dynamic>> get mensalidadesFiltradas {
+  return widget.store.mensalidades.where((mensalidade) {
+    final status = (mensalidade['status'] ?? 'PENDENTE')
+        .toString()
+        .toUpperCase();
+
+    if (abaAtual == 0) {
+      return status == 'PENDENTE';
+    }
+
+    if (abaAtual == 1) {
+      return status == 'RECEBIDO' || status == 'RECEBIDA';
+    }
+
+    return false;
+  }).toList();
+    }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

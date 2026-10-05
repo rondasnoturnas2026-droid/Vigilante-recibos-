@@ -278,7 +278,17 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
           ),
         );
       }
+final totalMensalidades = mensalidadesFiltradas.fold<double>(
+  0.0,
+  (soma, mensalidade) {
+    final valor = (mensalidade['valor'] ?? '0').toString().replaceAll('R\$', '').trim();
+    final valorNumerico = valor.contains(',')
+        ? valor.replaceAll('.', '').replaceAll(',', '.')
+        : valor;
 
+    return soma + (double.tryParse(valorNumerico) ?? 0.0);
+  },
+);
       return ListView.builder(
         itemCount: mensalidadesFiltradas.length,
         itemBuilder: (context, index) {

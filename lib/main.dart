@@ -140,18 +140,7 @@ class TelaFaturas extends StatefulWidget {
 
 class _TelaFaturasState extends State<TelaFaturas> {
   int abaAtual = 0;
-  @override
-  void initState() {
-    super.initState();
-    _carregarMensalidades();
-  }
-
-  Future<void> _carregarMensalidades() async {
-    await widget.store.carregarMensalidades();
-
-    if (!mounted) return;
-    setState(() {});
-    @override
+  
   void initState() {
     super.initState();
     _carregarMensalidades();

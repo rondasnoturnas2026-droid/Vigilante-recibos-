@@ -281,7 +281,68 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () async {
+  if (widget.store.clientes.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cadastre um cliente primeiro.')),
+    );
+    return;
+  }
+
+  final indice = await showDialog<int>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Escolher cliente'),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: widget.store.clientes.length,
+          itemBuilder: (context, index) {
+            final cliente = widget.store.clientes[index];
+            return ListTile(
+              title: Text(cliente['nome']?.toString().isNotEmpty == true
+                  ? cliente['nome'].toString()
+                  : 'Sem nome'),
+              subtitle: Text(
+                'Dia: ${cliente['dia'] ?? '-'} | '
+                'Valor: R\$ ${cliente['valor'] ?? '0,00'}',
+              ),
+              onTap: () => Navigator.pop(dialogContext, index),
+            );
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext),
+          child: const Text('Cancelar'),
+        ),
+      ],
+    ),
+  );
+
+  if (indice == null) return;
+
+  final cliente = widget.store.clientes[indice];
+  final agora = DateTime.now();
+
+  widget.store.mensalidades.add({
+    'nome': cliente['nome'] ?? '',
+    'bairro': cliente['bairro'] ?? '',
+    'rua': cliente['rua'] ?? '',
+    'numero': cliente['numero'] ?? '',
+    'dia': cliente['dia'] ?? '',
+    'valor': cliente['valor'] ?? '0,00',
+    'formaPagamento': cliente['formaPagamento'] ?? 'Pix',
+    'status': 'pendente',
+    'mes': agora.month,
+    'ano': agora.year,
+  });
+
+  await widget.store.salvarMensalidades();
+  await _carregarMensalidades();
+},
         icon: const Icon(Icons.add),
         label: const Text('Nova mensalidade'),
       ),

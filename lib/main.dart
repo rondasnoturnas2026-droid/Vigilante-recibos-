@@ -348,7 +348,12 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     ),
   );
 
-  if (indice == null) return;
+  if (indice == null) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Selecione um cliente para criar a mensalidade')),
+  );
+  return;
+  }
 
   final cliente = widget.store.clientes[indice];
   final agora = DateTime.now();

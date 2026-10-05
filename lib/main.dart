@@ -3120,21 +3120,46 @@ Future<void> carregarMensalidades() async {
   if (texto == null || texto.isEmpty) return;
 
   final List<dynamic> dados = jsonDecode(texto);
+  final indicesPorChave = <String, int>{};
 
-  mensalidades.addAll(
-    dados.map((item) => Map<String, dynamic>.from(item as Map)),
-  );
+  String normalizar(Object? valor) =>
+      (valor ?? '').toString().trim().toLowerCase();
+
+  for (final item in dados) {
+    final mensalidade = Map<String, dynamic>.from(item as Map);
+
+    final chave = [
+      normalizar(mensalidade['nome']),
+      normalizar(mensalidade['bairro']),
+      normalizar(mensalidade['rua']),
+      normalizar(mensalidade['numero']),
+      normalizar(mensalidade['mes']),
+      normalizar(mensalidade['ano']),
+    ].join('|');
+
+    final indiceExistente = indicesPorChave[chave];
+
+    if (indiceExistente == null) {
+      indicesPorChave[chave] = mensalidades.length;
+      mensalidades.add(mensalidade);
+      continue;
+    }
+
+    final anterior = mensalidades[indiceExistente];
+    final anteriorRecebida =
+        normalizar(anterior['status']).contains('recebid');
+    final novaRecebida =
+        normalizar(mensalidade['status']).contains('recebid');
+
+    if (!anteriorRecebida && novaRecebida) {
+      mensalidades[indiceExistente] = mensalidade;
+    }
+  }
+
+  if (mensalidades.length != dados.length) {
+    await salvarMensalidades();
+  }
 }
-
-Future<void> salvarBairrosERuas() async {
-  final prefs = await SharedPreferences.getInstance();
-
-  final dados = bairros.map((bairro) {
-    return {
-      'id': bairro.id,
-      'nome': bairro.nome,
-      'ruas': bairro.ruas,
-    };
   }).toList();
 
   await prefs.setString('bairros_ruas', jsonEncode(dados));

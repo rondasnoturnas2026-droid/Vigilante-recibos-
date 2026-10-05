@@ -315,64 +315,171 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     return;
   }
 
-  final indice = await showDialog<int>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text('Escolher cliente'),
-      content: SizedBox(
-        height: 300,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: widget.store.clientes.length,
-          itemBuilder: (context, index) {
-            final cliente = widget.store.clientes[index];
-            return ListTile(
-              title: Text(cliente['nome']?.toString().isNotEmpty == true
-                  ? cliente['nome'].toString()
-                  : 'Sem nome'),
-              subtitle: Text(
-                'Dia: ${cliente['dia'] ?? '-'} | '
-                'Valor: R\$ ${cliente['valor'] ?? '0,00'}',
+      final selecionados = await showDialog<Set<int>>(
+      context: context,
+      builder: (dialogContext) {
+        final clientesMarcados = <int>{};
+        String bairroSelecionado = 'Todos os bairros';
+        String ruaSelecionada = 'Todas as ruas';
+
+        return StatefulBuilder(
+          builder: (context, atualizarDialogo) {
+            final bairros = widget.store.clientes
+                .map<String>((cliente) => (cliente['bairro'] ?? '').toString())
+                .where((bairro) => bairro.isNotEmpty)
+                .toSet()
+                .toList()
+              ..sort();
+
+            final ruas = widget.store.clientes
+                .where((cliente) =>
+                    bairroSelecionado == 'Todos os bairros' ||
+                    (cliente['bairro'] ?? '').toString() ==
+                        bairroSelecionado)
+                .map<String>((cliente) => (cliente['rua'] ?? '').toString())
+                .where((rua) => rua.isNotEmpty)
+                .toSet()
+                .toList()
+              ..sort();
+
+            final clientesFiltrados =
+                widget.store.clientes.asMap().entries.where((entrada) {
+              final cliente = entrada.value;
+              final bairro = (cliente['bairro'] ?? '').toString();
+              final rua = (cliente['rua'] ?? '').toString();
+
+              return (bairroSelecionado == 'Todos os bairros' ||
+                      bairro == bairroSelecionado) &&
+                  (ruaSelecionada == 'Todas as ruas' ||
+                      rua == ruaSelecionada);
+            }).toList();
+
+            return AlertDialog(
+              title: const Text('Selecionar clientes'),
+              content: SizedBox(
+                width: double.maxFinite,
+                height: 380,
+                child: Column(
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: bairroSelecionado,
+                      decoration: const InputDecoration(labelText: 'Bairro'),
+                      items: [
+                        'Todos os bairros',
+                        ...bairros,
+                      ].map((bairro) {
+                        return DropdownMenuItem(
+                          value: bairro,
+                          child: Text(bairro),
+                        );
+                      }).toList(),
+                      onChanged: (valor) {
+                        if (valor == null) return;
+                        atualizarDialogo(() {
+                          bairroSelecionado = valor;
+                          ruaSelecionada = 'Todas as ruas';
+                        });
+                      },
+                    ),
+                    DropdownButtonFormField<String>(
+                      value: ruaSelecionada,
+                      decoration: const InputDecoration(labelText: 'Rua'),
+                      items: [
+                        'Todas as ruas',
+                        ...ruas,
+                      ].map((rua) {
+                        return DropdownMenuItem(
+                          value: rua,
+                          child: Text(rua),
+                        );
+                      }).toList(),
+                      onChanged: (valor) {
+                        if (valor == null) return;
+                        atualizarDialogo(() {
+                          ruaSelecionada = valor;
+                        });
+                      },
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        atualizarDialogo(() {
+                          final todosMarcados = clientesFiltrados.every(
+                            (entrada) =>
+                                clientesMarcados.contains(entrada.key),
+                          );
+
+                          if (todosMarcados) {
+                            for (final entrada in clientesFiltrados) {
+                              clientesMarcados.remove(entrada.key);
+                            }
+                          } else {
+                            for (final entrada in clientesFiltrados) {
+                              clientesMarcados.add(entrada.key);
+                            }
+                          }
+                        });
+                      },
+                      child: const Text('Selecionar todos deste filtro'),
+                    ),
+                    Expanded(
+                      child: clientesFiltrados.isEmpty
+                          ? const Center(
+                              child: Text('Nenhum cliente neste filtro.'),
+                            )
+                          : ListView.builder(
+                              itemCount: clientesFiltrados.length,
+                              itemBuilder: (context, posicao) {
+                                final entrada = clientesFiltrados[posicao];
+                                final cliente = entrada.value;
+
+                                return CheckboxListTile(
+                                  value: clientesMarcados.contains(entrada.key),
+                                  title: Text(
+                                    (cliente['nome'] ?? 'Sem nome').toString(),
+                                  ),
+                                  subtitle: Text(
+                                    '${cliente['rua'] ?? ''}, '
+                                    '${cliente['numero'] ?? ''} • '
+                                    '${cliente['bairro'] ?? ''}',
+                                  ),
+                                  onChanged: (marcado) {
+                                    atualizarDialogo(() {
+                                      if (marcado == true) {
+                                        clientesMarcados.add(entrada.key);
+                                      } else {
+                                        clientesMarcados.remove(entrada.key);
+                                      }
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
               ),
-              onTap: () => Navigator.pop(dialogContext, index),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(
+                    dialogContext,
+                    clientesMarcados,
+                  ),
+                  child: Text('Criar (${clientesMarcados.length})'),
+                ),
+              ],
             );
           },
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: const Text('Cancelar'),
-        ),
-      ],
-    ),
-  );
+        );
+      },
+    );
 
-  if (indice == null) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Selecione um cliente para criar a mensalidade')),
-  );
-  return;
-  }
-
-  final cliente = widget.store.clientes[indice];
-  final agora = DateTime.now();
-
-  widget.store.mensalidades.add({
-    'nome': cliente['nome'] ?? '',
-    'bairro': cliente['bairro'] ?? '',
-    'rua': cliente['rua'] ?? '',
-    'numero': cliente['numero'] ?? '',
-    'dia': cliente['dia'] ?? '',
-    'valor': cliente['valor'] ?? '0,00',
-    'formaPagamento': cliente['formaPagamento'] ?? 'Pix',
-    'status': 'pendente',
-    'mes': agora.month,
-    'ano': agora.year,
-  });
-
-  await widget.store.salvarMensalidades();
-  await _carregarMensalidades();
+    if (selecionados == null || selecionados.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione pelo menos um
 },
         icon: const Icon(Icons.add),
         label: const Text('Nova mensalidade'),

@@ -82,7 +82,7 @@ void initState() {
 store.carregarDadosVigilante();
  store.carregarBairrosERuas(); 
  
-    
+   store.carregarMensalidades(); 
   paginas = [
   TelaMensalidades(store: store),
   TelaClientes(store: store),

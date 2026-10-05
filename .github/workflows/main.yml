@@ -36,7 +36,7 @@ jobs:
     - name: Limpar projeto
       run: flutter clean
 
-            - name: Instalar dependencias
+            - name: Instalar dependências
         run: flutter pub get
 
       - name: Manter assinatura debug entre builds de teste

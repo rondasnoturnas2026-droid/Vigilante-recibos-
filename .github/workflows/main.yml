@@ -11,33 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Baixar codigo
-      uses: actions/checkout@v4
+      - name: Baixar código
+        uses: actions/checkout@v4
 
-    - name: Configurar Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Configurar Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.35.2'
-        channel: 'stable'
-        cache: true
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.2'
+          channel: 'stable'
+          cache: true
 
-    - name: Criar estrutura Android se nao existir
-      run: |
-        if [ ! -d "android" ]; then
-          flutter create --platforms=android --project-name vigilante_recibos .
-        fi
+      - name: Criar estrutura Android se não existir
+        run: |
+          if [ ! -d "android" ]; then
+            flutter create --platforms=android --project-name vigilante_recibos .
+          fi
 
-    - name: Limpar projeto
-      run: flutter clean
+      - name: Limpar projeto
+        run: flutter clean
 
-
-          - name: Instalar dependências
+      - name: Instalar dependências
         run: flutter pub get
 
       - name: Manter assinatura debug entre builds de teste
@@ -48,19 +47,20 @@ jobs:
 
       - name: Gerar APK
         run: flutter build apk --debug
-    - name: Gerar AAB
-      run: flutter build appbundle --release
 
-    - name: Salvar APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug-apk
-        path: build/app/outputs/flutter-apk/app-debug.apk
+      - name: Gerar AAB
+        run: flutter build appbundle --release
 
-    - name: Salvar AAB
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release-aab
-        path: build/app/outputs/bundle/release/app-release.aab
+      - name: Salvar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+
+      - name: Salvar AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
         
 

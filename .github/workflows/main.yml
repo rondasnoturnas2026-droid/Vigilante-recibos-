@@ -36,9 +36,10 @@ jobs:
     - name: Limpar projeto
       run: flutter clean
 
-    - name: Instalar dependencias
-      run: flutter pub get
-                  - name: Manter assinatura debug entre builds de teste
+          - name: Instalar dependencias
+        run: flutter pub get
+
+      - name: Manter assinatura debug entre builds de teste
         uses: actions/cache@v4
         with:
           path: ~/.android/debug.keystore

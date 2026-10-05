@@ -130,7 +130,9 @@ store.carregarDadosVigilante();
 }
 
 class TelaFaturas extends StatefulWidget {
-  const TelaFaturas({super.key});
+  final AppStore store;
+
+  const TelaFaturas({super.key, required this.store});
 
   @override
   State<TelaFaturas> createState() => _TelaFaturasState();

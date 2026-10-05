@@ -3289,10 +3289,19 @@ Future<void> carregarMensalidades() async {
     await salvarMensalidades();
   }
 }
+  Future<void> salvarBairrosERuas() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final dados = bairros.map((bairro) {
+    return {
+      'id': bairro.id,
+      'nome': bairro.nome,
+      'ruas': bairro.ruas,
+    };
   }).toList();
 
   await prefs.setString('bairros_ruas', jsonEncode(dados));
-}
+  }
 
 Future<void> carregarBairrosERuas() async {
   final prefs = await SharedPreferences.getInstance();

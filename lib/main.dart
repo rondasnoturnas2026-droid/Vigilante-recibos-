@@ -286,17 +286,17 @@ return false;
                     color: Colors.grey,
                   ),
                   const SizedBox(height: 15),
-                  Text(
-                    abaAtual == 0
-                        ? 'Nenhuma fatura pendente'
-                        : abaAtual == 1
-                            ? 'Nenhuma fatura recebida'
-                            : 'Nenhum cliente inativo',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                Text(
+  abaAtual == 0
+      ? 'Nenhuma mensalidade pendente'
+      : abaAtual == 1
+          ? 'Nenhuma mensalidade recebida'
+          : 'Nenhum cliente inativo',
+  style: const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  ),
+),
                 ],
               ),
             ),

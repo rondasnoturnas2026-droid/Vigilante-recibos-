@@ -374,13 +374,27 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
               : 'inativo';
 
       final mensalidadesFiltradas =
-          widget.store.mensalidades.where((mensalidade) {
-        final status =
-            (mensalidade['status'] ?? '').toString().toLowerCase();
+    widget.store.mensalidades.where((mensalidade) {
+  final status =
+      (mensalidade['status'] ?? '').toString().toLowerCase();
 
-        return status == statusDesejado ||
-            (abaAtual == 2 && status == 'inativa');
-      }).toList();
+  final statusCorresponde = status == statusDesejado ||
+      (abaAtual == 2 && status == 'inativa');
+
+  final bairro = (mensalidade['bairro'] ?? '').toString();
+  final rua = (mensalidade['rua'] ?? '').toString();
+  final dia = (mensalidade['dia'] ?? '').toString();
+  final pagamento =
+      (mensalidade['formaPagamento'] ?? '').toString();
+
+  return statusCorresponde &&
+      (bairroFiltro == 'Todos os bairros' ||
+          bairro == bairroFiltro) &&
+      (ruaFiltro == 'Todas as ruas' || rua == ruaFiltro) &&
+      (diaFiltro == 'Todos os dias' || dia == diaFiltro) &&
+      (pagamentoFiltro == 'Todas as formas' ||
+          pagamento == pagamentoFiltro);
+}).toList();
 
       if (mensalidadesFiltradas.isEmpty) {
         return Center(

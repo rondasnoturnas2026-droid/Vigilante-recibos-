@@ -242,6 +242,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
                   ),
                 ),
               ],
+                      ),
             ),
           Padding(
   padding: const EdgeInsets.symmetric(horizontal: 12),

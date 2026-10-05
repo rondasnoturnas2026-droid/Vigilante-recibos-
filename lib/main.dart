@@ -456,7 +456,7 @@ itemBuilder: (context, index) {
         padding: const EdgeInsets.all(16),
         child: Text(
             'Total das mensalidades: R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}',
-          'Total das mensalidades: R$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}',
+          
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

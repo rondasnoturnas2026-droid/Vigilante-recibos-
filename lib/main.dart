@@ -693,7 +693,7 @@ itemBuilder: (context, index) {
 });
 
 if (mensalidadeJaExiste) continue;
-if (mensalidadeJaExiste) continue;
+
 
       widget.store.mensalidades.add({
         'nome': cliente['nome'] ?? '',

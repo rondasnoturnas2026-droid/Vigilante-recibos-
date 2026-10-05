@@ -306,7 +306,7 @@ return false;
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
         icon: const Icon(Icons.add),
-        label: const Text('Nova fatura'),
+        label: const Text('Nova mensalidade'),
       ),
     );
   }

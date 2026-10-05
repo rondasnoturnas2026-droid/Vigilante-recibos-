@@ -382,49 +382,59 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
               ),
             ),
           ),         
-          Expanded(
-  child: Builder(
-    builder: (context) {
-      final statusDesejado = abaAtual == 0
-          ? 'pendente'
-          : abaAtual == 1
-              ? 'recebida'
-              : 'inativo';
+                    Expanded(
+            child: Builder(
+              builder: (context) {
+                final statusDesejado = abaAtual == 0
+                    ? 'pendente'
+                    : abaAtual == 1
+                        ? 'recebida'
+                        : 'inativo';
 
-        final bairro = (mensalidade['bairro'] ?? '').toString();
-  final rua = (mensalidade['rua'] ?? '').toString();
-  final numero = (mensalidade['numero'] ?? '').toString();
-  final nome = (mensalidade['nome'] ?? '').toString();
-  final dia = (mensalidade['dia'] ?? '').toString();
-  final pagamento =
-      (mensalidade['formaPagamento'] ?? '').toString();
-  final busca = buscaMensalidade.trim().toLowerCase();
+                final mensalidadesFiltradas =
+                    widget.store.mensalidades.where((mensalidade) {
+                  final status =
+                      (mensalidade['status'] ?? '').toString().toLowerCase();
+                  final bairro =
+                      (mensalidade['bairro'] ?? '').toString();
+                  final rua = (mensalidade['rua'] ?? '').toString();
+                  final numero =
+                      (mensalidade['numero'] ?? '').toString();
+                  final nome = (mensalidade['nome'] ?? '').toString();
+                  final dia = (mensalidade['dia'] ?? '').toString();
+                  final pagamento =
+                      (mensalidade['formaPagamento'] ?? '').toString();
+                  final busca = buscaMensalidade.trim().toLowerCase();
 
-  final correspondeBusca = busca.isEmpty ||
-      nome.toLowerCase().contains(busca) ||
-      rua.toLowerCase().contains(busca) ||
-      numero.toLowerCase().contains(busca) ||
-      bairro.toLowerCase().contains(busca);
+                  final correspondeBusca = busca.isEmpty ||
+                      nome.toLowerCase().contains(busca) ||
+                      rua.toLowerCase().contains(busca) ||
+                      numero.toLowerCase().contains(busca) ||
+                      bairro.toLowerCase().contains(busca);
 
-  return statusCorresponde &&
-      correspondeBusca &&
-      (bairroFiltro == 'Todos os bairros' || bairro == bairroFiltro) &&
-      (ruaFiltro == 'Todas as ruas' || rua == ruaFiltro) &&
-      (diaFiltro == 'Todos os dias' || dia == diaFiltro) &&
-      (pagamentoFiltro == 'Todas as formas' ||
-          pagamento == pagamentoFiltro);
+                  return status == statusDesejado &&
+                      correspondeBusca &&
+                      (bairroFiltro == 'Todos os bairros' ||
+                          bairro == bairroFiltro) &&
+                      (ruaFiltro == 'Todas as ruas' ||
+                          rua == ruaFiltro) &&
+                      (diaFiltro == 'Todos os dias' ||
+                          dia == diaFiltro) &&
+                      (pagamentoFiltro == 'Todas as formas' ||
+                          pagamento == pagamentoFiltro);
+                }).toList();
 
-      if (mensalidadesFiltradas.isEmpty) {
-        return Center(
-          child: Text(
-            abaAtual == 0
-                ? 'Nenhuma mensalidade pendente'
-                : abaAtual == 1
-                    ? 'Nenhuma mensalidade recebida'
-                    : 'Nenhuma mensalidade inativa',
-          ),
-        );
-      }
+                if (mensalidadesFiltradas.isEmpty) {
+                  return Center(
+                    child: Text(
+                      abaAtual == 0
+                          ? 'Nenhuma mensalidade pendente'
+                          : abaAtual == 1
+                              ? 'Nenhuma mensalidade recebida'
+                              : 'Nenhuma mensalidade inativa',
+                    ),
+                  );
+                }
 final totalMensalidades = mensalidadesFiltradas.fold<double>(
   0.0,
   (soma, mensalidade) {

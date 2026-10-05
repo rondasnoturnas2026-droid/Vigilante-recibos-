@@ -308,6 +308,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
+            await widget.store.carregarClientes();
   if (widget.store.clientes.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Cadastre um cliente primeiro.')),

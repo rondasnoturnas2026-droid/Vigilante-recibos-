@@ -517,6 +517,15 @@ itemBuilder: (context, index) {
     for (final indiceCliente in selecionados) {
       final cliente = widget.store.clientes[indiceCliente];
       final agora = DateTime.now();
+        final mensalidadeJaExiste = widget.store.mensalidades.any((mensalidade) =>
+    mensalidade['nome'] == (cliente['nome'] ?? '') &&
+    mensalidade['bairro'] == (cliente['bairro'] ?? '') &&
+    mensalidade['rua'] == (cliente['rua'] ?? '') &&
+    mensalidade['numero'] == (cliente['numero'] ?? '') &&
+    mensalidade['mes'] == agora.month &&
+    mensalidade['ano'] == agora.year);
+
+if (mensalidadeJaExiste) continue;
 
       widget.store.mensalidades.add({
         'nome': cliente['nome'] ?? '',

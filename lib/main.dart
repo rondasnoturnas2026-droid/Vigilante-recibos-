@@ -291,7 +291,7 @@ return false;
       ? 'Nenhuma mensalidade pendente'
       : abaAtual == 1
           ? 'Nenhuma mensalidade recebida'
-          : 'Nenhum cliente inativo',
+          : 'Nenhuma mensalidade inativa',
   style: const TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,

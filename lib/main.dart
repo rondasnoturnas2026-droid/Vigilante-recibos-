@@ -507,7 +507,7 @@ return ListView.builder(
 );
       },
     ),
-    },
+
   ),
 ),
         ],

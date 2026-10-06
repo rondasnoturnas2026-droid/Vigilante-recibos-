@@ -746,6 +746,7 @@ class TelaClientes extends StatefulWidget {
 class _TelaClientesState extends State<TelaClientes> {
       bool totalVisivel = true;
 String buscaCliente = '';
+    bool buscaAberta = false;
 String bairroFiltro = 'Todos os bairros';
     String ruaFiltro = 'Todas as ruas';
 String dataFiltro = 'Todas as datas';

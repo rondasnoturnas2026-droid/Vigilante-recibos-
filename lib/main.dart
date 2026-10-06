@@ -796,30 +796,57 @@ String dataFiltro = 'Todas as datas';
     .expand((bairro) => bairro.ruas)
     .toSet()
     .toList();
-    return Scaffold(
+        return Scaffold(
       appBar: AppBar(
         title: const Text('Clientes'),
+        actions: [
+          IconButton(
+            tooltip: 'Buscar cliente',
+            icon: const Icon(Icons.search),
+            iconSize: 19,
+            visualDensity: VisualDensity.compact,
+            constraints: const BoxConstraints.tightFor(width: 36, height: 36),
+            padding: EdgeInsets.zero,
+            style: IconButton.styleFrom(
+              shape: const CircleBorder(),
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              foregroundColor:
+                  Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
+            onPressed: () {
+              showDialog<void>(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  title: const Text('Buscar cliente'),
+                  content: TextField(
+                    autofocus: true,
+                    onChanged: (texto) {
+                      setState(() {
+                        buscaCliente = texto;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Nome ou endereço',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      child: const Text('Fechar'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
-                  body: Column(
+      body: Column(
         children: [
-            Padding(
-  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-  child: TextField(
-    onChanged: (texto) {
-      setState(() {
-        buscaCliente = texto;
-      });
-    },
-    decoration: InputDecoration(
-      hintText: 'Buscar cliente por nome ou endereço',
-      prefixIcon: const Icon(Icons.search),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-      ),
-      filled: true,
-    ),
-  ),
-),Padding(
+          Padding(
   padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
   child: Row(
     children: [

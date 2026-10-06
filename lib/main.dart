@@ -939,10 +939,12 @@ String dataFiltro = 'Todas as datas';
                         });
                       },
                       icon: Icon(
-                        totalVisivel
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                      ),
+  totalVisivel
+      ? Icons.visibility_off_outlined
+      : Icons.visibility_outlined,
+  size: 20,
+  color: Colors.white,
+),
                     ),
                   ],
                 ),

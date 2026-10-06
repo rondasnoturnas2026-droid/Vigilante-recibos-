@@ -200,7 +200,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      
               appBar: AppBar(
         title: buscaAberta
             ? TextField(

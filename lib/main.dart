@@ -557,9 +557,10 @@ return ListView.builder(
       final selecionados = await showDialog<Set<int>>(
       context: context,
       builder: (dialogContext) {
-        final clientesMarcados = <int>{};
+                final clientesMarcados = <int>{};
         String bairroSelecionado = 'Todos os bairros';
         String ruaSelecionada = 'Todas as ruas';
+        String diaSelecionado = 'Todos os dias';
 
         return StatefulBuilder(
           builder: (context, atualizarDialogo) {

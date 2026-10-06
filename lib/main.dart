@@ -202,19 +202,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     return Scaffold(
       
               appBar: AppBar(
-        title: buscaAberta
-            ? TextField(
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Buscar mensalidade',
-                  border: InputBorder.none,
-                ),
-                onChanged: (texto) {
-                  setState(() {
-                    buscaMensalidade = texto;
-                  });
-                },
-              )
+        title: const Text('Mensalidades'),
             : const Text('Mensalidades'),
         actions: [
           IconButton(

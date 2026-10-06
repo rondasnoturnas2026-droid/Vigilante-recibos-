@@ -146,6 +146,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   String diaFiltro = 'Todos os dias';
     String buscaMensalidade = '';
   String pagamentoFiltro = 'Todas as formas';
+    bool totalVisivel = true;
 
   List<String> _valoresUnicos(String chave) {
     final valores = widget.store.mensalidades

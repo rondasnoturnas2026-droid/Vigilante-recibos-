@@ -643,6 +643,22 @@ return ListView.builder(
                         });
                       },
                     ),
+                      DropdownButtonFormField<String>(
+  value: diaSelecionado,
+  decoration: const InputDecoration(labelText: 'Dia de vencimento'),
+  items: [
+    'Todos os dias',
+    ...List.generate(31, (index) => '${index + 1}'),
+  ].map((dia) {
+    return DropdownMenuItem(value: dia, child: Text(dia));
+  }).toList(),
+  onChanged: (valor) {
+    if (valor == null) return;
+    atualizarDialogo(() {
+      diaSelecionado = valor;
+    });
+  },
+),
                     TextButton(
                       onPressed: () {
                         atualizarDialogo(() {

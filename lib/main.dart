@@ -407,7 +407,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
               },
               decoration: InputDecoration(
                 hintText: 'Buscar mensalidade por nome ou endereço',
-                prefixIcon: const Icon(Icons.search),
+                
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),

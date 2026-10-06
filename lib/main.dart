@@ -201,10 +201,39 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mensalidades'),
+              appBar: AppBar(
+        title: buscaAberta
+            ? TextField(
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: 'Buscar mensalidade',
+                  border: InputBorder.none,
+                ),
+                onChanged: (texto) {
+                  setState(() {
+                    buscaMensalidade = texto;
+                  });
+                },
+              )
+            : const Text('Mensalidades'),
+        actions: [
+          IconButton(
+            style: IconButton.styleFrom(
+              shape: const CircleBorder(),
+              backgroundColor: Colors.green.shade100,
+              minimumSize: const Size(44, 44),
+            ),
+            icon: Icon(buscaAberta ? Icons.close : Icons.search),
+            onPressed: () {
+              setState(() {
+                buscaAberta = !buscaAberta;
+                if (!buscaAberta) buscaMensalidade = '';
+              });
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
-      body: Column(
-        children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(

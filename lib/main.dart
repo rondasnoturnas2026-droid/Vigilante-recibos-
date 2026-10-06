@@ -582,16 +582,19 @@ return ListView.builder(
                 .toList()
               ..sort();
 
-            final clientesFiltrados =
+                        final clientesFiltrados =
                 widget.store.clientes.asMap().entries.where((entrada) {
               final cliente = entrada.value;
               final bairro = (cliente['bairro'] ?? '').toString();
               final rua = (cliente['rua'] ?? '').toString();
+              final dia = (cliente['dia'] ?? '').toString();
 
               return (bairroSelecionado == 'Todos os bairros' ||
                       bairro == bairroSelecionado) &&
                   (ruaSelecionada == 'Todas as ruas' ||
-                      rua == ruaSelecionada);
+                      rua == ruaSelecionada) &&
+                  (diaSelecionado == 'Todos os dias' ||
+                      dia == diaSelecionado);
             }).toList();
 
             return AlertDialog(

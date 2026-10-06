@@ -960,25 +960,20 @@ String dataFiltro = 'Todas as datas';
                     itemBuilder: (context, index) {
                       final cliente = clientesFiltrados[index];
 
-                      final endereco = [
-                        cliente['rua'],
-                        cliente['numero'],
-                        cliente['complemento'],
-                      ]
-                          .where(
-                            (parte) =>
-                                parte != null && parte.trim().isNotEmpty,
-                          )
-                          .join(', ');
+                      final endereco = <String>[
+  cliente['rua']?.toString() ?? '',
+  cliente['numero']?.toString() ?? '',
+  cliente['complemento']?.toString() ?? '',
+].where((parte) => parte.trim().isNotEmpty).join(', ');
 
-                      final detalhes = [
-                        if ((cliente['bairro'] ?? '').isNotEmpty)
-                          cliente['bairro'],
-                        if (endereco.isNotEmpty) endereco,
-                        if ((cliente['telefone'] ?? '').isNotEmpty)
-                          'Tel: ${cliente['telefone']}',
-                        'Dia: ${cliente['dia'] ?? ''} | Pagamento: ${cliente['formaPagamento'] ?? ''}',
-                      ].join('\n');
+final detalhes = <String>[
+  if ((cliente['bairro']?.toString() ?? '').isNotEmpty)
+    cliente['bairro'].toString(),
+  if (endereco.isNotEmpty) endereco,
+  if ((cliente['telefone']?.toString() ?? '').isNotEmpty)
+    'Tel: ${cliente['telefone']}',
+  'Dia: ${cliente['dia'] ?? '?'} | Pagamento: ${cliente['formaPagamento'] ?? '?'}',
+].join('\n');
 
                       return Card(
                         child: ListTile(

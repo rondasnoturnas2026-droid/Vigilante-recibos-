@@ -812,7 +812,7 @@ String dataFiltro = 'Todas as datas';
     },
     decoration: InputDecoration(
       hintText: 'Buscar cliente por nome ou endereço',
-      prefixIcon: const Icon(Icons.search),
+      prefixIcon: const Icon(Icons.search, size: 20),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
       ),

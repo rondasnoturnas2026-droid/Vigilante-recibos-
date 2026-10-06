@@ -234,6 +234,8 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
           const SizedBox(width: 8),
         ],
       ),
+              body: Column(
+        children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(

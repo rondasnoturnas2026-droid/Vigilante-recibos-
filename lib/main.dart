@@ -958,40 +958,21 @@ String dataFiltro = 'Todas as datas';
                       ),
                     ),
                     IconButton(
-                      tooltip: totalVisivel
-                          ? 'Ocultar total'
-                          : 'Mostrar total',
-                      onPressed: () {
-                        setState(() {
-                          totalVisivel = !totalVisivel;
-                        });
-                      },
-                      icon: Icon(
-                        totalVisivel
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-  child: clientesFiltrados.isEmpty
-      ? const Center(
-          child: Text('Nenhum cliente cadastrado'),
-        )
-      : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-                    itemCount: clientesFiltrados.length,
-                    itemBuilder: (context, index) {
-                      final cliente = clientesFiltrados[index];
-
-                      final endereco = [
-                        cliente['rua'],
-                        cliente['numero'],
-                        cliente['complemento'],
+  tooltip: totalVisivel ? 'Ocultar total' : 'Mostrar total',
+  constraints: const BoxConstraints.tightFor(width: 36, height: 36),
+  padding: EdgeInsets.zero,
+  onPressed: () {
+    setState(() {
+      totalVisivel = !totalVisivel;
+    });
+  },
+  icon: Icon(
+    totalVisivel
+        ? Icons.visibility_off_outlined
+        : Icons.visibility_outlined,
+    size: 20,
+  ),
+),
                       ]
                           .where(
                             (parte) =>

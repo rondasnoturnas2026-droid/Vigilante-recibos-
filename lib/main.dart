@@ -145,6 +145,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   String ruaFiltro = 'Todas as ruas';
   String diaFiltro = 'Todos os dias';
     String buscaMensalidade = '';
+    bool buscaAberta = false;
   String pagamentoFiltro = 'Todas as formas';
     bool totalVisivel = true;
 

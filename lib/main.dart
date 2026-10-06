@@ -454,14 +454,31 @@ itemBuilder: (context, index) {
     return Card(
       margin: const EdgeInsets.all(12),
       child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Text(
-            'Total das mensalidades: R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}',
-          
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Row(
+  children: [
+    Expanded(
+      child: Text(
+        totalVisivel
+            ? 'Total das mensalidades: R$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
+            : 'Total das mensalidades: R$ ••••',
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+    IconButton(
+      icon: Icon(
+        totalVisivel ? Icons.visibility : Icons.visibility_off,
+      ),
+      onPressed: () {
+        setState(() {
+          totalVisivel = !totalVisivel;
+        });
+      },
+    ),
+  ],
+),
         ),
       ),
     );

@@ -472,7 +472,7 @@ return ListView.builder(
           title: const Text('Total das mensalidades'),
           subtitle: Text(
             totalVisivel
-                ? 'R$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
+                ? 'R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
                 : 'R$ •••••',
           ),
           trailing: IconButton(

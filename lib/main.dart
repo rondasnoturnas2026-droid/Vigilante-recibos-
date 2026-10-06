@@ -473,7 +473,7 @@ return ListView.builder(
           subtitle: Text(
             totalVisivel
                 ? 'R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
-                : 'R$ •••••',
+            'R\$ 50,00'
           ),
           trailing: IconButton(
             icon: Icon(

@@ -439,68 +439,14 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
 final totalMensalidades = mensalidadesFiltradas.fold<double>(
   0.0,
   (soma, mensalidade) {
-    final valor = (mensalidade['valor'] ?? '0').toString().replaceAll('R\$', '').trim();
-    final valorNumerico = valor.contains(',')
-        ? valor.replaceAll('.', '').replaceAll(',', '.')
-        : valor;
+    442  final valor = (mensalidade['valor'] ?? 0).toString().replaceAll(r'R$', '').trim();
 
-    return soma + (double.tryParse(valorNumerico) ?? 0.0);
-  },
-);
-      return ListView.builder(
-        itemCount: mensalidadesFiltradas.length + 1,
-itemBuilder: (context, index) {
-  if (index == 0) {
-    return Card(
-      margin: const EdgeInsets.all(12),
-      child: Padding(
-        child: Row(
-  children: [
-    Expanded(
-      child: Text(
-        totalVisivel
-            ? 'Total das mensalidades: R$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
-            : 'Total das mensalidades: R$ ••••',
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ),
-    IconButton(
-      icon: Icon(
-        totalVisivel ? Icons.visibility : Icons.visibility_off,
-      ),
-      onPressed: () {
-        setState(() {
-          totalVisivel = !totalVisivel;
-        });
-      },
-    ),
-  ],
-),
-        ),
-      ),
-    );
-  }
+462  totalVisivel
+       ? 'Total das mensalidades: R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
+463    : 'Total das mensalidades: R\$ •••',
 
-  final mensalidade = mensalidadesFiltradas[index - 1];
+503  'R\$ ${mensalidade['valor'] ?? '0,00'}',
 
-          return Card(
-            child: ListTile(
-              title: Text(
-                (mensalidade['nome'] ?? 'Cliente').toString(),
-              ),
-                            subtitle: Text(
-                'Rua: ${mensalidade['rua'] ?? '-'}, Nº ${mensalidade['numero'] ?? '-'}\n'
-                'Bairro: ${mensalidade['bairro'] ?? '-'}\n'
-                'Dia: ${mensalidade['dia'] ?? '-'} | '
-                'Pagamento: ${mensalidade['formaPagamento'] ?? '-'}',
-              ),
-              isThreeLine: true,
-              trailing: Text(
-                'R\$ ${mensalidade['valor'] ?? '0,00'}',
-              ),
             ),
           );
         },

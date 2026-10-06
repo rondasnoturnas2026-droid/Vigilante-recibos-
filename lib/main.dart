@@ -220,7 +220,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
           IconButton(
             style: IconButton.styleFrom(
               shape: const CircleBorder(),
-              backgroundColor: Colors.green.shade100,
+              backgroundColor: Colors.blue.shade100,
               minimumSize: const Size(44, 44),
             ),
             icon: Icon(buscaAberta ? Icons.close : Icons.search),

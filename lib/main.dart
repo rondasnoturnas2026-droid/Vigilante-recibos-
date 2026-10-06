@@ -424,6 +424,13 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
                       (pagamentoFiltro == 'Todas as formas' ||
                           pagamento == pagamentoFiltro);
                 }).toList();
+                  if (abaAtual == 0) {
+  mensalidadesFiltradas.sort((a, b) {
+    final diaA = int.tryParse((a['dia'] ?? '0').toString()) ?? 0;
+    final diaB = int.tryParse((b['dia'] ?? '0').toString()) ?? 0;
+    return diaA.compareTo(diaB);
+  });
+                  }
 
                 if (mensalidadesFiltradas.isEmpty) {
                   return Center(

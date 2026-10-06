@@ -500,7 +500,7 @@ return ListView.builder(
           'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}\n'
           'Dia: ${mensalidade['dia'] ?? ''} | Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
         ),
-        trailing: Text('R$ $valor'),
+        trailing: Text('R\$ $valor'),
       ),
     );
   },

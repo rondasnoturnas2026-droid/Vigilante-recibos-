@@ -439,13 +439,13 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
 final totalMensalidades = mensalidadesFiltradas.fold<double>(
   0.0,
   (soma, mensalidade) {
-    442  final valor = (mensalidade['valor'] ?? 0).toString().replaceAll(r'R$', '').trim();
+     final valor = (mensalidade['valor'] ?? 0).toString().replaceAll(r'R$', '').trim();
 
-462  totalVisivel
+totalVisivel
        ? 'Total das mensalidades: R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
-463    : 'Total das mensalidades: R\$ •••',
+ : 'Total das mensalidades: R\$ •••',
 
-503  'R\$ ${mensalidade['valor'] ?? '0,00'}',
+'R\$ ${mensalidade['valor'] ?? '0,00'}',
 
             ),
           );

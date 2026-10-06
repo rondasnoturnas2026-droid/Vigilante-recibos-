@@ -446,18 +446,67 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
 final totalMensalidades = mensalidadesFiltradas.fold<double>(
   0.0,
   (soma, mensalidade) {
-     final valor = (mensalidade['valor'] ?? 0).toString().replaceAll(r'R$', '').trim();
+    final valorBruto = mensalidade['valor'];
+    final valor = valorBruto is num
+        ? valorBruto.toDouble()
+        : (double.tryParse(
+              valorBruto
+                  .toString()
+                  .replaceAll('R\$', '')
+                  .replaceAll('.', '')
+                  .replaceAll(',', '.')
+                  .trim(),
+            ) ??
+            0.0);
 
-totalVisivel
-       ? 'Total das mensalidades: R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
- : 'Total das mensalidades: R\$ •••',
+    return soma + valor;
+  },
+);
 
-'R\$ ${mensalidade['valor'] ?? '0,00'}',
-
+return ListView.builder(
+  itemCount: mensalidadesFiltradas.length + 1,
+  itemBuilder: (context, index) {
+    if (index == 0) {
+      return Card(
+        child: ListTile(
+          title: const Text('Total das mensalidades'),
+          subtitle: Text(
+            totalVisivel
+                ? 'R$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
+                : 'R$ •••••',
+          ),
+          trailing: IconButton(
+            icon: Icon(
+              totalVisivel ? Icons.visibility_off : Icons.visibility,
             ),
-          );
-        },
+            onPressed: () {
+              setState(() {
+                totalVisivel = !totalVisivel;
+              });
+            },
+          ),
+        ),
       );
+    }
+
+    final mensalidade = mensalidadesFiltradas[index - 1];
+    final valor = (mensalidade['valor'] ?? '0,00').toString();
+
+    return Card(
+      child: ListTile(
+        title: Text((mensalidade['nome'] ?? 'Cliente').toString()),
+        subtitle: Text(
+          'Bairro: ${mensalidade['bairro'] ?? ''}\n'
+          'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}\n'
+          'Dia: ${mensalidade['dia'] ?? ''} | Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
+        ),
+        trailing: Text('R$ $valor'),
+      ),
+    );
+  },
+);
+      },
+    ),
     },
   ),
 ),

@@ -696,6 +696,55 @@ final selecionados = await showDialog<Set<int>>(
                         });
                       },
                     ),
+                      FutureBuilder<String>(
+  future: SharedPreferences.getInstance().then(
+    (prefs) =>
+        prefs.getString('modoGeracaoMensalidade') ?? 'ao_longo_do_mes',
+  ),
+  builder: (context, snapshotModo) {
+    if (!snapshotModo.hasData) {
+      return const SizedBox(height: 56);
+    }
+
+    final modo = snapshotModo.data!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<String>(
+          value: modo,
+          decoration: const InputDecoration(
+            labelText: 'Modo de geração automática',
+          ),
+          items: const [
+            DropdownMenuItem(
+              value: 'ao_longo_do_mes',
+              child: Text('Ao longo do mês'),
+            ),
+            DropdownMenuItem(
+              value: 'mes_completo',
+              child: Text('Mês inteiro de uma vez'),
+            ),
+          ],
+          onChanged: (valor) async {
+            if (valor == null) return;
+
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('modoGeracaoMensalidade', valor);
+            atualizarDialogo(() {});
+          },
+        ),
+        const SizedBox(height: 6),
+        Text(
+          modo == 'mes_completo'
+              ? 'Gera agora as mensalidades de todos os Clientes para o mês atual.'
+              : 'Gera cada mensalidade quando faltarem os dias configurados para o vencimento.',
+        ),
+      ],
+    );
+  },
+),
+const SizedBox(height: 12),
                       FutureBuilder<int>(
   future: SharedPreferences.getInstance().then(
     (prefs) => prefs.getInt('diasAntecedenciaMensalidade') ?? 0,

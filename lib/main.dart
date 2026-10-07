@@ -849,10 +849,8 @@ else
                 },
     );
                   },
+          },
     );
-           },
-       
-             },
      if (selecionados == null || selecionados.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

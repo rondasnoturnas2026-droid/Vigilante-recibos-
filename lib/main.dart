@@ -666,6 +666,7 @@ final selecionados = await showDialog<Set<int>>(
             }).toList();
 
             return AlertDialog(
+                scrollable: true,
               title: const Text('Selecionar clientes'),
               content: SizedBox(
                 width: double.maxFinite,

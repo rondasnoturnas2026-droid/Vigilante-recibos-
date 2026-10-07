@@ -848,7 +848,12 @@ else
             );
                 },
     );
-    if (selecionados == null || selecionados.isEmpty) {
+                  },
+    );
+           },
+       
+             },
+     if (selecionados == null || selecionados.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Selecione pelo menos um cliente.'),

@@ -672,7 +672,7 @@ final selecionados = await showDialog<Set<int>>(
                 width: double.maxFinite,
                 height: MediaQuery.of(context).size.height * 0.72 -
     MediaQuery.of(context).viewInsets.bottom,
-                child: Column(
+                child: ListView(
                   children: [
                     DropdownButtonFormField<String>(
                       value: bairroSelecionado,

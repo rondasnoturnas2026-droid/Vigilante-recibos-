@@ -559,12 +559,13 @@ final selecionados = await showDialog<Set<int>>(
               final rua = (cliente['rua'] ?? '').toString();
               final dia = (cliente['dia'] ?? '').toString();
 
-              return (bairroSelecionado == 'Todos os bairros' ||
-                      bairro == bairroSelecionado) &&
-                  (ruaSelecionada == 'Todas as ruas' ||
-                      rua == ruaSelecionada) &&
-                  (diaSelecionado == 'Todos os dias' ||
-                      dia == diaSelecionado);
+              return
+    (bairroSelecionado == 'Todos os bairros' ||
+        bairro == bairroSelecionado) &&
+    (ruaSelecionada == 'Todas as ruas' ||
+        rua == ruaSelecionada) &&
+    (diaSelecionado == 'Todos os dias' ||
+        dia == diaSelecionado);
             }).toList();
 
             return AlertDialog(

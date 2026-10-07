@@ -518,17 +518,13 @@ return ListView.builder(
         onPressed: () async {
             await widget.store.carregarClientes();
   if (widget.store.clientes.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cadastre um cliente primeiro.')),
-        final clientesMarcados = <int>{};
-String bairroSelecionado = 'Todos os bairros';
-String ruaSelecionada = 'Todas as ruas';
-String diaSelecionado = 'Todos os dias';
-    );
-    return;
-  }
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Cadastre um cliente primeiro.')),
+  );
+  return;
+}
 
-      final selecionados = await showDialog<Set<int>>(
+final selecionados = await showDialog<Set<int>>(
       context: context,
       builder: (dialogContext) {
                 final clientesMarcados = <int>{};

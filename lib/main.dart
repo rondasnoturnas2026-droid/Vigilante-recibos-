@@ -669,7 +669,7 @@ final selecionados = await showDialog<Set<int>>(
               title: const Text('Selecionar clientes'),
               content: SizedBox(
                 width: double.maxFinite,
-                height: MediaQuery.of(dialogContext).size.height * 0.90.
+                height: MediaQuery.of(dialogContext).size.height * 0.72
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(

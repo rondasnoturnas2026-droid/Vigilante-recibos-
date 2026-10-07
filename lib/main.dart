@@ -801,7 +801,7 @@ const SizedBox(height: 12),
                     if (clientesFiltrados.isEmpty)
   const Padding(
     padding: EdgeInsets.all(16),
-    child: Text('Nenhum cliente neste filtro.'),
+    child: Text('Nenhum cliente neste filtro.')
   )
 else
   ...clientesFiltrados.map((entrada) {

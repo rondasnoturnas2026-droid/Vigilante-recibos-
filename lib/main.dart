@@ -195,6 +195,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   await widget.store.carregarClientes();
   await widget.store.carregarMensalidades();
   if (!mounted) return;
+      await _gerarMensalidadesAutomaticas();
   setState(() {});
   }
       Future<void> _gerarMensalidadesAutomaticas() async {

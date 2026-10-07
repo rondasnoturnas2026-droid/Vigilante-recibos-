@@ -671,7 +671,7 @@ final selecionados = await showDialog<Set<int>>(
                         if (valor == null) return;
                         atualizarDialogo(() {
                           bairroSelecionado = valor;
-                            clientesMarcados.clear();
+                            
                           ruaSelecionada = 'Todas as ruas';
                         });
                       },

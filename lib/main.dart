@@ -627,7 +627,7 @@ final selecionados = await showDialog<Set<int>>(
       initialValue: '${snapshot.data}',
       keyboardType: TextInputType.number,
       decoration: const InputDecoration(
-        labelText: 'Gerar quantos dias antes do vencimento?',
+        labelText: 'Gerar mensalidades automaticamente quantos dias antes do vencimento?',
         border: OutlineInputBorder(),
       ),
       onChanged: (valor) async {

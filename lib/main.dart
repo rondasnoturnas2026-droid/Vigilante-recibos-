@@ -663,12 +663,14 @@ else
             }).toList();
 
             return AlertDialog(
-                scrollable: true,
-              title: const Text('Selecionar clientes'),
-              content: SizedBox(
-                width: double.maxFinite,
-                height: MediaQuery.of(context).size.height * 0.72 -
-    MediaQuery.of(context).viewInsets.bottom,
+  insetPadding: const EdgeInsets.all(8),
+  title: const Text('Selecionar mensalidade'),
+  content: SizedBox(
+    width: double.maxFinite,
+    height: MediaQuery.of(context).size.height -
+        MediaQuery.of(context).viewInsets.bottom -
+        180,
+    child: ListView(
                 child: ListView(
                   children: [
                     DropdownButtonFormField<String>(

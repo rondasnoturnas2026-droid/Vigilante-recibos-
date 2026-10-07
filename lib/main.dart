@@ -630,7 +630,9 @@ final selecionados = await showDialog<Set<int>>(
 
         
 
-            return AlertDialog(
+            return StatefulBuilder(
+  builder: (context, atualizarDialogo) {
+    return AlertDialog(
   insetPadding: const EdgeInsets.all(8),
   title: const Text('Selecionar mensalidade'),
   content: SizedBox(

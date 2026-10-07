@@ -203,7 +203,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
       
               appBar: AppBar(
         title: const Text('Mensalidades'),
-            : const Text('Mensalidades'),
+        
         actions: [
           IconButton(
             style: IconButton.styleFrom(

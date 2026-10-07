@@ -671,7 +671,7 @@ else
         MediaQuery.of(context).viewInsets.bottom -
         180,
     child: ListView(
-                child: ListView(
+                
                   children: [
                     DropdownButtonFormField<String>(
                       value: bairroSelecionado,

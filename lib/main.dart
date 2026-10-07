@@ -838,19 +838,7 @@ else
         .toList()
       ..sort();
 
-    final ruas = widget.store.bairros
-        .where((bairro) =>
-            bairroSelecionado == 'Todos os bairros' ||
-            bairro.nome == bairroSelecionado)
-        .expand((bairro) => bairro.ruas)
-        .toSet()
-        .toList()
-      ..sort();
-
-    final clientesFiltrados =
-        widget.store.clientes.asMap().entries.where((entrada) {
-      final cliente = entrada.value;
-      final bairroCliente = (cliente['bairro'] ?? '').toString();
+    
       final ruaCliente = (cliente['rua'] ?? '').toString();
       final diaCliente = (cliente['dia'] ?? '').toString();
 

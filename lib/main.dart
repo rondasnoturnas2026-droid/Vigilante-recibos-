@@ -566,6 +566,7 @@ final selecionados = await showDialog<Set<int>>(
         rua == ruaSelecionada) &&
     (diaSelecionado == 'Todos os dias' ||
         dia == diaSelecionado);
+                            clientesMarcados.clear();
             }).toList();
 
             return AlertDialog(

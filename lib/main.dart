@@ -799,7 +799,7 @@ const SizedBox(height: 12),
                       child: const Text('Selecionar todos deste filtro'),
                       ),  
                     if (clientesFiltrados.isEmpty)
-  const Center(
+  const Padding(
     child: Padding(
       padding: EdgeInsets.all(16),
       child: Text('Nenhum cliente neste filtro.'),

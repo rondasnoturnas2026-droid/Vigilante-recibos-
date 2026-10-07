@@ -2124,7 +2124,7 @@ Future<void> _abrirTema() async {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.light_mode_outlined),
+              subtitle: const Text('Usar o tema do celular'),
               title: const Text('Claro'),
               trailing: temaAtual == ThemeMode.light
                   ? const Icon(Icons.check_circle)

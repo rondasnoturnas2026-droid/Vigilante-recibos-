@@ -888,6 +888,12 @@ const SizedBox(height: 12),
       return;
     }
 final agora = DateTime.now();
+            final prefs = await SharedPreferences.getInstance();
+final modoSalvo =
+    prefs.getString('modoGeracaoMensalidade') ?? 'ao_longo_do_mes';
+final diasAntes =
+    prefs.getInt('diasAntecedenciaMensalidade') ?? 0;
+final hoje = DateTime(agora.year, agora.month, agora.day);
     for (final indiceCliente in selecionados) {
       final cliente = widget.store.clientes[indiceCliente];
       final mensalidadeJaExiste =

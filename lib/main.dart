@@ -661,7 +661,7 @@ final selecionados = await showDialog<Set<int>>(
                           ruaSelecionada = 'Todas as ruas';
                         });
                       },
-                    
+                                        ),
                     DropdownButtonFormField<String>(
                       value: ruaSelecionada,
                       decoration: const InputDecoration(labelText: 'Rua'),

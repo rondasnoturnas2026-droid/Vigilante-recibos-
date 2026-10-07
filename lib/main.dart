@@ -630,9 +630,10 @@ final selecionados = await showDialog<Set<int>>(
       initialValue: '${snapshot.data}',
       keyboardType: TextInputType.number,
       decoration: const InputDecoration(
-        labelText: 'Gerar mensalidades automaticamente quantos dias antes do vencimento?',
-        border: OutlineInputBorder(),
-      ),
+  labelText: 'Dias antes do vencimento para gerar automaticamente',
+  helperText: 'Exemplo: 4 dias gera a mensalidade 4 dias antes do vencimento.',
+  border: OutlineInputBorder(),
+),
       onChanged: (valor) async {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setInt(

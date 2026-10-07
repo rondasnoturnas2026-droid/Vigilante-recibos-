@@ -828,40 +828,38 @@ const SizedBox(height: 12),
                         });
                       },
                       child: const Text('Selecionar todos deste filtro'),
-                    ),
-                    Expanded(
-                      child: clientesFiltrados.isEmpty
-                          ? const Center(
-                              child: Text('Nenhum cliente neste filtro.'),
-                            )
-                          : ListView.builder(
-                              itemCount: clientesFiltrados.length,
-                              itemBuilder: (context, posicao) {
-                                final entrada = clientesFiltrados[posicao];
-                                final cliente = entrada.value;
+                    if (clientesFiltrados.isEmpty)
+  const Center(
+    child: Padding(
+      padding: EdgeInsets.all(16),
+      child: Text('Nenhum cliente neste filtro.'),
+    ),
+  )
+else
+  ...clientesFiltrados.map((entrada) {
+    final cliente = entrada.value;
 
-                                return CheckboxListTile(
-                                  value: clientesMarcados.contains(entrada.key),
-                                  title: Text(
-                                    (cliente['nome'] ?? 'Sem nome').toString(),
-                                  ),
-                                  subtitle: Text(
-                                    '${cliente['rua'] ?? ''}, '
-                                    '${cliente['numero'] ?? ''} • '
-                                    '${cliente['bairro'] ?? ''}',
-                                  ),
-                                  onChanged: (marcado) {
-                                    atualizarDialogo(() {
-                                      if (marcado == true) {
-                                        clientesMarcados.add(entrada.key);
-                                      } else {
-                                        clientesMarcados.remove(entrada.key);
-                                      }
-                                    });
-                                  },
-                                );
-                              },
-                            ),
+    return CheckboxListTile(
+      value: clientesMarcados.contains(entrada.key),
+      title: Text(
+        (cliente['nome'] ?? 'Sem nome').toString(),
+      ),
+      subtitle: Text(
+        '${cliente['rua'] ?? ''}, '
+        '${cliente['numero'] ?? ''} • '
+        '${cliente['bairro'] ?? ''}',
+      ),
+      onChanged: (marcado) {
+        atualizarDialogo(() {
+          if (marcado == true) {
+            clientesMarcados.add(entrada.key);
+          } else {
+            clientesMarcados.remove(entrada.key);
+          }
+        });
+      },
+    );
+  }),
                     ),
                   ],
                 ),

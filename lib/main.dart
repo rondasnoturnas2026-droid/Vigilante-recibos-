@@ -612,6 +612,7 @@ final selecionados = await showDialog<Set<int>>(
                         if (valor == null) return;
                         atualizarDialogo(() {
                           ruaSelecionada = valor;
+                            clientesMarcados.clear();
                         });
                       },
                     ),

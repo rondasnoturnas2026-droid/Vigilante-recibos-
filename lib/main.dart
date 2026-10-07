@@ -199,83 +199,96 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   setState(() {});
   }
       Future<void> _gerarMensalidadesAutomaticas() async {
-    final prefs = await SharedPreferences.getInstance();
-    final diasAntes =
-        prefs.getInt('diasAntecedenciaMensalidade') ?? 0;
+  final prefs = await SharedPreferences.getInstance();
+  final modo =
+      prefs.getString('modoGeracaoMensalidade') ?? 'ao_longo_do_mes';
+  final diasAntes =
+      prefs.getInt('diasAntecedenciaMensalidade') ?? 0;
+  final gerarMesInteiro = modo == 'mes_completo';
 
-    if (diasAntes < 1 || diasAntes > 31) return;
+  if (!gerarMesInteiro && (diasAntes < 1 || diasAntes > 31)) {
+    return;
+  }
 
-    final agora = DateTime.now();
-    final hoje = DateTime(agora.year, agora.month, agora.day);
-    bool alterou = false;
+  final agora = DateTime.now();
+  final hoje = DateTime(agora.year, agora.month, agora.day);
+  bool alterou = false;
 
-    String normalizar(Object? valor) =>
-        (valor ?? '').toString().trim().toLowerCase();
+  String normalizar(Object? valor) =>
+      (valor ?? '').toString().trim().toLowerCase();
 
-    for (final cliente in widget.store.clientes) {
-      final dia = int.tryParse((cliente['dia'] ?? '').toString());
-      if (dia == null || dia < 1 || dia > 31) continue;
+  for (final cliente in widget.store.clientes) {
+    final dia = int.tryParse((cliente['dia'] ?? '').toString());
+    if (dia == null || dia < 1 || dia > 31) continue;
 
-      for (var deslocamentoMes = 0; deslocamentoMes <= 1; deslocamentoMes++) {
-        final mesBase = DateTime(
-          hoje.year,
-          hoje.month + deslocamentoMes,
-          1,
-        );
-        final ultimoDia = DateTime(
-          mesBase.year,
-          mesBase.month + 1,
-          0,
-        ).day;
-        final vencimento = DateTime(
-          mesBase.year,
-          mesBase.month,
-          dia > ultimoDia ? ultimoDia : dia,
-        );
-        final dataGeracao =
-            vencimento.subtract(Duration(days: diasAntes));
+    final quantidadeMeses = gerarMesInteiro ? 1 : 2;
 
-        if (hoje.isBefore(dataGeracao)) continue;
+    for (var deslocamentoMes = 0;
+        deslocamentoMes < quantidadeMeses;
+        deslocamentoMes++) {
+      final mesBase = DateTime(
+        hoje.year,
+        hoje.month + deslocamentoMes,
+        1,
+      );
 
-        final jaExiste = widget.store.mensalidades.any((mensalidade) {
-          return normalizar(mensalidade['nome']) ==
-                  normalizar(cliente['nome']) &&
-              normalizar(mensalidade['bairro']) ==
-                  normalizar(cliente['bairro']) &&
-              normalizar(mensalidade['rua']) ==
-                  normalizar(cliente['rua']) &&
-              normalizar(mensalidade['numero']) ==
-                  normalizar(cliente['numero']) &&
-              normalizar(mensalidade['mes']) ==
-                  vencimento.month.toString() &&
-              normalizar(mensalidade['ano']) ==
-                  vencimento.year.toString();
-        });
+      final ultimoDia = DateTime(
+        mesBase.year,
+        mesBase.month + 1,
+        0,
+      ).day;
 
-        if (!jaExiste) {
-          widget.store.mensalidades.add({
-            'nome': cliente['nome'] ?? '',
-            'bairro': cliente['bairro'] ?? '',
-            'rua': cliente['rua'] ?? '',
-            'numero': cliente['numero'] ?? '',
-            'dia': cliente['dia'] ?? '',
-            'valor': cliente['valor'] ?? '0,00',
-            'formaPagamento': cliente['formaPagamento'] ?? 'Pix',
-            'status': 'pendente',
-            'mes': vencimento.month,
-            'ano': vencimento.year,
-          });
-          alterou = true;
-        }
+      final vencimento = DateTime(
+        mesBase.year,
+        mesBase.month,
+        dia > ultimoDia ? ultimoDia : dia,
+      );
 
-        break;
+      final dataGeracao =
+          vencimento.subtract(Duration(days: diasAntes));
+
+      if (!gerarMesInteiro && hoje.isBefore(dataGeracao)) {
+        continue;
       }
-    }
 
-    if (alterou) {
-      await widget.store.salvarMensalidades();
+      final jaExiste = widget.store.mensalidades.any((mensalidade) {
+        return normalizar(mensalidade['nome']) ==
+                normalizar(cliente['nome']) &&
+            normalizar(mensalidade['bairro']) ==
+                normalizar(cliente['bairro']) &&
+            normalizar(mensalidade['rua']) ==
+                normalizar(cliente['rua']) &&
+            normalizar(mensalidade['numero']) ==
+                normalizar(cliente['numero']) &&
+            normalizar(mensalidade['mes']) ==
+                vencimento.month.toString() &&
+            normalizar(mensalidade['ano']) ==
+                vencimento.year.toString();
+      });
+
+      if (jaExiste) continue;
+
+      widget.store.mensalidades.add({
+        'nome': cliente['nome'] ?? '',
+        'bairro': cliente['bairro'] ?? '',
+        'rua': cliente['rua'] ?? '',
+        'numero': cliente['numero'] ?? '',
+        'dia': cliente['dia'] ?? '',
+        'valor': cliente['valor'] ?? '0,00',
+        'formaPagamento': cliente['formaPagamento'] ?? 'Pix',
+        'status': 'pendente',
+        'mes': vencimento.month,
+        'ano': vencimento.year,
+      });
+
+      alterou = true;
     }
-      }
+  }
+
+  if (alterou) {
+    await widget.store.salvarMensalidades();
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

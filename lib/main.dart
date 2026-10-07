@@ -520,6 +520,10 @@ return ListView.builder(
   if (widget.store.clientes.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Cadastre um cliente primeiro.')),
+        final clientesMarcados = <int>{};
+String bairroSelecionado = 'Todos os bairros';
+String ruaSelecionada = 'Todas as ruas';
+String diaSelecionado = 'Todos os dias';
     );
     return;
   }

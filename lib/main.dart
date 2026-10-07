@@ -658,9 +658,7 @@ else
         });
       },
     );
-  }),
-                        
-            }).toList();
+  
 
             return AlertDialog(
   insetPadding: const EdgeInsets.all(8),

@@ -613,6 +613,33 @@ return ListView.builder(
                         });
                       },
                     ),
+                      FutureBuilder<int>(
+  future: SharedPreferences.getInstance().then(
+    (prefs) => prefs.getInt('diasAntecedenciaMensalidade') ?? 0,
+  ),
+  builder: (context, snapshot) {
+    if (!snapshot.hasData) {
+      return const SizedBox(height: 56);
+    }
+
+    return TextFormField(
+      initialValue: '${snapshot.data}',
+      keyboardType: TextInputType.number,
+      decoration: const InputDecoration(
+        labelText: 'Gerar quantos dias antes do vencimento?',
+        border: OutlineInputBorder(),
+      ),
+      onChanged: (valor) async {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt(
+          'diasAntecedenciaMensalidade',
+          int.tryParse(valor) ?? 0,
+        );
+      },
+    );
+  },
+),
+const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
   value: diaSelecionado,
   decoration: const InputDecoration(labelText: 'Dia de vencimento'),

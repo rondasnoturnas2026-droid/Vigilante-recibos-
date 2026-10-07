@@ -628,40 +628,37 @@ final selecionados = await showDialog<Set<int>>(
         String ruaSelecionada = 'Todas as ruas';
         String diaSelecionado = 'Todos os dias';
 
-        return StatefulBuilder(
-          builder: (context, atualizarDialogo) {
-            final bairros = widget.store.clientes
-                .map<String>((cliente) => (cliente['bairro'] ?? '').toString())
-                .where((bairro) => bairro.isNotEmpty)
-                .toSet()
-                .toList()
-              ..sort();
-
-            final ruas = widget.store.clientes
-                .where((cliente) =>
-                    bairroSelecionado == 'Todos os bairros' ||
-                    (cliente['bairro'] ?? '').toString() ==
-                        bairroSelecionado)
-                .map<String>((cliente) => (cliente['rua'] ?? '').toString())
-                .where((rua) => rua.isNotEmpty)
-                .toSet()
-                .toList()
-              ..sort();
-
-                        final clientesFiltrados =
-                widget.store.clientes.asMap().entries.where((entrada) {
-              final cliente = entrada.value;
-              final bairro = (cliente['bairro'] ?? '').toString();
-              final rua = (cliente['rua'] ?? '').toString();
-              final dia = (cliente['dia'] ?? '').toString();
-
-              return
-    (bairroSelecionado == 'Todos os bairros' ||
-        bairro == bairroSelecionado) &&
-    (ruaSelecionada == 'Todas as ruas' ||
-        rua == ruaSelecionada) &&
-    (diaSelecionado == 'Todos os dias' ||
-        dia == diaSelecionado);
+        if (clientesFiltrados.isEmpty)
+  const Center(
+    child: Padding(
+      padding: EdgeInsets.all(16),
+      child: Text('Nenhum cliente neste filtro.'),
+    ),
+  )
+else
+  ...clientesFiltrados.map((entrada) {
+    final cliente = entrada.value;
+    return CheckboxListTile(
+      value: clientesMarcados.contains(entrada.key),
+      title: Text(
+        (cliente['nome'] ?? 'Sem nome').toString(),
+      ),
+      subtitle: Text(
+        '${cliente['rua'] ?? ''}, '
+        '${cliente['numero'] ?? ''} • '
+        '${cliente['bairro'] ?? ''}',
+      ),
+      onChanged: (marcado) {
+        atualizarDialogo(() {
+          if (marcado == true) {
+            clientesMarcados.add(entrada.key);
+          } else {
+            clientesMarcados.remove(entrada.key);
+          }
+        });
+      },
+    );
+  }),
                         
             }).toList();
 

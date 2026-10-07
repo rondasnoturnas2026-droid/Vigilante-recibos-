@@ -3252,7 +3252,7 @@ ${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
       printText: PrintTextSize(
         size: 1,
         text: recibo,
-          bool geracaoAutomaticaAtiva = false;
+          
       ),
     );
 

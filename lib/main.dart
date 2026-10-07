@@ -12,6 +12,9 @@ final ValueNotifier<ThemeMode> temaApp =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+    await SystemChrome.setEnabledSystemUIMode(
+  SystemUiMode.immersiveSticky,
+);
 
   final prefs = await SharedPreferences.getInstance();
   final temaSalvo = prefs.getString('temaApp') ?? 'automatico';

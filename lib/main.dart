@@ -863,45 +863,7 @@ else
                 ),
               ),
         );
-          final bairros = widget.store.bairros
-    .map((bairro) => bairro.nome)
-    .toSet()
-    .toList()
-  ..sort();
-
-final clientesFiltrados =
-    widget.store.clientes.asMap().entries.where((entrada) {
-  final cliente = entrada.value;
-  final bairroCliente = (cliente['bairro'] ?? '').toString();
-  final ruaCliente = (cliente['rua'] ?? '').toString();
-  final diaCliente = (cliente['dia'] ?? '').toString();
-
-  return
-      (bairroSelecionado == 'Todos os bairros' ||
-          bairroCliente == bairroSelecionado) &&
-      (ruaSelecionada == 'Todas as ruas' ||
-          ruaCliente == ruaSelecionada) &&
-      (diaSelecionado == 'Todos os dias' ||
-          diaCliente == diaSelecionado);
-}).toList();
-      return AlertDialog(
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  child: const Text('Cancelar'),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(
-                    dialogContext,
-                    clientesMarcados,
-                  ),
-                  child: Text('Criar (${clientesMarcados.length})'),
-                ),
-              ],
-            );
-                },
-    );
-                  },
+          
           
     );
      if (selecionados == null || selecionados.isEmpty) {

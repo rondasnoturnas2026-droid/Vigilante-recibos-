@@ -854,6 +854,7 @@ final clientesFiltrados =
       (diaSelecionado == 'Todos os dias' ||
           diaCliente == diaSelecionado);
 }).toList();
+      return AlertDialog(
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(dialogContext),

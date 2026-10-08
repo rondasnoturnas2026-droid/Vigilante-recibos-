@@ -840,7 +840,8 @@ else
     .toList()
   ..sort();
 
-final clientesFiltrados = widget.store.clientes.entries.where((entrada) {
+final clientesFiltrados =
+    widget.store.clientes.asMap().entries.where((entrada) {
   final cliente = entrada.value;
   final bairroCliente = (cliente['bairro'] ?? '').toString();
   final ruaCliente = (cliente['rua'] ?? '').toString();

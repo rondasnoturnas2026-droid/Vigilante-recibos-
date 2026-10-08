@@ -872,68 +872,72 @@ final clientesFiltrados = widget.store.clientes.entries.where((entrada) {
           
     );
      if (selecionados == null || selecionados.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Selecione pelo menos um cliente.'),
-        ),
-      );
-      return;
-    }
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Selecione pelo menos um cliente.'),
+    ),
+  );
+  return;
+}
+
 final agora = DateTime.now();
-            final prefs = await SharedPreferences.getInstance();
+final prefs = await SharedPreferences.getInstance();
 final modoSalvo =
     prefs.getString('modoGeracaoMensalidade') ?? 'ao_longo_do_mes';
 final diasAntes =
     prefs.getInt('diasAntecedenciaMensalidade') ?? 0;
 final hoje = DateTime(agora.year, agora.month, agora.day);
-    for (final indiceCliente in selecionados) {
-      final cliente = widget.store.clientes[indiceCliente];
-      final mensalidadeJaExiste =
-    widget.store.mensalidades.any((mensalidade) {
-  String normalizar(Object? valor) =>
-      (valor ?? '').toString().trim().toLowerCase();
 
-  return normalizar(mensalidade['nome']) ==
-          normalizar(cliente['nome']) &&
-      normalizar(mensalidade['bairro']) ==
-          normalizar(cliente['bairro']) &&
-      normalizar(mensalidade['rua']) ==
-          normalizar(cliente['rua']) &&
-      normalizar(mensalidade['numero']) ==
-          normalizar(cliente['numero']) &&
-      normalizar(mensalidade['mes']) == agora.month.toString() &&
-      normalizar(mensalidade['ano']) == agora.year.toString();
-});
+for (final indiceCliente in selecionados) {
+  final cliente = widget.store.clientes[indiceCliente];
 
-if (mensalidadeJaExiste) continue;
+  final mensalidadeJaExiste =
+      widget.store.mensalidades.any((mensalidade) {
+    String normalizar(Object? valor) =>
+        (valor ?? '').toString().trim().toLowerCase();
 
+    return normalizar(mensalidade['nome']) ==
+            normalizar(cliente['nome']) &&
+        normalizar(mensalidade['bairro']) ==
+            normalizar(cliente['bairro']) &&
+        normalizar(mensalidade['rua']) ==
+            normalizar(cliente['rua']) &&
+        normalizar(mensalidade['numero']) ==
+            normalizar(cliente['numero']) &&
+        normalizar(mensalidade['mes']) ==
+            agora.month.toString() &&
+        normalizar(mensalidade['ano']) ==
+            agora.year.toString();
+  });
 
-      widget.store.mensalidades.add({
-        'nome': cliente['nome'] ?? '',
-        'bairro': cliente['bairro'] ?? '',
-        'rua': cliente['rua'] ?? '',
-        'numero': cliente['numero'] ?? '',
-        'dia': cliente['dia'] ?? '',
-        'valor': cliente['valor'] ?? '0,00',
-        'formaPagamento': cliente['formaPagamento'] ?? 'Pix',
-        'status': 'pendente',
-        'mes': agora.month,
-        'ano': agora.year,
-      });
-    }
+  if (mensalidadeJaExiste) continue;
 
-    await widget.store.salvarMensalidades();
-    await _carregarMensalidades();
+  widget.store.mensalidades.add({
+    'nome': cliente['nome'] ?? '',
+    'bairro': cliente['bairro'] ?? '',
+    'rua': cliente['rua'] ?? '',
+    'numero': cliente['numero'] ?? '',
+    'dia': cliente['dia'] ?? '',
+    'valor': cliente['valor'] ?? '0,00',
+    'formaPagamento': cliente['formaPagamento'] ?? 'Pix',
+    'status': 'pendente',
+    'mes': agora.month,
+    'ano': agora.year,
+  });
+}
 
-    if (!mounted) return;
+await widget.store.salvarMensalidades();
+await carregarMensalidades();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${selecionados.length} mensalidade(s) criada(s).',
-        ),
-      ),
-    );
+if (!mounted) return;
+
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text(
+      '${selecionados.length} mensalidade(s) criada(s).',
+    ),
+  ),
+);
 },
         icon: const Icon(Icons.add),
         label: const Text('Nova mensalidade'),

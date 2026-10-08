@@ -660,7 +660,7 @@ final clientesFiltrados =
           ruaCliente == ruaSelecionada) &&
       (diaSelecionado == 'Todos os dias' ||
           diaCliente == diaSelecionado);
-}).map((entrada) => entrada.value).toList();
+}).toList();
            
                   children: [
                     DropdownButtonFormField<String>(

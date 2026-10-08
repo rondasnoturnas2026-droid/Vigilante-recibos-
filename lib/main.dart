@@ -659,17 +659,8 @@ final clientesFiltrados =
       (ruaSelecionada == 'Todas as ruas' ||
           ruaCliente == ruaSelecionada) &&
       (diaSelecionado == 'Todos os dias' ||
-       }).map((entrada) => entrada.value).toList();
-         
-    return AlertDialog(
-  insetPadding: const EdgeInsets.all(8),
-  title: const Text('Selecionar mensalidade'),
-  content: SizedBox(
-    width: double.maxFinite,
-    height: MediaQuery.of(context).size.height -
-        MediaQuery.of(context).viewInsets.bottom -
-        180,
-    child: ListView(
+          diaCliente == diaSelecionado);
+}).map((entrada) => entrada.value).toList();
            
                   children: [
                     DropdownButtonFormField<String>(

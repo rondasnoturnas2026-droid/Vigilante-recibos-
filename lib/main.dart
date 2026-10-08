@@ -834,22 +834,24 @@ else
                 ),
               ),
           final bairros = widget.store.bairros
-        .map((bairro) => bairro.nome)
-        .toSet()
-        .toList()
-      ..sort();
+    .map((bairro) => bairro.nome)
+    .toSet()
+    .toList()
+  ..sort();
 
-    
-      final ruaCliente = (cliente['rua'] ?? '').toString();
-      final diaCliente = (cliente['dia'] ?? '').toString();
+final clientesFiltrados = widget.store.clientes.entries.where((entrada) {
+  final cliente = entrada.value;
+  final bairroCliente = (cliente['bairro'] ?? '').toString();
+  final ruaCliente = (cliente['rua'] ?? '').toString();
+  final diaCliente = (cliente['dia'] ?? '').toString();
 
-      return (bairroSelecionado == 'Todos os bairros' ||
-              bairroCliente == bairroSelecionado) &&
-          (ruaSelecionada == 'Todas as ruas' ||
-              ruaCliente == ruaSelecionada) &&
-          (diaSelecionado == 'Todos os dias' ||
-              diaCliente == diaSelecionado);
-    }).toList();
+  return (bairroSelecionado == 'Todos os bairros' ||
+          bairroCliente == bairroSelecionado) &&
+      (ruaSelecionada == 'Todas as ruas' ||
+          ruaCliente == ruaSelecionada) &&
+      (diaSelecionado == 'Todos os dias' ||
+          diaCliente == diaSelecionado);
+}).toList();
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(dialogContext),

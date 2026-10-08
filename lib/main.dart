@@ -833,6 +833,7 @@ else
                   ],
                 ),
               ),
+        );
           final bairros = widget.store.bairros
     .map((bairro) => bairro.nome)
     .toSet()

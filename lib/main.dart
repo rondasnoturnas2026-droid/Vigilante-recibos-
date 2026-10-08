@@ -825,8 +825,9 @@ else
             clientesMarcados.remove(entrada.key);
           }
         });
-      },
-    }),
+            },
+    );
+  }),
   
                     
                   ],

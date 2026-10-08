@@ -922,7 +922,7 @@ for (final indiceCliente in selecionados) {
 }
 
 await widget.store.salvarMensalidades();
-await carregarMensalidadesDoMes();
+await widget.store.carregarMensalidades();
 
 if (!mounted) return;
 

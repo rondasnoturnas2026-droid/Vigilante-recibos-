@@ -632,6 +632,34 @@ final selecionados = await showDialog<Set<int>>(
 
             return StatefulBuilder(
   builder: (context, atualizarDialogo) {
+      final bairros = widget.store.bairros
+    .map((bairro) => bairro.nome)
+    .toSet()
+    .toList()
+  ..sort();
+
+final ruas = widget.store.bairros
+    .where((bairro) =>
+        bairroSelecionado == 'Todos os bairros' ||
+        bairro.nome == bairroSelecionado)
+    .expand((bairro) => bairro.ruas)
+    .toSet()
+    .toList()
+  ..sort();
+
+final clientesFiltrados =
+    widget.store.clientes.asMap().entries.where((entrada) {
+  final cliente = entrada.value;
+  final bairroCliente = (cliente['bairro'] ?? '').toString();
+  final ruaCliente = (cliente['rua'] ?? '').toString();
+  final diaCliente = (cliente['dia'] ?? '').toString();
+
+  return (bairroSelecionado == 'Todos os bairros' ||
+          bairroCliente == bairroSelecionado) &&
+      (ruaSelecionada == 'Todas as ruas' ||
+          ruaCliente == ruaSelecionada) &&
+      (diaSelecionado == 'Todos os dias' ||
+         
     return AlertDialog(
   insetPadding: const EdgeInsets.all(8),
   title: const Text('Selecionar mensalidade'),

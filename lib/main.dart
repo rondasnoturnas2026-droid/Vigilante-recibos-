@@ -662,7 +662,231 @@ final clientesFiltrados =
           diaCliente == diaSelecionado);
 }).toList();
         
-        
+                    return AlertDialog(
+                    title: const Text('Selecionar clientes'),
+                    scrollable: true,
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        DropdownButtonFormField<String>(
+                          value: bairroSelecionado,
+                          decoration: const InputDecoration(
+                            labelText: 'Bairro',
+                          ),
+                          items: [
+                            'Todos os bairros',
+                            ...bairros,
+                          ].map((bairro) {
+                            return DropdownMenuItem(
+                              value: bairro,
+                              child: Text(bairro),
+                            );
+                          }).toList(),
+                          onChanged: (valor) {
+                            if (valor == null) return;
+                            atualizarDialogo(() {
+                              bairroSelecionado = valor;
+                              ruaSelecionada = 'Todas as ruas';
+                            });
+                          },
+                        ),
+                        DropdownButtonFormField<String>(
+                          value: ruaSelecionada,
+                          decoration: const InputDecoration(
+                            labelText: 'Rua',
+                          ),
+                          items: [
+                            'Todas as ruas',
+                            ...ruas,
+                          ].map((rua) {
+                            return DropdownMenuItem(
+                              value: rua,
+                              child: Text(rua),
+                            );
+                          }).toList(),
+                          onChanged: (valor) {
+                            if (valor == null) return;
+                            atualizarDialogo(() {
+                              ruaSelecionada = valor;
+                            });
+                          },
+                        ),
+                        FutureBuilder<String>(
+                          future: SharedPreferences.getInstance().then(
+                            (prefs) =>
+                                prefs.getString('modoGeracaoMensalidade') ??
+                                'ao_longo_do_mes',
+                          ),
+                          builder: (context, snapshotModo) {
+                            if (!snapshotModo.hasData) {
+                              return const SizedBox(height: 56);
+                            }
+
+                            final modo = snapshotModo.data!;
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                DropdownButtonFormField<String>(
+                                  value: modo,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Modo de geração automática',
+                                  ),
+                                  items: const [
+                                    DropdownMenuItem(
+                                      value: 'ao_longo_do_mes',
+                                      child: Text('Ao longo do mês'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'mes_completo',
+                                      child: Text('Mês inteiro de uma vez'),
+                                    ),
+                                  ],
+                                  onChanged: (valor) async {
+                                    if (valor == null) return;
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.setString(
+                                      'modoGeracaoMensalidade',
+                                      valor,
+                                    );
+                                    atualizarDialogo(() {});
+                                  },
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  modo == 'mes_completo'
+                                      ? 'Gera agora as mensalidades de todos os Clientes para o mês atual.'
+                                      : 'Gera cada mensalidade quando faltarem os dias configurados para o vencimento.',
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        FutureBuilder<int>(
+                          future: SharedPreferences.getInstance().then(
+                            (prefs) =>
+                                prefs.getInt('diasAntecedenciaMensalidade') ??
+                                0,
+                          ),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const SizedBox(height: 56);
+                            }
+
+                            return TextFormField(
+                              initialValue: '${snapshot.data}',
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                labelText:
+                                    'Dias antes do vencimento para gerar automaticamente',
+                                helperText:
+                                    'Exemplo: 4 dias gera a mensalidade 4 dias antes do vencimento.',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (valor) async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.setInt(
+                                  'diasAntecedenciaMensalidade',
+                                  int.tryParse(valor) ?? 0,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        DropdownButtonFormField<String>(
+                          value: diaSelecionado,
+                          decoration: const InputDecoration(
+                            labelText: 'Dia de vencimento',
+                          ),
+                          items: [
+                            'Todos os dias',
+                            ...List.generate(31, (index) => '${index + 1}'),
+                          ].map((dia) {
+                            return DropdownMenuItem(
+                              value: dia,
+                              child: Text(dia),
+                            );
+                          }).toList(),
+                          onChanged: (valor) {
+                            if (valor == null) return;
+                            atualizarDialogo(() {
+                              diaSelecionado = valor;
+                            });
+                          },
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            atualizarDialogo(() {
+                              final todosMarcados = clientesFiltrados.every(
+                                (entrada) =>
+                                    clientesMarcados.contains(entrada.key),
+                              );
+
+                              if (todosMarcados) {
+                                for (final entrada in clientesFiltrados) {
+                                  clientesMarcados.remove(entrada.key);
+                                }
+                              } else {
+                                for (final entrada in clientesFiltrados) {
+                                  clientesMarcados.add(entrada.key);
+                                }
+                              }
+                            });
+                          },
+                          child: const Text('Selecionar todos deste filtro'),
+                        ),
+                        if (clientesFiltrados.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text('Nenhum cliente neste filtro.'),
+                          )
+                        else
+                          ...clientesFiltrados.map((entrada) {
+                            final cliente = entrada.value;
+
+                            return CheckboxListTile(
+                              value: clientesMarcados.contains(entrada.key),
+                              title: Text(
+                                (cliente['nome'] ?? 'Sem nome').toString(),
+                              ),
+                              subtitle: Text(
+                                '${cliente['rua'] ?? ''}, '
+                                '${cliente['numero'] ?? ''} • '
+                                '${cliente['bairro'] ?? ''}',
+                              ),
+                              onChanged: (marcado) {
+                                atualizarDialogo(() {
+                                  if (marcado == true) {
+                                    clientesMarcados.add(entrada.key);
+                                  } else {
+                                    clientesMarcados.remove(entrada.key);
+                                  }
+                                });
+                              },
+                            );
+                          }),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: const Text('Cancelar'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          Navigator.pop(
+                            dialogContext,
+                            Set<int>.from(clientesMarcados),
+                          );
+                        },
+                        child: const Text('Criar mensalidades'),
+                      ),
+                    ],
+                  );      
           
           
     );

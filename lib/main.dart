@@ -876,12 +876,13 @@ final clientesFiltrados =
   final ruaCliente = (cliente['rua'] ?? '').toString();
   final diaCliente = (cliente['dia'] ?? '').toString();
 
-  return (bairroSelecionado == 'Todos os bairros' ||
-          bairroCliente == bairroSelecionado) &&
-      (ruaSelecionada == 'Todas as ruas' ||
-          ruaCliente == ruaSelecionada) &&
-      (diaSelecionado == 'Todos os dias' ||
-          diaCliente == diaSelecionado);
+  return
+    (bairroSelecionado == 'Todos os bairros' ||
+        bairroCliente == bairroSelecionado) &&
+    (ruaSelecionada == 'Todas as ruas' ||
+        ruaCliente == ruaSelecionada) &&
+    (diaSelecionado == 'Todos os dias' ||
+        diaCliente == diaSelecionado);
 }).toList();
       return AlertDialog(
               actions: [

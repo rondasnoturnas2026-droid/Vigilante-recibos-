@@ -888,7 +888,8 @@ final clientesFiltrados =
                     ],
                   );      
           
-          
+                },
+    );
                       
                         },
       );

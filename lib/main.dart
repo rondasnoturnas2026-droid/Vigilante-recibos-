@@ -905,7 +905,7 @@ for (final indiceCliente in selecionados) {
         normalizar(mensalidade['numero']) ==
             normalizar(cliente['numero']) &&
         normalizar(mensalidade['mes']) ==
-            agora.month.toString() &&
+            normalizar(mensalidade['mes']) == agora.month.toString() &&
         normalizar(mensalidade['ano']) ==
             agora.year.toString();
   });

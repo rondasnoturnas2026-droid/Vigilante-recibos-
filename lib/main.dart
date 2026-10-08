@@ -659,6 +659,7 @@ final clientesFiltrados =
       (ruaSelecionada == 'Todas as ruas' ||
           ruaCliente == ruaSelecionada) &&
       (diaSelecionado == 'Todos os dias' ||
+       }).map((entrada) => entrada.value).toList();
          
     return AlertDialog(
   insetPadding: const EdgeInsets.all(8),

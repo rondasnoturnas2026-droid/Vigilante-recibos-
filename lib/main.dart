@@ -1094,13 +1094,40 @@ String bairroFiltro = 'Todos os bairros';
     String ruaFiltro = 'Todas as ruas';
 String dataFiltro = 'Todas as datas';
   double get totalMensal {
-    return widget.store.clientes.fold<double>(0, (soma, cliente) {
-      final texto = (cliente['valor'] ?? '0')
-          .replaceAll('.', '')
-          .replaceAll(',', '.');
+  final busca = buscaCliente.trim().toLowerCase();
 
-      return soma + (double.tryParse(texto) ?? 0);
-    });
+  return widget.store.clientes
+      .where((cliente) {
+        final nome = (cliente['nome'] ?? '').toString().toLowerCase();
+        final bairro = (cliente['bairro'] ?? '').toString().trim();
+        final rua = (cliente['rua'] ?? '').toString().trim();
+
+        final endereco = [
+          bairro,
+          rua,
+          cliente['numero'] ?? '',
+          cliente['complemento'] ?? '',
+        ].join(' ').toLowerCase();
+
+        final correspondeBusca =
+            busca.isEmpty || '$nome $endereco'.contains(busca);
+
+        final correspondeBairro =
+            bairroFiltro == 'Todos os bairros' || bairro == bairroFiltro;
+
+        final correspondeRua =
+            ruaFiltro == 'Todas as ruas' || rua == ruaFiltro;
+
+        return correspondeBusca && correspondeBairro && correspondeRua;
+      })
+      .fold<double>(0, (soma, cliente) {
+        final texto = (cliente['valor'] ?? '0')
+            .toString()
+            .replaceAll('.', '')
+            .replaceAll(',', '.');
+
+        return soma + (double.tryParse(texto) ?? 0);
+      });
   }
   @override
   void initState() {

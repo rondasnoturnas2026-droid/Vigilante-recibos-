@@ -613,7 +613,10 @@ return ListView.builder(
     final valor = (mensalidade['valor'] ?? '0,00').toString();
 
         return Card(
-      child: ListTile(
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      ListTile(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 8,
@@ -626,34 +629,34 @@ return ListView.builder(
           ),
         ),
         subtitle: Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  mainAxisSize: MainAxisSize.min,
-  children: [
-    Text(
-      'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}',
-      style: const TextStyle(fontSize: 17),
-    ),
-    const SizedBox(height: 2),
-    Row(
-      children: [
-        Text(
-          (mensalidade['dia'] ?? '').toString().padLeft(2, '0'),
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}',
+              style: const TextStyle(fontSize: 17),
+            ),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                Text(
+                  (mensalidade['dia'] ?? '').toString().padLeft(2, '0'),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            'Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
-            style: const TextStyle(fontSize: 17),
-          ),
-        ),
-      ],
-    ),
-  ],
-),
         trailing: Text(
           'R\$ $valor',
           style: const TextStyle(
@@ -662,7 +665,51 @@ return ListView.builder(
           ),
         ),
       ),
-    );
+      if (abaAtual == 0)
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 12, bottom: 8),
+            child: FilledButton.icon(
+              icon: const Icon(Icons.check),
+              label: const Text('Receber'),
+              onPressed: () async {
+                final confirmado = await showDialog<bool>(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: const Text('Confirmar recebimento'),
+                    content: const Text(
+                      'Deseja marcar esta mensalidade como recebida?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () =>
+                            Navigator.pop(dialogContext, false),
+                        child: const Text('Cancelar'),
+                      ),
+                      FilledButton(
+                        onPressed: () =>
+                            Navigator.pop(dialogContext, true),
+                        child: const Text('Confirmar'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmado != true) return;
+
+                mensalidade['status'] = 'recebida';
+                await widget.store.salvarMensalidades();
+
+                if (!mounted) return;
+                setState(() {});
+              },
+            ),
+          ),
+        ),
+    ],
+  ),
+);
   },
 );
       },

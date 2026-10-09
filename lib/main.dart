@@ -518,7 +518,8 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
                       (ruaFiltro == 'Todas as ruas' ||
                           rua == ruaFiltro) &&
                       (diaFiltro == 'Todos os dias' ||
-                          dia == diaFiltro) &&
+    (int.tryParse(dia) ?? -1) ==
+        (int.tryParse(diaFiltro) ?? -2)) &&
                       (pagamentoFiltro == 'Todas as formas' ||
                           pagamento == pagamentoFiltro);
                 }).toList();

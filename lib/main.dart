@@ -3596,7 +3596,7 @@ final valorFormatado =
        VIGILANTE RECIBOS
 ================================
 
-Morador: $nomecliente
+Cliente: $nomecliente
 
 Value: R\$ ${valorFormatado}
 

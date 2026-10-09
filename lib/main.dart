@@ -625,12 +625,35 @@ return ListView.builder(
             fontWeight: FontWeight.bold,
           ),
         ),
-        subtitle: Text(
-          'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}\n'
-          'Dia: ${mensalidade['dia'] ?? ''} | '
-          'Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
-          style: const TextStyle(fontSize: 17),
+        subtitle: Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    Text(
+      'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}',
+      style: const TextStyle(fontSize: 17),
+    ),
+    const SizedBox(height: 2),
+    Row(
+      children: [
+        Text(
+          (mensalidade['dia'] ?? '').toString().padLeft(2, '0'),
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            'Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
+            style: const TextStyle(fontSize: 17),
+          ),
+        ),
+      ],
+    ),
+  ],
+),
         trailing: Text(
           'R\$ $valor',
           style: const TextStyle(

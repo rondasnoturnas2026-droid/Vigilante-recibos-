@@ -665,6 +665,68 @@ return ListView.builder(
           ),
         ),
       ),
+                onTap: () async {
+          final acao = await showModalBottomSheet<String>(
+            context: context,
+            builder: (sheetContext) => SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: Text(
+                      (mensalidade['nome'] ?? 'Cliente').toString(),
+                    ),
+                    subtitle: const Text('Ações do cliente'),
+                  ),
+                  if (abaAtual == 0)
+                    ListTile(
+                      leading: const Icon(Icons.check_circle_outline),
+                      title: const Text('Receber'),
+                      onTap: () =>
+                          Navigator.pop(sheetContext, 'receber'),
+                    ),
+                  ListTile(
+                    leading: const Icon(Icons.close),
+                    title: const Text('Fechar'),
+                    onTap: () => Navigator.pop(sheetContext),
+                  ),
+                ],
+              ),
+            ),
+          );
+
+          if (acao != 'receber') return;
+
+          final confirmado = await showDialog<bool>(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              title: const Text('Confirmar recebimento'),
+              content: const Text(
+                'Deseja marcar esta mensalidade como recebida?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () =>
+                      Navigator.pop(dialogContext, false),
+                  child: const Text('Cancelar'),
+                ),
+                FilledButton(
+                  onPressed: () =>
+                      Navigator.pop(dialogContext, true),
+                  child: const Text('Confirmar'),
+                ),
+              ],
+            ),
+          );
+
+          if (confirmado != true) return;
+
+          mensalidade['status'] = 'recebida';
+          await widget.store.salvarMensalidades();
+
+          if (!mounted) return;
+          setState(() {});
+        },
       if (abaAtual == 0)
         Align(
           alignment: Alignment.centerRight,

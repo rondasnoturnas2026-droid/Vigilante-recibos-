@@ -319,6 +319,26 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
         ],
       ),
               body: Column(
+                  if (buscaAberta)
+  Padding(
+    padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+    child: TextField(
+      autofocus: true,
+      onChanged: (texto) {
+        setState(() {
+          buscaMensalidade = texto;
+        });
+      },
+      decoration: InputDecoration(
+        hintText: 'Buscar cliente por nome ou endereço',
+        prefixIcon: const Icon(Icons.search),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        filled: true,
+      ),
+    ),
+  ),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

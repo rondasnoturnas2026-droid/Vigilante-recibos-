@@ -721,11 +721,60 @@ return ListView.builder(
 
           if (confirmado != true) return;
 
-          mensalidade['status'] = 'recebida';
-          await widget.store.salvarMensalidades();
+mensalidade['status'] = 'recebida';
+await widget.store.salvarMensalidades();
 
-          if (!mounted) return;
-          setState(() {});
+if (!mounted) return;
+setState(() {});
+
+final imprimirAgora = await showDialog<bool>(
+  context: context,
+  builder: (dialogContext) => AlertDialog(
+    title: const Text('Recibo da mensalidade'),
+    content: const Text(
+      'Recebimento confirmado. Deseja imprimir o recibo agora?',
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, false),
+        child: const Text('Depois'),
+      ),
+      FilledButton.icon(
+        onPressed: () => Navigator.pop(dialogContext, true),
+        icon: const Icon(Icons.print),
+        label: const Text('Imprimir'),
+      ),
+    ],
+  ),
+);
+
+if (imprimirAgora != true) return;
+
+final agora = DateTime.now();
+final dataRecebimento =
+    '${agora.day.toString().padLeft(2, '0')}/'
+    '${agora.month.toString().padLeft(2, '0')}/'
+    '${agora.year}';
+
+final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
+  nomeMorador: (mensalidade['nome'] ?? 'Cliente').toString(),
+  valor: (mensalidade['valor'] ?? '0,00').toString(),
+  formaPagamento: (mensalidade['formaPagamento'] ?? 'Pix').toString(),
+  vencimento:
+      '${mensalidade['dia'] ?? ''}/${mensalidade['mes'] ?? agora.month}/${mensalidade['ano'] ?? agora.year}',
+  dataRecebimento: dataRecebimento,
+);
+
+if (!mounted) return;
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text(
+      sucesso
+          ? 'Recibo enviado para a impressora'
+          : 'Impressora não conectada',
+    ),
+  ),
+);
         },
       
     ],

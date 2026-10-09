@@ -699,45 +699,7 @@ return ListView.builder(
           ),
         ),
       ),
-      if (abaAtual == 0)
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 12, bottom: 8),
-            child: FilledButton.icon(
-              icon: const Icon(Icons.check),
-              label: const Text('Receber'),
-              onPressed: () async {
-                final confirmado = await showDialog<bool>(
-                  context: context,
-                  builder: (dialogContext) => AlertDialog(
-                    title: const Text('Confirmar recebimento'),
-                    content: const Text(
-                      'Deseja marcar esta mensalidade como recebida?',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () =>
-                            Navigator.pop(dialogContext, false),
-                        child: const Text('Cancelar'),
-                      ),
-                      FilledButton(
-                        onPressed: () =>
-                            Navigator.pop(dialogContext, true),
-                        child: const Text('Confirmar'),
-                      ),
-                    ],
-                  ),
-                );
-
-                if (confirmado != true) return;
-
-                mensalidade['status'] = 'recebida';
-                await widget.store.salvarMensalidades();
-
-                if (!mounted) return;
-                setState(() {});
-              },
+      
             ),
           ),
         ),

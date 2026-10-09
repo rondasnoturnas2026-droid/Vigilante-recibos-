@@ -331,7 +331,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
         });
       },
       decoration: InputDecoration(
-        hintText: 'Buscar cliente por nome ou endereço',
+        hintText: 'Buscar mensalidade por nome, bairro ou rua',
         prefixIcon: const Icon(Icons.search),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),

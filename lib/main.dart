@@ -1039,7 +1039,7 @@ final modoSalvo =
 final diasAntes =
     prefs.getInt('diasAntecedenciaMensalidade') ?? 0;
 final hoje = DateTime(agora.year, agora.month, agora.day);
-
+for (final indiceCliente in selecionados) {
 for (final indiceCliente in selecionados) {
   final cliente = widget.store.clientes[indiceCliente];
 

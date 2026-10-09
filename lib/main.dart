@@ -319,6 +319,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
         ],
       ),
               body: Column(
+                  children: [
                   if (buscaAberta)
   Padding(
     padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),

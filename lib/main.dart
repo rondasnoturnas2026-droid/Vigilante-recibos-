@@ -3598,7 +3598,7 @@ final valorFormatado =
 
 Morador: $nomeMorador
 
-Valor: R\$ $valor
+Valor: R$ $valorFormatado
 
 Pagamento: $formaPagamento
 

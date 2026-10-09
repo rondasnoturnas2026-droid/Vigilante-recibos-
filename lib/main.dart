@@ -612,7 +612,7 @@ return ListView.builder(
     final mensalidade = mensalidadesFiltradas[index - 1];
     final valor = (mensalidade['valor'] ?? '0,00').toString();
 
-        return Card(
+     return Card(
   child: Column(
     mainAxisSize: MainAxisSize.min,
     children: [
@@ -652,40 +652,6 @@ return ListView.builder(
                     'Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
                     style: const TextStyle(fontSize: 17),
                   ),
-                    if (abaAtual == 0)
-  Align(
-    alignment: Alignment.centerRight,
-    child: TextButton.icon(
-      icon: const Icon(Icons.check),
-      label: const Text('Receber'),
-      onPressed: () async {
-        final confirmado = await showDialog<bool>(
-          context: context,
-          builder: (dialogContext) => AlertDialog(
-            title: const Text('Confirmar recebimento'),
-            content: const Text(
-              'Deseja marcar esta mensalidade como recebida?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext, false),
-                child: const Text('Cancelar'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(dialogContext, true),
-                child: const Text('Confirmar'),
-              ),
-            ],
-          ),
-        );
-        if (confirmado != true) return;
-        mensalidade['status'] = 'recebida';
-        await widget.store.salvarMensalidades();
-        if (!mounted) return;
-        setState(() {});
-      },
-    ),
-  ),
                 ),
               ],
             ),
@@ -699,13 +665,48 @@ return ListView.builder(
           ),
         ),
       ),
-      
-            ),
+      if (abaAtual == 0)
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            icon: const Icon(Icons.check),
+            label: const Text('Receber'),
+            onPressed: () async {
+              final confirmado = await showDialog<bool>(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  title: const Text('Confirmar recebimento'),
+                  content: const Text(
+                    'Deseja marcar esta mensalidade como recebida?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.pop(dialogContext, false),
+                      child: const Text('Cancelar'),
+                    ),
+                    FilledButton(
+                      onPressed: () =>
+                          Navigator.pop(dialogContext, true),
+                      child: const Text('Confirmar'),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirmado != true) return;
+
+              mensalidade['status'] = 'recebida';
+              await widget.store.salvarMensalidades();
+
+              if (!mounted) return;
+              setState(() {});
+            },
           ),
         ),
     ],
   ),
-);
+);   
   },
 );
       },

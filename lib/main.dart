@@ -592,14 +592,33 @@ return ListView.builder(
     final valor = (mensalidade['valor'] ?? '0,00').toString();
 
     return Card(
-      child: ListTile(
-        title: Text((mensalidade['nome'] ?? 'Cliente').toString()),
-        subtitle: Text(
-          'Bairro: ${mensalidade['bairro'] ?? ''}\n'
-          'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}\n'
-          'Dia: ${mensalidade['dia'] ?? ''} | Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
-        ),
-        trailing: Text('R\$ $valor'),
+  child: ListTile(
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 8,
+    ),
+    title: Text(
+      (mensalidade['nome'] ?? 'Cliente').toString(),
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    subtitle: Text(
+      'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}\n'
+      'Dia: ${mensalidade['dia'] ?? ''} | '
+      'Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
+      style: const TextStyle(fontSize: 15),
+    ),
+    trailing: Text(
+      'R$ $valor',
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  ),
+);
       ),
     );
   },

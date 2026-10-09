@@ -3585,6 +3585,11 @@ class ImpressoraBluetoothService {
     if (!conectado) {
       return false;
     }
+      final valorNumerico = valor.contains(',')
+    ? valor.replaceAll('.', '').replaceAll(',', '.')
+    : valor;
+final valorFormatado =
+    double.tryParse(valorNumerico)?.toStringAsFixed(2).replaceAll('.', ',') ?? valor;
 
     final recibo = '''
 ================================

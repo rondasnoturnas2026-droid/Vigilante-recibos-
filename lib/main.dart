@@ -1014,7 +1014,7 @@ await widget.store.salvarMensalidades();
 await widget.store.carregarMensalidades();
 
 if (!mounted) return;
-
+setState(() {});
 ScaffoldMessenger.of(context).showSnackBar(
   SnackBar(
     content: Text(

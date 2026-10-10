@@ -895,6 +895,27 @@ final clientesFiltrados =
                             });
                           },
                         ),
+                          DropdownButtonFormField<String>(
+  value: diaSelecionado,
+  decoration: const InputDecoration(
+    labelText: 'Dia',
+  ),
+  items: [
+    'Todos os dias',
+    ...List.generate(31, (index) => 'Dia ${index + 1}'),
+  ].map((dia) {
+    return DropdownMenuItem<String>(
+      value: dia,
+      child: Text(dia),
+    );
+  }).toList(),
+  onChanged: (valor) {
+    if (valor == null) return;
+    atualizarDialogo(() {
+      diaSelecionado = valor;
+    });
+  },
+),
                         FutureBuilder<String>(
                           future: SharedPreferences.getInstance().then(
                             (prefs) =>

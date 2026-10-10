@@ -1321,6 +1321,232 @@ ScaffoldMessenger.of(context).showSnackBar(
       ),
     );
       }
+      Future<void> _marcarRetorno(
+    Map<String, dynamic> mensalidade,
+  ) async {
+    final hoje = DateTime.now();
+
+    final data = await showDatePicker(
+      context: context,
+      initialDate: DateTime(hoje.year, hoje.month, hoje.day),
+      firstDate: DateTime(hoje.year, hoje.month, hoje.day),
+      lastDate: DateTime(2100),
+    );
+
+    if (data == null) return;
+
+    mensalidade['retorno'] =
+        '${data.day.toString().padLeft(2, '0')}/'
+        '${data.month.toString().padLeft(2, '0')}/'
+        '${data.year}';
+
+    await widget.store.salvarMensalidades();
+
+    if (!mounted) return;
+    setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Retorno marcado para ${mensalidade['retorno']}.'),
+      ),
+    );
+  }
+
+  Future<void> _editarMensalidade(
+    Map<String, dynamic> mensalidade,
+  ) async {
+    final valorController = TextEditingController(
+      text: (mensalidade['valor'] ?? '0,00').toString(),
+    );
+    String formaPagamento =
+        (mensalidade['formaPagamento'] ?? 'Pix').toString();
+
+    final salvou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Editar mensalidade'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: valorController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Valor',
+              ),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              value: formaPagamento,
+              decoration: const InputDecoration(
+                labelText: 'Forma de pagamento',
+              ),
+              items: const [
+                DropdownMenuItem(value: 'Pix', child: Text('Pix')),
+                DropdownMenuItem(
+                  value: 'Dinheiro',
+                  child: Text('Dinheiro'),
+                ),
+                DropdownMenuItem(value: 'Cartão', child: Text('Cartão')),
+              ],
+              onChanged: (valor) {
+                if (valor != null) formaPagamento = valor;
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+
+    if (salvou != true) {
+      valorController.dispose();
+      return;
+    }
+
+    final novoValor = valorController.text.trim();
+    valorController.dispose();
+
+    if (novoValor.isEmpty) return;
+
+    mensalidade['valor'] = novoValor;
+    mensalidade['formaPagamento'] = formaPagamento;
+
+    await widget.store.salvarMensalidades();
+
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  Future<void> _receberMesesAdiantados(
+    Map<String, dynamic> mensalidade,
+  ) async {
+    final quantidadeController = TextEditingController(text: '1');
+
+    final quantidade = await showDialog<int>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Meses adiantados'),
+        content: TextField(
+          controller: quantidadeController,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Quantidade de meses',
+            helperText: 'Informe de 1 a 12, contando este mês.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(
+                dialogContext,
+                int.tryParse(quantidadeController.text),
+              );
+            },
+            child: const Text('Confirmar'),
+          ),
+        ],
+      ),
+    );
+
+    quantidadeController.dispose();
+
+    if (quantidade == null) return;
+
+    if (quantidade < 1 || quantidade > 12) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Informe uma quantidade de 1 a 12.')),
+      );
+      return;
+    }
+
+    final mesBase =
+        int.tryParse((mensalidade['mes'] ?? '').toString()) ??
+            DateTime.now().month;
+    final anoBase =
+        int.tryParse((mensalidade['ano'] ?? '').toString()) ??
+            DateTime.now().year;
+
+    String normalizar(Object? valor) =>
+        (valor ?? '').toString().trim().toLowerCase();
+
+    for (var i = 0; i < quantidade; i++) {
+      final data = DateTime(anoBase, mesBase + i, 1);
+
+      final existente = widget.store.mensalidades.where((item) {
+        return normalizar(item['nome']) == normalizar(mensalidade['nome']) &&
+            normalizar(item['bairro']) ==
+                normalizar(mensalidade['bairro']) &&
+            normalizar(item['rua']) == normalizar(mensalidade['rua']) &&
+            normalizar(item['numero']) ==
+                normalizar(mensalidade['numero']) &&
+            normalizar(item['mes']) == data.month.toString() &&
+            normalizar(item['ano']) == data.year.toString();
+      }).firstOrNull;
+
+      if (existente != null) {
+        existente['status'] = 'recebida';
+      } else {
+        final adiantada = Map<String, dynamic>.from(mensalidade);
+        adiantada['mes'] = data.month;
+        adiantada['ano'] = data.year;
+        adiantada['status'] = 'recebida';
+        widget.store.mensalidades.add(adiantada);
+      }
+    }
+
+    await widget.store.salvarMensalidades();
+
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  Future<void> _inativarCliente(
+    Map<String, dynamic> mensalidade,
+  ) async {
+    final confirmado = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Inativar cliente'),
+        content: const Text(
+          'Deseja mover esta mensalidade para a lista de inativos?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Inativar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmado != true) return;
+
+    mensalidade['status'] = 'inativo';
+    await widget.store.salvarMensalidades();
+
+    if (!mounted) return;
+    setState(() {});
+  }
 }
 
 

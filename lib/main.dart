@@ -808,45 +808,32 @@ return ListView.builder(
                                       ),
                                     );
 
-                                    if (imprimirAgora != true) return;
+                                    final acaoRecibo = await showDialog<String>(
+  context: context,
+  builder: (dialogContext) => AlertDialog(
+    title: const Text('Recibo da mensalidade'),
+    content: const Text(
+      'Recebimento confirmado. O que deseja fazer com o recibo?',
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, 'nao'),
+        child: const Text('Não'),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, 'whatsapp'),
+        child: const Text('Enviar pelo WhatsApp'),
+      ),
+      FilledButton.icon(
+        onPressed: () => Navigator.pop(dialogContext, 'imprimir'),
+        icon: const Icon(Icons.print),
+        label: const Text('Imprimir'),
+      ),
+    ],
+  ),
+);
 
-                                    final agora = DateTime.now();
-                                    final dataRecebimento =
-                                        '${agora.day.toString().padLeft(2, '0')}/'
-                                        '${agora.month.toString().padLeft(2, '0')}/'
-                                        '${agora.year}';
-
-                                    final sucesso =
-                                        await ImpressoraBluetoothService
-                                            .imprimirRecibo(
-                                      nomeMorador:
-                                          (mensalidade['nome'] ?? 'Cliente')
-                                              .toString(),
-                                      valor:
-                                          (mensalidade['valor'] ?? '0,00')
-                                              .toString(),
-                                      formaPagamento:
-                                          (mensalidade['formaPagamento'] ??
-                                                  'Pix')
-                                              .toString(),
-                                      vencimento:
-                                          '${mensalidade['dia'] ?? ''}/'
-                                          '${mensalidade['mes'] ?? agora.month}/'
-                                          '${mensalidade['ano'] ?? agora.year}',
-                                      dataRecebimento: dataRecebimento,
-                                    );
-
-                                    if (!mounted) return;
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          sucesso
-                                              ? 'Recibo enviado para a impressora'
-                                              : 'Impressora não conectada',
-                                        ),
-                                      ),
-                                    );
+if (acaoRecibo != 'imprimir') return;
                                   },
                                   icon: const Icon(
                                     Icons.check_circle_outline,

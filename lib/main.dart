@@ -609,180 +609,212 @@ return ListView.builder(
     }
 
     final mensalidade = mensalidadesFiltradas[index - 1];
-    final valor = (mensalidade['valor'] ?? '0,00').toString();
+                    final valor =
+                        (mensalidade['valor'] ?? '0,00').toString();
+                    final nome =
+                        (mensalidade['nome'] ?? 'Cliente').toString();
 
-     return Card(
-  child: Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
-        title: Text(
-          (mensalidade['nome'] ?? 'Cliente').toString(),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Rua: ${mensalidade['rua'] ?? ''}, Nº ${mensalidade['numero'] ?? ''}',
-              style: const TextStyle(fontSize: 17),
+                    return Card(
+                      child: ExpansionTile(
+                        key: PageStorageKey<int>(index),
+                        title: Text(
+                          nome,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Rua: ' +
+                                  (mensalidade['rua'] ?? '').toString() +
+                                  ', Nº ' +
+                                  (mensalidade['numero'] ?? '').toString(),
+                              style: const TextStyle(fontSize: 17),
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Text(
+                                  (mensalidade['dia'] ?? '')
+                                      .toString()
+                                      .padLeft(2, '0'),
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Pagamento: ' +
+                                        (mensalidade['formaPagamento'] ?? '')
+                                            .toString(),
+                                    style: const TextStyle(fontSize: 17),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'R\$ ' + valor,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.expand_more),
+                          ],
+                        ),
+                        children: [
+                          if (abaAtual == 0)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                16,
+                                0,
+                                16,
+                                16,
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: FilledButton.icon(
+                                  onPressed: () async {
+                                    final confirmado =
+                                        await showDialog<bool>(
+                                      context: context,
+                                      builder: (dialogContext) =>
+                                          AlertDialog(
+                                        title: const Text(
+                                          'Confirmar recebimento',
+                                        ),
+                                        content: const Text(
+                                          'Deseja marcar esta mensalidade como recebida?',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(
+                                              dialogContext,
+                                              false,
+                                            ),
+                                            child: const Text('Cancelar'),
+                                          ),
+                                          FilledButton(
+                                            onPressed: () =>
+                                                Navigator.pop(
+                                              dialogContext,
+                                              true,
+                                            ),
+                                            child: const Text('Confirmar'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+
+                                    if (confirmado != true) return;
+
+                                    mensalidade['status'] = 'recebida';
+                                    await widget.store.salvarMensalidades();
+
+                                    if (!mounted) return;
+                                    setState(() {});
+
+                                    final imprimirAgora =
+                                        await showDialog<bool>(
+                                      context: context,
+                                      builder: (dialogContext) =>
+                                          AlertDialog(
+                                        title: const Text(
+                                          'Recibo da mensalidade',
+                                        ),
+                                        content: const Text(
+                                          'Recebimento confirmado. Deseja imprimir o recibo agora?',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(
+                                              dialogContext,
+                                              false,
+                                            ),
+                                            child: const Text('Depois'),
+                                          ),
+                                          FilledButton.icon(
+                                            onPressed: () =>
+                                                Navigator.pop(
+                                              dialogContext,
+                                              true,
+                                            ),
+                                            icon: const Icon(Icons.print),
+                                            label: const Text('Imprimir'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+
+                                    if (imprimirAgora != true) return;
+
+                                    final agora = DateTime.now();
+                                    final dataRecebimento =
+                                        '${agora.day.toString().padLeft(2, '0')}/'
+                                        '${agora.month.toString().padLeft(2, '0')}/'
+                                        '${agora.year}';
+
+                                    final sucesso =
+                                        await ImpressoraBluetoothService
+                                            .imprimirRecibo(
+                                      nomeMorador:
+                                          (mensalidade['nome'] ?? 'Cliente')
+                                              .toString(),
+                                      valor:
+                                          (mensalidade['valor'] ?? '0,00')
+                                              .toString(),
+                                      formaPagamento:
+                                          (mensalidade['formaPagamento'] ??
+                                                  'Pix')
+                                              .toString(),
+                                      vencimento:
+                                          '${mensalidade['dia'] ?? ''}/'
+                                          '${mensalidade['mes'] ?? agora.month}/'
+                                          '${mensalidade['ano'] ?? agora.year}',
+                                      dataRecebimento: dataRecebimento,
+                                    );
+
+                                    if (!mounted) return;
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          sucesso
+                                              ? 'Recibo enviado para a impressora'
+                                              : 'Impressora não conectada',
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.check_circle_outline,
+                                  ),
+                                  label: const Text('Receber'),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
             ),
-            const SizedBox(height: 2),
-            Row(
-              children: [
-                Text(
-                  (mensalidade['dia'] ?? '').toString().padLeft(2, '0'),
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Pagamento: ${mensalidade['formaPagamento'] ?? ''}',
-                    style: const TextStyle(fontSize: 17),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        trailing: Text(
-          'R\$ $valor',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
           ),
-        ),
-      onTap: () async {
-  // mantém aqui o código que já está dentro do onTap
-},
-),
-],
-                onTap: () async {
-  final acao = await showModalBottomSheet<String>(
-    context: context,
-    builder: (sheetContext) => SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            title: Text(
-              (mensalidade['nome'] ?? 'Cliente').toString(),
-            ),
-            subtitle: const Text('Ações do cliente'),
-          ),
-          if (abaAtual == 0)
-            ListTile(
-              leading: const Icon(Icons.check_circle_outline),
-              title: const Text('Receber'),
-              onTap: () => Navigator.pop(sheetContext, 'receber'),
-            ),
-          ListTile(
-            leading: const Icon(Icons.close),
-            title: const Text('Fechar'),
-            onTap: () => Navigator.pop(sheetContext),
-          ),
-        ],
-      ),
-    ),
-  );
-
-  if (acao != 'receber') return;
-
-  final confirmado = await showDialog<bool>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text('Confirmar recebimento'),
-      content: const Text(
-        'Deseja marcar esta mensalidade como recebida?',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext, false),
-          child: const Text('Cancelar'),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(dialogContext, true),
-          child: const Text('Confirmar'),
-        ),
-      ],
-    ),
-  );
-
-  if (confirmado != true) return;
-
-  mensalidade['status'] = 'recebida';
-  await widget.store.salvarMensalidades();
-
-  if (!mounted) return;
-  setState(() {});
-
-  final imprimirAgora = await showDialog<bool>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text('Recibo da mensalidade'),
-      content: const Text(
-        'Recebimento confirmado. Deseja imprimir o recibo agora?',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext, false),
-          child: const Text('Depois'),
-        ),
-        FilledButton.icon(
-          onPressed: () => Navigator.pop(dialogContext, true),
-          icon: const Icon(Icons.print),
-          label: const Text('Imprimir'),
-        ),
-      ],
-    ),
-  );
-
-  if (imprimirAgora != true) return;
-
-  final agora = DateTime.now();
-  final dataRecebimento =
-      '${agora.day.toString().padLeft(2, '0')}/'
-      '${agora.month.toString().padLeft(2, '0')}/'
-      '${agora.year}';
-
-  final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
-    nomeMorador: (mensalidade['nome'] ?? 'Cliente').toString(),
-    valor: (mensalidade['valor'] ?? '0,00').toString(),
-    formaPagamento: (mensalidade['formaPagamento'] ?? 'Pix').toString(),
-    vencimento:
-        '${mensalidade['dia'] ?? ''}/'
-        '${mensalidade['mes'] ?? agora.month}/'
-        '${mensalidade['ano'] ?? agora.year}',
-    dataRecebimento: dataRecebimento,
-  );
-
-  if (!mounted) return;
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        sucesso
-            ? 'Recibo enviado para a impressora'
-            : 'Impressora não conectada',
-      ),
-    ),
-  );
-},
-    ),
-
-  ),
-
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(

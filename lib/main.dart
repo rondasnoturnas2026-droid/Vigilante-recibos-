@@ -293,6 +293,53 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     await widget.store.salvarMensalidades();
   }
 }
+    Future<void> _mostrarQrPix(Map<String, dynamic> mensalidade) async {
+  final chavePix = widget.store.vigilanteChavePix.trim();
+
+  if (chavePix.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cadastre a chave Pix nas configurações.')),
+    );
+    return;
+  }
+
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Pagamento Pix'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Cliente: ${mensalidade['nome'] ?? 'Cliente'}'),
+          const SizedBox(height: 8),
+          const Text('Chave Pix:'),
+          SelectableText(chavePix),
+          const SizedBox(height: 8),
+          Text('Valor: R\$ ${mensalidade['valor'] ?? '0,00'}'),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext),
+          child: const Text('Fechar'),
+        ),
+        FilledButton.icon(
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(text: chavePix));
+            if (!dialogContext.mounted) return;
+            Navigator.pop(dialogContext);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Chave Pix copiada.')),
+            );
+          },
+          icon: const Icon(Icons.copy),
+          label: const Text('Copiar chave'),
+        ),
+      ],
+    ),
+  );
+    }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

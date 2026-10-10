@@ -533,16 +533,15 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
                       bairro.toLowerCase().contains(busca);
 
                   return status == statusDesejado &&
-                      correspondeBusca &&
-                      (bairroFiltro == 'Todos os bairros' ||
-                          bairro == bairroFiltro) &&
-                      (ruaFiltro == 'Todas as ruas' ||
-                          rua == ruaFiltro) &&
-                      (diaFiltro == 'Todos os dias' ||
-    (int.tryParse(dia.toString()) ==
-    int.tryParse(diaFiltro)) &&
-                      (pagamentoFiltro == 'Todas as formas' ||
-                          pagamento == pagamentoFiltro);
+    correspondeBusca &&
+    (bairroFiltro == 'Todos os bairros' ||
+        bairro == bairroFiltro) &&
+    (ruaFiltro == 'Todas as ruas' ||
+        rua == ruaFiltro) &&
+    (diaFiltro == 'Todos os dias' ||
+        int.tryParse(dia) == int.tryParse(diaFiltro)) &&
+    (pagamentoFiltro == 'Todas as formas' ||
+        pagamento == pagamentoFiltro);
                 }).toList();
                   if (abaAtual == 0) {
   mensalidadesFiltradas.sort((a, b) {

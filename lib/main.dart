@@ -664,7 +664,11 @@ return ListView.builder(
             fontWeight: FontWeight.bold,
           ),
         ),
-      ),
+      onTap: () async {
+  // mantém aqui o código que já está dentro do onTap
+},
+),
+],
                 onTap: () async {
           final acao = await showModalBottomSheet<String>(
             context: context,

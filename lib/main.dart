@@ -908,7 +908,7 @@ final clientesFiltrados =
           ruaCliente == ruaSelecionada) &&
       (diaSelecionado == 'Todos os dias' ||
     int.tryParse(diaCliente.replaceAll(RegExp(r'[^0-9]'), '')) ==
-        int.tryParse(diaSelecionado.replaceAll(RegExp(r'[^0-9]'), ''));
+        int.tryParse(diaSelecionado.replaceAll(RegExp(r'[^0-9]'), '')));
 }).toList();
         
                     return AlertDialog(

@@ -807,6 +807,46 @@ return ListView.builder(
                                 ),
                               ),
                             ),
+                            if (abaAtual == 0)
+  Padding(
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+    child: Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        OutlinedButton.icon(
+          onPressed: () => _mostrarQrPix(mensalidade),
+          icon: const Icon(Icons.qr_code_2),
+          label: const Text('QR Pix'),
+        ),
+        OutlinedButton.icon(
+          onPressed: () => _marcarRetorno(mensalidade),
+          icon: const Icon(Icons.event),
+          label: const Text('Retorno'),
+        ),
+        OutlinedButton.icon(
+          onPressed: () => _editarMensalidade(mensalidade),
+          icon: const Icon(Icons.edit),
+          label: const Text('Editar'),
+        ),
+        OutlinedButton.icon(
+          onPressed: () => _receberMesesAdiantados(mensalidade),
+          icon: const Icon(Icons.payments_outlined),
+          label: const Text('Meses adiantados'),
+        ),
+        OutlinedButton.icon(
+          onPressed: () => _inativarCliente(mensalidade),
+          icon: const Icon(Icons.person_off_outlined),
+          label: const Text('Inativar Cliente'),
+        ),
+        OutlinedButton.icon(
+          onPressed: () => _excluirMensalidade(mensalidade),
+          icon: const Icon(Icons.delete_outline),
+          label: const Text('Excluir'),
+        ),
+      ],
+    ),
+  ),
                         ],
                       ),
                     );

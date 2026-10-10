@@ -853,7 +853,7 @@ final ruas = widget.store.bairros
     .toSet()
     .toList()
   ..sort();
-  ..sort();
+  
 
 final clientesFiltrados =
     widget.store.clientes.asMap().entries.where((entrada) {

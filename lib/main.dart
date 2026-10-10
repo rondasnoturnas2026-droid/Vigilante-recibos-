@@ -1236,6 +1236,44 @@ ScaffoldMessenger.of(context).showSnackBar(
       ),
     );
   }
+      Future<void> _excluirMensalidade(
+    Map<String, dynamic> mensalidade,
+  ) async {
+    final confirmado = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Excluir mensalidade'),
+        content: const Text(
+          'Deseja excluir esta mensalidade?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmado != true) return;
+
+    widget.store.mensalidades.remove(mensalidade);
+    await widget.store.salvarMensalidades();
+
+    if (!mounted) return;
+
+    setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Mensalidade excluída.'),
+      ),
+    );
+      }
 }
 
 

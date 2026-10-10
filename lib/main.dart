@@ -842,7 +842,7 @@ final clientesFiltrados =
       (ruaSelecionada == 'Todas as ruas' ||
           ruaCliente == ruaSelecionada) &&
       (diaSelecionado == 'Todos os dias' ||
-          diaCliente == diaSelecionado);
+          int.tryParse(diaCliente) == int.tryParse(diaSelecionado)
 }).toList();
         
                     return AlertDialog(

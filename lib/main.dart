@@ -757,7 +757,7 @@ final dataRecebimento =
     '${agora.year}';
 
 final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
-  nomecliete: (mensalidade['nome'] ?? 'Cliente').toString(),
+  nomeMorador: (mensalidade['nome'] ?? 'Cliente').toString(),
   valor: (mensalidade['valor'] ?? '0,00').toString(),
   formaPagamento: (mensalidade['formaPagamento'] ?? 'Pix').toString(),
   vencimento:

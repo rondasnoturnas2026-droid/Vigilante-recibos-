@@ -775,7 +775,37 @@ return ListView.builder(
 
                                     if (!mounted) return;
                                     setState(() {});
+final acaoRecibo = await showDialog<String>(
+  context: context,
+  builder: (dialogContext) => AlertDialog(
+    title: const Text('Recibo da mensalidade'),
+    content: const Text(
+      'Recebimento confirmado. O que deseja fazer com o recibo?',
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, 'nao'),
+        child: const Text('Não'),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, 'whatsapp'),
+        child: const Text('Enviar pelo WhatsApp'),
+      ),
+      FilledButton.icon(
+        onPressed: () => Navigator.pop(dialogContext, 'imprimir'),
+        icon: const Icon(Icons.print),
+        label: const Text('Imprimir'),
+      ),
+    ],
+  ),
+);
 
+if (acaoRecibo != 'imprimir') return;
+},
+icon: const Icon(
+  Icons.check_circle_outline,
+),
+label: const Text('Receber'),
 
                                     final acaoRecibo = await showDialog<String>(
   context: context,

@@ -742,7 +742,7 @@ return ListView.builder(
                                     if (!mounted) return;
                                     setState(() {});
 
-                                    await showDialog<String>(
+                                    final acaoRecibo = await showDialog<String>(
                                       context: context,
                                       builder: (dialogContext) =>
                                           AlertDialog(

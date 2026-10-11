@@ -984,6 +984,9 @@ if (confirmarRecebimento != true) return;
                                         ],
                                       ),
                                     );
+                                      if (acaoRecibo == 'whatsapp') {
+  await _compartilharReciboWhatsApp(mensalidade);
+                                      }
                                   },
                                   icon: const Icon(
                                     Icons.check_circle_outline,

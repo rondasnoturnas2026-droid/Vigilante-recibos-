@@ -1587,7 +1587,7 @@ ScaffoldMessenger.of(context).showSnackBar(
     setState(() {});
   }
 
-  Future<void> _receberMesesAdiantados(
+    Future<void> _receberMesesAdiantados(
     Map<String, dynamic> mensalidade,
   ) async {
     final quantidadeController = TextEditingController(text: '1');
@@ -1601,7 +1601,7 @@ ScaffoldMessenger.of(context).showSnackBar(
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
             labelText: 'Quantidade de meses',
-            helperText: 'Informe de 1 a 12, contando este mês.',
+            helperText: 'Informe de 1 a 12, começando no próximo mês.',
           ),
         ),
         actions: [
@@ -1643,8 +1643,25 @@ ScaffoldMessenger.of(context).showSnackBar(
     String normalizar(Object? valor) =>
         (valor ?? '').toString().trim().toLowerCase();
 
+    double converterValor(Object? valor) {
+      var texto = (valor ?? '0')
+          .toString()
+          .replaceAll('R', '')
+          .replaceAll('\$', '')
+          .trim();
+
+      if (texto.contains(',')) {
+        texto = texto.replaceAll('.', '').replaceAll(',', '.');
+      }
+
+      return double.tryParse(texto) ?? 0;
+    }
+
+    final mensalidadesAdiantadas = <Map<String, dynamic>>[];
+
     for (var i = 0; i < quantidade; i++) {
-      final data = DateTime(anoBase, mesBase + i, 1);
+      // +1 começa pelo próximo mês e deixa o mês atual de fora.
+      final data = DateTime(anoBase, mesBase + i + 1, 1);
 
       final existente = widget.store.mensalidades.where((item) {
         return normalizar(item['nome']) == normalizar(mensalidade['nome']) &&
@@ -1659,12 +1676,14 @@ ScaffoldMessenger.of(context).showSnackBar(
 
       if (existente != null) {
         existente['status'] = 'recebida';
+        mensalidadesAdiantadas.add(existente);
       } else {
         final adiantada = Map<String, dynamic>.from(mensalidade);
         adiantada['mes'] = data.month;
         adiantada['ano'] = data.year;
         adiantada['status'] = 'recebida';
         widget.store.mensalidades.add(adiantada);
+        mensalidadesAdiantadas.add(adiantada);
       }
     }
 
@@ -1672,6 +1691,112 @@ ScaffoldMessenger.of(context).showSnackBar(
 
     if (!mounted) return;
     setState(() {});
+
+    final valorTotal = mensalidadesAdiantadas.fold<double>(
+      0,
+      (total, item) => total + converterValor(item['valor']),
+    );
+    final valorTotalFormatado =
+        valorTotal.toStringAsFixed(2).replaceAll('.', ',');
+
+    String dataFormatada(DateTime data) =>
+        '${data.day.toString().padLeft(2, '0')}/'
+        '${data.month.toString().padLeft(2, '0')}/'
+        '${data.year}';
+
+    final diaInformado =
+        int.tryParse((mensalidade['dia'] ?? '').toString()) ?? 1;
+    final diaVencimento =
+        diaInformado < 1 ? 1 : (diaInformado > 31 ? 31 : diaInformado);
+
+    // O período também começa no próximo mês.
+    final primeiroMes = DateTime(anoBase, mesBase + 1, 1);
+    final ultimoMes = DateTime(anoBase, mesBase + quantidade, 1);
+
+    final ultimoDiaPrimeiroMes =
+        DateTime(primeiroMes.year, primeiroMes.month + 1, 0).day;
+    final ultimoDiaUltimoMes =
+        DateTime(ultimoMes.year, ultimoMes.month + 1, 0).day;
+
+    final primeiroVencimento = DateTime(
+      primeiroMes.year,
+      primeiroMes.month,
+      diaVencimento > ultimoDiaPrimeiroMes
+          ? ultimoDiaPrimeiroMes
+          : diaVencimento,
+    );
+    final ultimoVencimento = DateTime(
+      ultimoMes.year,
+      ultimoMes.month,
+      diaVencimento > ultimoDiaUltimoMes
+          ? ultimoDiaUltimoMes
+          : diaVencimento,
+    );
+
+    final periodoAdiantamento =
+        '${dataFormatada(primeiroVencimento)} a '
+        '${dataFormatada(ultimoVencimento)}';
+
+    final reciboAdiantamento = Map<String, dynamic>.from(mensalidade)
+      ..['valor'] = valorTotalFormatado
+      ..['periodoAdiantamento'] = periodoAdiantamento;
+
+    final acaoRecibo = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Recibo do adiantamento'),
+        content: Text(
+          'Adiantamento de $quantidade mensalidade(s) confirmado. '
+          'O que deseja fazer?',
+        ),
+        actions: [
+          FilledButton.icon(
+            onPressed: () => Navigator.pop(dialogContext, 'imprimir'),
+            icon: const Icon(Icons.print),
+            label: const Text('Imprimir'),
+          ),
+          TextButton.icon(
+            onPressed: () => Navigator.pop(dialogContext, 'enviar'),
+            icon: const Icon(Icons.share),
+            label: const Text('Enviar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, 'nao'),
+            child: const Text('Não'),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted || acaoRecibo == null || acaoRecibo == 'nao') return;
+
+    if (acaoRecibo == 'enviar') {
+      await _compartilharReciboWhatsApp(reciboAdiantamento);
+      return;
+    }
+
+    if (acaoRecibo == 'imprimir') {
+      final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
+        nomeMorador: (mensalidade['nome'] ?? 'Cliente').toString(),
+        valor: valorTotalFormatado,
+        formaPagamento:
+            (mensalidade['formaPagamento'] ?? 'Não informado').toString(),
+        vencimento: periodoAdiantamento,
+        dataRecebimento: dataFormatada(DateTime.now()),
+        observacao: 'Adiantamento de $quantidade mensalidade(s)',
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            sucesso
+                ? 'Recibo do adiantamento impresso.'
+                : 'Não foi possível imprimir. Confira se a impressora está conectada.',
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _inativarCliente(

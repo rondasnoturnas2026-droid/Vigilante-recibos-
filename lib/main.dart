@@ -776,38 +776,6 @@ return ListView.builder(
                                     if (!mounted) return;
                                     setState(() {});
 
-                                    final imprimirAgora =
-                                        await showDialog<bool>(
-                                      context: context,
-                                      builder: (dialogContext) =>
-                                          AlertDialog(
-                                        title: const Text(
-                                          'Recibo da mensalidade',
-                                        ),
-                                        content: const Text(
-                                          'Recebimento confirmado. Deseja imprimir o recibo agora?',
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(
-                                              dialogContext,
-                                              false,
-                                            ),
-                                            child: const Text('Depois'),
-                                          ),
-                                          FilledButton.icon(
-                                            onPressed: () =>
-                                                Navigator.pop(
-                                              dialogContext,
-                                              true,
-                                            ),
-                                            icon: const Icon(Icons.print),
-                                            label: const Text('Imprimir'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
 
                                     final acaoRecibo = await showDialog<String>(
   context: context,

@@ -343,6 +343,187 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     ),
   );
     }
+    Future<void> _compartilharReciboWhatsApp(
+  Map<String, dynamic> mensalidade,
+) async {
+  try {
+    final agora = DateTime.now();
+
+    final empresa = widget.store.vigilanteNomeFantasia.trim().isNotEmpty
+        ? widget.store.vigilanteNomeFantasia.trim()
+        : widget.store.vigilanteNome.trim().isNotEmpty
+            ? widget.store.vigilanteNome.trim()
+            : 'VIGILANTE RECIBOS';
+
+    final cliente = (mensalidade['nome'] ?? 'Cliente').toString();
+    final valor = (mensalidade['valor'] ?? '0,00').toString();
+    final pagamento =
+        (mensalidade['formaPagamento'] ?? 'Não informado').toString();
+
+    String dataFormatada(DateTime data) =>
+        '${data.day.toString().padLeft(2, '0')}/'
+        '${data.month.toString().padLeft(2, '0')}/'
+        '${data.year}';
+
+    final diaVencimento =
+        int.tryParse((mensalidade['dia'] ?? '').toString()) ?? agora.day;
+    final mesVencimento =
+        int.tryParse((mensalidade['mes'] ?? '').toString()) ?? agora.month;
+    final anoVencimento =
+        int.tryParse((mensalidade['ano'] ?? '').toString()) ?? agora.year;
+
+    const largura = 1080;
+    const altura = 1450;
+
+    final gravador = ui.PictureRecorder();
+    final canvas = ui.Canvas(gravador);
+
+    canvas.drawColor(const Color(0xFFF2F4F8), ui.BlendMode.src);
+
+    canvas.drawRRect(
+      ui.RRect.fromRectAndRadius(
+        ui.Rect.fromLTWH(40, 40, 1000, 1370),
+        const ui.Radius.circular(36),
+      ),
+      ui.Paint()..color = Colors.white,
+    );
+
+    canvas.drawRRect(
+      ui.RRect.fromRectAndRadius(
+        ui.Rect.fromLTWH(40, 40, 1000, 290),
+        const ui.Radius.circular(36),
+      ),
+      ui.Paint()..color = const Color(0xFF17365D),
+    );
+
+    void escrever(
+      String texto,
+      double y, {
+      double tamanho = 38,
+      Color cor = const Color(0xFF202938),
+      FontWeight peso = FontWeight.normal,
+    }) {
+      final pintor = TextPainter(
+        text: TextSpan(
+          text: texto,
+          style: TextStyle(
+            color: cor,
+            fontSize: tamanho,
+            fontWeight: peso,
+          ),
+        ),
+        textDirection: ui.TextDirection.ltr,
+        maxLines: 2,
+        ellipsis: '…',
+      );
+
+      pintor.layout(maxWidth: 880);
+      pintor.paint(canvas, ui.Offset(100, y));
+    }
+
+    void separador(double y) {
+      canvas.drawLine(
+        ui.Offset(100, y),
+        ui.Offset(980, y),
+        ui.Paint()
+          ..color = const Color(0xFFE1E6ED)
+          ..strokeWidth = 3,
+      );
+    }
+
+    escrever(
+      empresa,
+      95,
+      tamanho: 44,
+      cor: Colors.white,
+      peso: FontWeight.bold,
+    );
+    escrever(
+      'RECIBO DE PAGAMENTO',
+      165,
+      tamanho: 38,
+      cor: const Color(0xFFFFD166),
+      peso: FontWeight.bold,
+    );
+    escrever(
+      'PAGAMENTO RECEBIDO',
+      225,
+      tamanho: 30,
+      cor: Colors.white,
+    );
+
+    escrever('CLIENTE', 390, tamanho: 28, cor: Colors.blueGrey);
+    escrever(cliente, 435, tamanho: 44, peso: FontWeight.bold);
+    separador(520);
+
+    escrever('VALOR PAGO', 560, tamanho: 28, cor: Colors.blueGrey);
+    escrever(
+      'R\$ $valor',
+      605,
+      tamanho: 54,
+      cor: const Color(0xFF17365D),
+      peso: FontWeight.bold,
+    );
+    separador(700);
+
+    escrever('FORMA DE PAGAMENTO', 740, tamanho: 28, cor: Colors.blueGrey);
+    escrever(pagamento, 785, tamanho: 40, peso: FontWeight.bold);
+    separador(865);
+
+    escrever('VENCIMENTO', 905, tamanho: 28, cor: Colors.blueGrey);
+    escrever(
+      dataFormatada(DateTime(anoVencimento, mesVencimento, diaVencimento)),
+      950,
+      tamanho: 40,
+      peso: FontWeight.bold,
+    );
+    separador(1030);
+
+    escrever('RECEBIDO EM', 1070, tamanho: 28, cor: Colors.blueGrey);
+    escrever(dataFormatada(agora), 1115, tamanho: 40, peso: FontWeight.bold);
+    escrever(
+      'Obrigado pela confiança!',
+      1270,
+      tamanho: 34,
+      cor: const Color(0xFF17365D),
+      peso: FontWeight.bold,
+    );
+
+    final imagem = await gravador.endRecording().toImage(largura, altura);
+    final dados = await imagem.toByteData(format: ui.ImageByteFormat.png);
+
+    if (dados == null) {
+      throw Exception('Não foi possível criar a imagem do recibo.');
+    }
+
+    final arquivo = File(
+      '${Directory.systemTemp.path}/recibo_${agora.millisecondsSinceEpoch}.png',
+    );
+
+    await arquivo.writeAsBytes(
+      dados.buffer.asUint8List(),
+      flush: true,
+    );
+
+    await SharePlus.instance.share(
+      ShareParams(
+        title: 'Recibo de pagamento',
+        text: 'Recibo de pagamento de $cliente',
+        files: [
+          XFile(arquivo.path, mimeType: 'image/png'),
+        ],
+      ),
+    );
+  } catch (_) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Não foi possível preparar o recibo para compartilhar.'),
+      ),
+    );
+  }
+    }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

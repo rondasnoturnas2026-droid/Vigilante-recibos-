@@ -737,6 +737,25 @@ return ListView.builder(
                                 width: double.infinity,
                                 child: FilledButton.icon(
                                   onPressed: () async {
+                                      final confirmarRecebimento = await showDialog<bool>(
+  context: context,
+  builder: (dialogContext) => AlertDialog(
+    title: const Text('Confirmar recebimento'),
+    content: const Text('Confirma o recebimento desta mensalidade?'),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, false),
+        child: const Text('Cancelar'),
+      ),
+      FilledButton(
+        onPressed: () => Navigator.pop(dialogContext, true),
+        child: const Text('Confirmar'),
+      ),
+    ],
+  ),
+);
+
+if (confirmarRecebimento != true) return;
                                     mensalidade['status'] = 'recebida';
                                     await widget.store.salvarMensalidades();
 

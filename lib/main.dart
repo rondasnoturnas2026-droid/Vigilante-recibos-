@@ -889,6 +889,11 @@ return ListView.builder(
                                 ),
                               ],
                             ),
+                              if ((mensalidade['retorno'] ?? '').toString().isNotEmpty)
+  Text(
+    'Retorno: ${mensalidade['retorno']}',
+    style: const TextStyle(fontSize: 15),
+  ),
                           ],
                         ),
                         trailing: Row(

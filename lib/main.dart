@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 final ValueNotifier<ThemeMode> temaApp =
     ValueNotifier<ThemeMode>(ThemeMode.system);
 

@@ -724,7 +724,7 @@ return ListView.builder(
                           ],
                         ),
                         children: [
-                          if (abaAtual == 0)
+                                  if (abaAtual == 0)
                             Padding(
                               padding: const EdgeInsets.fromLTRB(
                                 16,
@@ -736,76 +736,61 @@ return ListView.builder(
                                 width: double.infinity,
                                 child: FilledButton.icon(
                                   onPressed: () async {
-                                    final confirmado =
-                                        await showDialog<bool>(
+                                    mensalidade['status'] = 'recebida';
+                                    await widget.store.salvarMensalidades();
+
+                                    if (!mounted) return;
+                                    setState(() {});
+
+                                    await showDialog<String>(
                                       context: context,
                                       builder: (dialogContext) =>
                                           AlertDialog(
                                         title: const Text(
-                                          'Confirmar recebimento',
+                                          'Recibo da mensalidade',
                                         ),
                                         content: const Text(
-                                          'Deseja marcar esta mensalidade como recebida?',
+                                          'Recebimento confirmado. O que deseja fazer com o recibo?',
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(
                                               dialogContext,
-                                              false,
+                                              'nao',
                                             ),
-                                            child: const Text('Cancelar'),
+                                            child: const Text('Não'),
                                           ),
-                                          FilledButton(
+                                          TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(
                                               dialogContext,
-                                              true,
+                                              'whatsapp',
                                             ),
-                                            child: const Text('Confirmar'),
+                                            child: const Text(
+                                              'Enviar pelo WhatsApp',
+                                            ),
+                                          ),
+                                          FilledButton.icon(
+                                            onPressed: () =>
+                                                Navigator.pop(
+                                              dialogContext,
+                                              'imprimir',
+                                            ),
+                                            icon: const Icon(Icons.print),
+                                            label: const Text('Imprimir'),
                                           ),
                                         ],
                                       ),
                                     );
-
-                                    if (confirmado != true) return;
-
-                                    mensalidade['status'] = 'recebida';
-                                    await widget.store.salvarMensalidades();
-
-                                    if (!mounted) return;
-                                    setState(() {});
-final acaoRecibo = await showDialog<String>(
-  context: context,
-  builder: (dialogContext) => AlertDialog(
-    title: const Text('Recibo da mensalidade'),
-    content: const Text(
-      'Recebimento confirmado. O que deseja fazer com o recibo?',
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(dialogContext, 'nao'),
-        child: const Text('Não'),
-      ),
-      TextButton(
-        onPressed: () => Navigator.pop(dialogContext, 'whatsapp'),
-        child: const Text('Enviar pelo WhatsApp'),
-      ),
-      FilledButton.icon(
-        onPressed: () => Navigator.pop(dialogContext, 'imprimir'),
-        icon: const Icon(Icons.print),
-        label: const Text('Imprimir'),
-      ),
-    ],
-  ),
-);
-
-if (acaoRecibo != 'imprimir') return;
-},
-icon: const Icon(
-  Icons.check_circle_outline,
-),
-label: const Text('Receber'),
+                                  },
+                                  icon: const Icon(
+                                    Icons.check_circle_outline,
+                                  ),
+                                  label: const Text('Receber'),
+                                ),
+                              ),
+                            ),
 
                                 
                             if (abaAtual == 0)

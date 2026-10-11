@@ -44,6 +44,15 @@ class VigilanteRecibosApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Vigilante Recibos',
+            locale: const Locale('pt', 'BR'),
+supportedLocales: const [
+  Locale('pt', 'BR'),
+],
+localizationsDelegates: const [
+  GlobalMaterialLocalizations.delegate,
+  GlobalWidgetsLocalizations.delegate,
+  GlobalCupertinoLocalizations.delegate,
+],
 
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(

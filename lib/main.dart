@@ -121,28 +121,40 @@ class _TelaPrincipalState extends State<TelaPrincipal>
   }
 
   Future<void> _reconectarImpressora() async {
-    if (_reconectandoImpressora) return;
-    _reconectandoImpressora = true;
+  if (_reconectandoImpressora) return;
+  _reconectandoImpressora = true;
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final macSalvo = prefs.getString('impressoraMac');
+  try {
+    await Future.delayed(const Duration(seconds: 1));
 
-      if (macSalvo == null || macSalvo.isEmpty) return;
+    final prefs = await SharedPreferences.getInstance();
+    final macSalvo = prefs.getString('impressoraMac');
 
-      final bluetoothLigado = await PrintBluetoothThermal.bluetoothEnabled;
-      if (!bluetoothLigado) return;
+    if (macSalvo == null || macSalvo.isEmpty) return;
 
-      final conectada = await PrintBluetoothThermal.connectionStatus;
-      if (!conectada) {
+    final bluetoothLigado =
+        await PrintBluetoothThermal.bluetoothEnabled;
+    if (!bluetoothLigado) return;
+
+    for (var tentativa = 0; tentativa < 3; tentativa++) {
+      if (await PrintBluetoothThermal.connectionStatus) return;
+
+      try {
         await ImpressoraBluetoothService.conectar(macSalvo);
+      } catch (_) {
+        // Tenta novamente se a conexão falhar.
       }
-    } catch (_) {
-    } finally {
-      _reconectandoImpressora = false;
-      if (mounted) setState(() {});
+
+      await Future.delayed(const Duration(seconds: 1));
+      if (await PrintBluetoothThermal.connectionStatus) return;
     }
+  } catch (_) {
+    // Mantém o app aberto mesmo se o Bluetooth falhar.
+  } finally {
+    _reconectandoImpressora = false;
+    if (mounted) setState(() {});
   }
+}
 
   @override
   void dispose() {

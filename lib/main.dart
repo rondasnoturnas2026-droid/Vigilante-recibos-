@@ -552,6 +552,25 @@ escrever(
         title: const Text('Mensalidades'),
         
         actions: [
+                      FutureBuilder<bool>(
+            future: ImpressoraBluetoothService.estaConectada(),
+            builder: (context, snapshot) {
+              final conectada = snapshot.data ?? false;
+              return Tooltip(
+                message: conectada
+                    ? 'Impressora pronta'
+                    : 'Impressora desconectada',
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Icon(
+                    Icons.circle,
+                    size: 10,
+                    color: conectada ? Colors.green : Colors.red,
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             style: IconButton.styleFrom(
               shape: const CircleBorder(),

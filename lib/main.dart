@@ -879,6 +879,14 @@ return ListView.builder(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                              Text(
+  'Mês/Ano: ${(mensalidade['mes'] ?? '').toString().padLeft(2, '0')}/${mensalidade['ano'] ?? ''}',
+  style: const TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.bold,
+  ),
+),
+const SizedBox(height: 2),
                             Text(
                               'Rua: ' +
                                   (mensalidade['rua'] ?? '').toString() +

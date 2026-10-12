@@ -1065,51 +1065,110 @@ if (confirmarRecebimento != true) return;
                             if (abaAtual == 1)
   Padding(
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-    child: SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: () async {
-          final confirmarDesfazer = await showDialog<bool>(
-            context: context,
-            builder: (dialogContext) => AlertDialog(
-              title: const Text('Desfazer recebimento?'),
-              content: const Text(
-                'A mensalidade voltará para Pendentes. Confirma?',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () =>
-                      Navigator.pop(dialogContext, false),
-                  child: const Text('Cancelar'),
+    child: Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        OutlinedButton.icon(
+          onPressed: () async {
+            final agora = DateTime.now();
+            final dia = int.tryParse(
+                  (mensalidade['dia'] ?? '').toString(),
+                ) ??
+                agora.day;
+            final mes = int.tryParse(
+                  (mensalidade['mes'] ?? '').toString(),
+                ) ??
+                agora.month;
+            final ano = int.tryParse(
+                  (mensalidade['ano'] ?? '').toString(),
+                ) ??
+                agora.year;
+
+            final vencimento =
+                (mensalidade['periodoAdiantamento'] ?? '')
+                    .toString()
+                    .trim()
+                    .isNotEmpty
+                ? mensalidade['periodoAdiantamento'].toString()
+                : '${dia.toString().padLeft(2, '0')}/'
+                    '${mes.toString().padLeft(2, '0')}/$ano';
+
+            final dataRecebimento =
+                '${agora.day.toString().padLeft(2, '0')}/'
+                '${agora.month.toString().padLeft(2, '0')}/'
+                '${agora.year}';
+
+            final sucesso =
+                await ImpressoraBluetoothService.imprimirRecibo(
+              nomeMorador:
+                  (mensalidade['nome'] ?? 'Cliente').toString(),
+              valor: (mensalidade['valor'] ?? '0,00').toString(),
+              formaPagamento:
+                  (mensalidade['formaPagamento'] ?? 'Não informado')
+                      .toString(),
+              vencimento: vencimento,
+              dataRecebimento: dataRecebimento,
+            );
+
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  sucesso
+                      ? 'Recibo impresso.'
+                      : 'Não foi possível imprimir. Confira se a impressora está conectada.',
                 ),
-                FilledButton(
-                  onPressed: () =>
-                      Navigator.pop(dialogContext, true),
-                  child: const Text('Desfazer'),
-                ),
-              ],
-            ),
-          );
-
-          if (confirmarDesfazer != true) return;
-
-          mensalidade['status'] = 'pendente';
-          await widget.store.salvarMensalidades();
-
-          if (!mounted) return;
-          setState(() {});
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Recebimento desfeito. A mensalidade voltou para Pendentes.',
               ),
-            ),
-          );
-        },
-        icon: const Icon(Icons.undo),
-        label: const Text('Desfazer recebimento'),
-      ),
+            );
+          },
+          icon: const Icon(Icons.print),
+          label: const Text('Imprimir'),
+        ),
+        OutlinedButton.icon(
+          onPressed: () async {
+            final confirmarDesfazer = await showDialog<bool>(
+              context: context,
+              builder: (dialogContext) => AlertDialog(
+                title: const Text('Desfazer recebimento?'),
+                content: const Text(
+                  'A mensalidade voltará para Pendentes. Confirma?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () =>
+                        Navigator.pop(dialogContext, false),
+                    child: const Text('Cancelar'),
+                  ),
+                  FilledButton(
+                    onPressed: () =>
+                        Navigator.pop(dialogContext, true),
+                    child: const Text('Desfazer'),
+                  ),
+                ],
+              ),
+            );
+
+            if (confirmarDesfazer != true) return;
+
+            mensalidade['status'] = 'pendente';
+            await widget.store.salvarMensalidades();
+
+            if (!mounted) return;
+            setState(() {});
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Recebimento desfeito. A mensalidade voltou para Pendentes.',
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.undo),
+          label: const Text('Desfazer recebimento'),
+        ),
+      ],
     ),
   ),
                         ],

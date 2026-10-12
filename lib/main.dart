@@ -149,7 +149,7 @@ class _TelaPrincipalState extends State<TelaPrincipal>
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-}
+
 
   @override
   Widget build(BuildContext context) {

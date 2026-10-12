@@ -563,8 +563,8 @@ escrever(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Icon(
-                    Icons.circle,
-                    size: 10,
+                    Icons.print_rounded,
+size: 18,
                     color: conectada ? Colors.green : Colors.red,
                   ),
                 ),

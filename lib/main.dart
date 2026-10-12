@@ -1248,6 +1248,25 @@ if (confirmarRecebimento != true) return;
         ),
                   OutlinedButton.icon(
           onPressed: () async {
+              final confirmarImpressao = await showDialog<bool>(
+  context: context,
+  builder: (dialogContext) => AlertDialog(
+    title: const Text('Confirmar impressão'),
+    content: const Text('Deseja imprimir este recibo?'),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, false),
+        child: const Text('Cancelar'),
+      ),
+      FilledButton(
+        onPressed: () => Navigator.pop(dialogContext, true),
+        child: const Text('Imprimir'),
+      ),
+    ],
+  ),
+);
+
+if (confirmarImpressao != true) return;
             final agora = DateTime.now();
             final dia =
                 int.tryParse((mensalidade['dia'] ?? '').toString()) ??

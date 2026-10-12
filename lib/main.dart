@@ -2011,6 +2011,74 @@ mensalidadesAdiantadas.add(mensalidade);
       );
     }
   }
+      Future<void> _reativarCliente(
+    Map<String, dynamic> mensalidade,
+  ) async {
+    final confirmado = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Reativar cliente?'),
+        content: const Text(
+          'O cliente voltará a ficar ativo e as mensalidades inativas '
+          'voltarão para Pendentes. Confirma?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Reativar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmado != true) return;
+
+    String normalizar(Object? valor) =>
+        (valor ?? '').toString().trim().toLowerCase();
+
+    bool mesmoCliente(Map item) {
+      return normalizar(item['nome']) ==
+              normalizar(mensalidade['nome']) &&
+          normalizar(item['bairro']) ==
+              normalizar(mensalidade['bairro']) &&
+          normalizar(item['rua']) ==
+              normalizar(mensalidade['rua']) &&
+          normalizar(item['numero']) ==
+              normalizar(mensalidade['numero']);
+    }
+
+    for (final cliente in widget.store.clientes) {
+      if (mesmoCliente(cliente)) {
+        cliente['ativo'] = 'true';
+      }
+    }
+
+    for (final registro in widget.store.mensalidades) {
+      if (mesmoCliente(registro) &&
+          normalizar(registro['status']) == 'inativo') {
+        registro['status'] = 'pendente';
+      }
+    }
+
+    await widget.store.salvarClientes();
+    await widget.store.salvarMensalidades();
+
+    if (!mounted) return;
+
+    setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Cliente reativado. As mensalidades voltaram para Pendentes.',
+        ),
+      ),
+    );
+      }
 
     Future<void> _inativarCliente(
     Map<String, dynamic> mensalidade,

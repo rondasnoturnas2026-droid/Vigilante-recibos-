@@ -152,7 +152,13 @@ class _TelaPrincipalState extends State<TelaPrincipal>
     // Mantém o app aberto mesmo se o Bluetooth falhar.
   } finally {
     _reconectandoImpressora = false;
-    if (mounted) setState(() {});
+    if (mounted) {
+  setState(() {
+    if (paginaAtual == 0) {
+      paginas[0] = TelaMensalidades(store: store);
+    }
+  });
+    }
   }
 }
 

@@ -1600,15 +1600,18 @@ ScaffoldMessenger.of(context).showSnackBar(
     Future<void> _receberMesesAdiantados(
     Map<String, dynamic> mensalidade,
   ) async {
-    final quantidadeController = TextEditingController(text: '1');
+        String quantidadeTexto = '1';
 
     final quantidade = await showDialog<int>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Meses adiantados'),
-        content: TextField(
-          controller: quantidadeController,
+        content: TextFormField(
+          initialValue: '1',
           keyboardType: TextInputType.number,
+          onChanged: (valor) {
+            quantidadeTexto = valor;
+          },
           decoration: const InputDecoration(
             labelText: 'Quantidade de meses',
             helperText: 'Informe de 1 a 12, começando no próximo mês.',
@@ -1616,14 +1619,18 @@ ScaffoldMessenger.of(context).showSnackBar(
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
+            onPressed: () {
+              FocusScope.of(dialogContext).unfocus();
+              Navigator.pop(dialogContext);
+            },
             child: const Text('Cancelar'),
           ),
           FilledButton(
             onPressed: () {
+              FocusScope.of(dialogContext).unfocus();
               Navigator.pop(
                 dialogContext,
-                int.tryParse(quantidadeController.text),
+                int.tryParse(quantidadeTexto),
               );
             },
             child: const Text('Confirmar'),
@@ -1631,8 +1638,6 @@ ScaffoldMessenger.of(context).showSnackBar(
         ],
       ),
     );
-
-    quantidadeController.dispose();
 
     if (quantidade == null) return;
 

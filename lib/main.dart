@@ -5228,4 +5228,247 @@ Future<void> adicionarRua(Bairro bairro, String nome) async {
 }
 
 }
+class PersonalizarReciboTermicoPage extends StatefulWidget {
+  const PersonalizarReciboTermicoPage({super.key});
+
+  @override
+  State<PersonalizarReciboTermicoPage> createState() =>
+      _PersonalizarReciboTermicoPageState();
+}
+
+class _PersonalizarReciboTermicoPageState
+    extends State<PersonalizarReciboTermicoPage> {
+  static const Color _azul = Color(0xFF10243A);
+  static const Color _dourado = Color(0xFFD6AE52);
+
+  final Map<String, bool> _campos = {
+    'logo': true,
+    'fantasia': true,
+    'segmento': true,
+    'horarios': true,
+    'site': false,
+    'endereco_vigilante': false,
+    'documento_vigilante': false,
+    'pix': true,
+    'cliente_nome': true,
+    'cliente_contato': true,
+    'cliente_bairro': true,
+    'cliente_documento': false,
+    'data_pagamento': true,
+  };
+
+  String _modoQr = 'pendente';
+  bool _carregando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarPreferencias();
+  }
+
+  Future<void> _carregarPreferencias() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    for (final chave in _campos.keys.toList()) {
+      _campos[chave] = prefs.getBool('recibo_$chave') ?? _campos[chave]!;
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _modoQr = prefs.getString('recibo_modo_qr') ?? 'pendente';
+      _carregando = false;
+    });
+  }
+
+  Future<void> _alterarCampo(String chave, bool valor) async {
+    setState(() => _campos[chave] = valor);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('recibo_$chave', valor);
+  }
+
+  Future<void> _alterarModoQr(String? valor) async {
+    if (valor == null) return;
+
+    setState(() => _modoQr = valor);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('recibo_modo_qr', valor);
+  }
+
+  Widget _secao(String titulo, List<Widget> itens) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      color: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: Color(0xFFE8E1D2)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              child: Text(
+                titulo.toUpperCase(),
+                style: const TextStyle(
+                  color: _azul,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
+              ),
+            ),
+            ...itens,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _opcao(String chave, String titulo, String descricao) {
+    return SwitchListTile(
+      value: _campos[chave] ?? false,
+      activeThumbColor: _dourado,
+      title: Text(
+        titulo,
+        style: const TextStyle(
+          color: _azul,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(descricao),
+      onChanged: (valor) => _alterarCampo(chave, valor),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F3EE),
+      appBar: AppBar(
+        backgroundColor: _azul,
+        foregroundColor: Colors.white,
+        title: const Text('Personalizar recibo'),
+      ),
+      body: _carregando
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                Card(
+                  color: _azul,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(18),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.shield_outlined,
+                          color: _dourado,
+                          size: 38,
+                        ),
+                        SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'VIGILANTE RECIBOS',
+                                style: TextStyle(
+                                  color: _dourado,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                'Escolha o que será impresso no recibo.',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _secao('Dados do vigilante', [
+                  _opcao('logo', 'Logo', 'Exibir a marca no recibo'),
+                  _opcao('fantasia', 'Nome fantasia', 'Exibir o nome da empresa'),
+                  _opcao('segmento', 'Segmento', 'Exibir o tipo de serviço'),
+                  _opcao('horarios', 'Horários', 'Exibir os horários do serviço'),
+                  _opcao('site', 'Site', 'Exibir o endereço do site'),
+                  _opcao(
+                    'endereco_vigilante',
+                    'Endereço',
+                    'Exibir o endereço do vigilante',
+                  ),
+                  _opcao(
+                    'documento_vigilante',
+                    'CPF ou CNPJ',
+                    'Exibir o documento do vigilante',
+                  ),
+                ]),
+                _secao('Pagamento', [
+                  _opcao('pix', 'Chave Pix', 'Exibir a chave Pix'),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                    child: DropdownButtonFormField<String>(
+                      value: _modoQr,
+                      decoration: const InputDecoration(
+                        labelText: 'QR Code Pix',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'nunca',
+                          child: Text('Não exibir'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'sempre',
+                          child: Text('Exibir sempre'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'pendente',
+                          child: Text('Exibir somente se estiver pendente'),
+                        ),
+                      ],
+                      onChanged: _alterarModoQr,
+                    ),
+                  ),
+                ]),
+                _secao('Dados do cliente', [
+                  _opcao('cliente_nome', 'Nome', 'Exibir o nome do cliente'),
+                  _opcao(
+                    'cliente_contato',
+                    'Contato',
+                    'Exibir o telefone ou contato',
+                  ),
+                  _opcao(
+                    'cliente_bairro',
+                    'Bairro',
+                    'Exibir o bairro do cliente',
+                  ),
+                  _opcao(
+                    'cliente_documento',
+                    'CPF ou CNPJ',
+                    'Exibir o documento do cliente',
+                  ),
+                  _opcao(
+                    'data_pagamento',
+                    'Data do pagamento',
+                    'Exibir a data do pagamento',
+                  ),
+                ]),
+              ],
+            ),
+    );
+  }
+}
 

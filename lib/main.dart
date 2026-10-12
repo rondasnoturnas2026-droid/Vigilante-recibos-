@@ -483,13 +483,20 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     escrever(pagamento, 785, tamanho: 40, peso: FontWeight.bold);
     separador(865);
 
-    escrever('VENCIMENTO', 905, tamanho: 28, cor: Colors.blueGrey);
     escrever(
-      dataFormatada(DateTime(anoVencimento, mesVencimento, diaVencimento)),
-      950,
-      tamanho: 40,
-      peso: FontWeight.bold,
-    );
+  ehAdiantamento ? 'PERÍODO ADIANTADO' : 'VENCIMENTO',
+  905,
+  tamanho: 28,
+  cor: Colors.blueGrey,
+);
+escrever(
+  ehAdiantamento
+      ? periodoAdiantamento
+      : dataFormatada(DateTime(anoVencimento, mesVencimento, diaVencimento)),
+  950,
+  tamanho: 40,
+  peso: FontWeight.bold,
+);
     separador(1030);
 
     escrever('RECEBIDO EM', 1070, tamanho: 28, cor: Colors.blueGrey);

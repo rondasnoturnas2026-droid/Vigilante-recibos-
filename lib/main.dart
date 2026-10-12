@@ -1757,7 +1757,27 @@ ScaffoldMessenger.of(context).showSnackBar(
       );
       return;
     }
+final confirmarPagamento = await showDialog<bool>(
+  context: context,
+  builder: (dialogContext) => AlertDialog(
+    title: const Text('Confirmar pagamento'),
+    content: Text(
+      'Confirma o recebimento de $quantidade mensalidade(s) adiantada(s)?',
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, false),
+        child: const Text('Cancelar'),
+      ),
+      FilledButton(
+        onPressed: () => Navigator.pop(dialogContext, true),
+        child: const Text('Confirmar pagamento'),
+      ),
+    ],
+  ),
+);
 
+if (confirmarPagamento != true) return;
     final mesBase =
         int.tryParse((mensalidade['mes'] ?? '').toString()) ??
             DateTime.now().month;

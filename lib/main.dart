@@ -87,26 +87,68 @@ class TelaPrincipal extends StatefulWidget {
   State<TelaPrincipal> createState() => _TelaPrincipalState();
 }
 
-class _TelaPrincipalState extends State<TelaPrincipal> {
+class _TelaPrincipalState extends State<TelaPrincipal>
+    with WidgetsBindingObserver {
   int paginaAtual = 0;
 
-final AppStore store = AppStore();
-late final List<Widget> paginas;
+  final AppStore store = AppStore();
+  late final List<Widget> paginas;
+  bool _reconectandoImpressora = false;
 
-@override
-void initState() {
-  super.initState();
-store.carregarDadosVigilante();
- store.carregarBairrosERuas(); 
- 
-   
-  paginas = [
-  TelaMensalidades(store: store),
-  TelaClientes(store: store),
-  const TelaRelatorio(),
-  TelaConfiguracoes(store: store),
-];
-  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    store.carregarDadosVigilante();
+    store.carregarBairrosERuas();
+
+    paginas = [
+      TelaMensalidades(store: store),
+      TelaClientes(store: store),
+      const TelaRelatorio(),
+      TelaConfiguracoes(store: store),
+    ];
+
+    _reconectarImpressora();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _reconectarImpressora();
+    }
+  }
+
+  Future<void> _reconectarImpressora() async {
+    if (_reconectandoImpressora) return;
+    _reconectandoImpressora = true;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final macSalvo = prefs.getString('impressoraMac');
+
+      if (macSalvo == null || macSalvo.isEmpty) return;
+
+      final bluetoothLigado = await PrintBluetoothThermal.bluetoothEnabled;
+      if (!bluetoothLigado) return;
+
+      final conectada = await PrintBluetoothThermal.connectionStatus;
+      if (!conectada) {
+        await ImpressoraBluetoothService.conectar(macSalvo);
+      }
+    } catch (_) {
+    } finally {
+      _reconectandoImpressora = false;
+      if (mounted) setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 }
 
   @override

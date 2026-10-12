@@ -1803,6 +1803,8 @@ if (confirmarPagamento != true) return;
     }
 
     final mensalidadesAdiantadas = <Map<String, dynamic>>[];
+        mensalidade['status'] = 'recebida';
+mensalidadesAdiantadas.add(mensalidade);
 
     for (var i = 0; i < quantidade; i++) {
       // +1 começa pelo próximo mês e deixa o mês atual de fora.

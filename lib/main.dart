@@ -832,6 +832,23 @@ final totalMensalidades = mensalidadesFiltradas.fold<double>(
     return soma + valor;
   },
 );
+                  if (abaAtual == 0 || abaAtual == 1) {
+  mensalidadesFiltradas.sort((a, b) {
+    final anoA = int.tryParse((a['ano'] ?? '0').toString()) ?? 0;
+    final anoB = int.tryParse((b['ano'] ?? '0').toString()) ?? 0;
+    final compararAno = anoB.compareTo(anoA);
+    if (compararAno != 0) return compararAno;
+
+    final mesA = int.tryParse((a['mes'] ?? '0').toString()) ?? 0;
+    final mesB = int.tryParse((b['mes'] ?? '0').toString()) ?? 0;
+    final compararMes = mesB.compareTo(mesA);
+    if (compararMes != 0) return compararMes;
+
+    final diaA = int.tryParse((a['dia'] ?? '0').toString()) ?? 0;
+    final diaB = int.tryParse((b['dia'] ?? '0').toString()) ?? 0;
+    return diaA.compareTo(diaB);
+  });
+                  }
 
 return ListView.builder(
   itemCount: mensalidadesFiltradas.length + 1,

@@ -1246,11 +1246,7 @@ final clientesFiltrados =
                           decoration: const InputDecoration(
                             labelText: 'Bairro',
                           ),
-                            if (confirmarDesfazer == true) {
-  mensalidade['status'] = 'pendente';
-  await store.salvarMensalidades();
-  setState(() {});
-}
+                            
                           items: [
                             'Todos os bairros',
                             ...bairros,

@@ -4976,6 +4976,7 @@ String vigilanteChavePix = '';
 String vigilanteTipoChavePix = 'Telefone';
 String vigilanteLogo = '';
   String vigilanteNomeFantasia = '';
+    String vigilanteCnpjEmpresa = '';
 String vigilanteSegmentoMercado = '';
 String vigilanteServicoPrestado = '';
 String vigilanteSite = '';

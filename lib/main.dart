@@ -850,8 +850,24 @@ final totalMensalidades = mensalidadesFiltradas.fold<double>(
   });
                   }
 
+final listaAgrupada = <Map<String, dynamic>>[];
+String? mesAnterior;
+
+for (final mensalidade in mensalidadesFiltradas) {
+  final mes = int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
+  final ano = (mensalidade['ano'] ?? '').toString();
+  final mesAno = '${mes.toString().padLeft(2, '0')}/$ano';
+
+  if (mesAno != mesAnterior) {
+    listaAgrupada.add({'separadorMes': mesAno});
+    mesAnterior = mesAno;
+  }
+
+  listaAgrupada.add({'mensalidade': mensalidade});
+}
+
 return ListView.builder(
-  itemCount: mensalidadesFiltradas.length + 1,
+  itemCount: listaAgrupada.length + 1,
   itemBuilder: (context, index) {
     if (index == 0) {
       return Card(
@@ -860,7 +876,7 @@ return ListView.builder(
           subtitle: Text(
             totalVisivel
                 ? 'R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
-            : 'R\$ •••••',
+                : 'R\$ •••••',
           ),
           trailing: IconButton(
             icon: Icon(
@@ -876,7 +892,32 @@ return ListView.builder(
       );
     }
 
-    final mensalidade = mensalidadesFiltradas[index - 1];
+    final itemLista = listaAgrupada[index - 1];
+
+    if (itemLista.containsKey('separadorMes')) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+        child: Row(
+          children: [
+            const Expanded(child: Divider()),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                'MÊS ${itemLista['separadorMes']}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey,
+                ),
+              ),
+            ),
+            const Expanded(child: Divider()),
+          ],
+        ),
+      );
+    }
+
+    final mensalidade =
+        itemLista['mensalidade'] as Map<String, dynamic>;
                     final valor =
                         (mensalidade['valor'] ?? '0,00').toString();
                     final nome =

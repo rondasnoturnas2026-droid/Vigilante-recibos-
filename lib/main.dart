@@ -983,51 +983,40 @@ const SizedBox(height: 2),
                           ],
                         ),
                         trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            
-                                                          if (abaAtual == 2)
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                16,
-                                0,
-                                16,
-                                16,
-                              ),
-                              child: Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: [
-                                  OutlinedButton.icon(
-                                    onPressed: () =>
-                                        _reativarCliente(mensalidade),
-                                    icon: const Icon(
-                                      Icons.person_add_alt_1,
-                                    ),
-                                    label: const Text('Reativar cliente'),
-                                  ),
-                                  OutlinedButton.icon(
-                                    onPressed: () =>
-                                        _excluirMensalidade(mensalidade),
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                    ),
-                                    label: const Text('Excluir mensalidade'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                              'R\$ ' + valor,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.expand_more),
-                          ],
-                        ),
-                        children: [
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    Text(
+      'R\$ ' + valor,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    const SizedBox(width: 8),
+    const Icon(Icons.expand_more),
+  ],
+),
+children: [
+  if (abaAtual == 2)
+    Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          OutlinedButton.icon(
+            onPressed: () => _reativarCliente(mensalidade),
+            icon: const Icon(Icons.person_add_alt_1),
+            label: const Text('Reativar cliente'),
+          ),
+          OutlinedButton.icon(
+            onPressed: () => _excluirMensalidade(mensalidade),
+            icon: const Icon(Icons.delete_outline),
+            label: const Text('Excluir mensalidade'),
+          ),
+        ],
+      ),
+    ),
                                   if (abaAtual == 0)
                             Padding(
                               padding: const EdgeInsets.fromLTRB(

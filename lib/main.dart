@@ -4060,7 +4060,7 @@ const SizedBox(height: 16),
 TextField(
   controller: nomeFantasia,
   decoration: const InputDecoration(
-    labelText: 'Nome Fantasia',
+    labelText: 'Nome da empresa (CNPJ, se tiver) ou nome fantasia',
     border: OutlineInputBorder(),
   ),
 ),

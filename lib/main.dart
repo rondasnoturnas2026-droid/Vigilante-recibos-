@@ -1014,6 +1014,63 @@ children: [
             icon: const Icon(Icons.delete_outline),
             label: const Text('Excluir mensalidade'),
           ),
+            OutlinedButton.icon(
+  onPressed: () async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Excluir cliente'),
+        content: Text(
+          'Atenção: o cadastro de ${mensalidade['nome'] ?? 'este cliente'} '
+          'será excluído da aba Clientes. As mensalidades e os recibos já '
+          'registrados serão mantidos no histórico. Para gerar novas '
+          'mensalidades para esse cliente, será necessário cadastrá-lo '
+          'novamente. Deseja continuar?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
+    final nome = (mensalidade['nome'] ?? '').toString();
+    final bairro = (mensalidade['bairro'] ?? '').toString();
+    final rua = (mensalidade['rua'] ?? '').toString();
+    final numero = (mensalidade['numero'] ?? '').toString();
+
+    widget.store.clientes.removeWhere(
+      (cliente) =>
+          (cliente['nome'] ?? '').toString() == nome &&
+          (cliente['bairro'] ?? '').toString() == bairro &&
+          (cliente['rua'] ?? '').toString() == rua &&
+          (cliente['numero'] ?? '').toString() == numero,
+    );
+
+    await widget.store.salvarClientes();
+
+    if (!mounted) return;
+    setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Cliente excluído da lista. Histórico das mensalidades mantido.',
+        ),
+      ),
+    );
+  },
+  icon: const Icon(Icons.person_remove_alt_1),
+  label: const Text('Excluir cliente'),
+),
         ],
       ),
     ),

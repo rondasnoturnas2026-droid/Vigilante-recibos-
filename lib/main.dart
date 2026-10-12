@@ -2012,7 +2012,7 @@ mensalidadesAdiantadas.add(mensalidade);
     }
   }
 
-  Future<void> _inativarCliente(
+    Future<void> _inativarCliente(
     Map<String, dynamic> mensalidade,
   ) async {
     final confirmado = await showDialog<bool>(
@@ -2020,7 +2020,8 @@ mensalidadesAdiantadas.add(mensalidade);
       builder: (dialogContext) => AlertDialog(
         title: const Text('Inativar cliente'),
         content: const Text(
-          'Deseja mover esta mensalidade para a lista de inativos?',
+          'As mensalidades pendentes deste cliente irão para Inativos. '
+          'Os recebimentos serão mantidos. Confirma?',
         ),
         actions: [
           TextButton(
@@ -2037,11 +2038,47 @@ mensalidadesAdiantadas.add(mensalidade);
 
     if (confirmado != true) return;
 
-    mensalidade['status'] = 'inativo';
+    String normalizar(Object? valor) =>
+        (valor ?? '').toString().trim().toLowerCase();
+
+    bool mesmoCliente(Map item) {
+      return normalizar(item['nome']) ==
+              normalizar(mensalidade['nome']) &&
+          normalizar(item['bairro']) ==
+              normalizar(mensalidade['bairro']) &&
+          normalizar(item['rua']) ==
+              normalizar(mensalidade['rua']) &&
+          normalizar(item['numero']) ==
+              normalizar(mensalidade['numero']);
+    }
+
+    for (final cliente in widget.store.clientes) {
+      if (mesmoCliente(cliente)) {
+        cliente['ativo'] = 'false';
+      }
+    }
+
+    for (final registro in widget.store.mensalidades) {
+      if (mesmoCliente(registro) &&
+          normalizar(registro['status']) == 'pendente') {
+        registro['status'] = 'inativo';
+      }
+    }
+
+    await widget.store.salvarClientes();
     await widget.store.salvarMensalidades();
 
     if (!mounted) return;
+
     setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Cliente inativado. Os recebimentos foram mantidos.',
+        ),
+      ),
+    );
   }
 }
 

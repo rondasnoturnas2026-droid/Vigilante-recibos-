@@ -4185,35 +4185,7 @@ Wrap(
       selected: widget.store.vigilanteQuinta,
       onSelected: (valor) {
         setState(() {
-          TextField(
-  controller: nomeFantasia,
-  decoration: const InputDecoration(
-    labelText: 'Nome da empresa ou nome fantasia',
-    border: OutlineInputBorder(),
-  ),
-),
-
-const SizedBox(height: 12),
-
-TextFormField(
-  initialValue: widget.store.vigilanteCnpjEmpresa,
-  keyboardType: TextInputType.number,
-  inputFormatters: [
-    FilteringTextInputFormatter.digitsOnly,
-    LengthLimitingTextInputFormatter(14),
-  ],
-  onChanged: (valor) {
-    widget.store.vigilanteCnpjEmpresa = valor;
-  },
-  decoration: const InputDecoration(
-    labelText: 'CNPJ da empresa (opcional)',
-    helperText: 'Deixe em branco se não tiver CNPJ.',
-    border: OutlineInputBorder(),
-  ),
-),
-
-const SizedBox(height: 12),
-          widget.store.vigilanteSexta = valor;
+          widget.store.vigilanteQuinta = valor;
         });
       },
     ),

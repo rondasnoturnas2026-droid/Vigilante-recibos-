@@ -368,6 +368,9 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     final cliente = (mensalidade['nome'] ?? 'Cliente').toString();
     final valor = (mensalidade['valor'] ?? '0,00').toString();
     final pagamento =
+            final periodoAdiantamento =
+        (mensalidade['periodoAdiantamento'] ?? '').toString().trim();
+    final ehAdiantamento = periodoAdiantamento.isNotEmpty;
         (mensalidade['formaPagamento'] ?? 'Não informado').toString();
 
     String dataFormatada(DateTime data) =>

@@ -985,7 +985,7 @@ const SizedBox(height: 2),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
+                            
                                                           if (abaAtual == 2)
                             Padding(
                               padding: const EdgeInsets.fromLTRB(

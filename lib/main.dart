@@ -1202,6 +1202,60 @@ if (confirmarRecebimento != true) return;
           icon: const Icon(Icons.delete_outline),
           label: const Text('Excluir'),
         ),
+                  OutlinedButton.icon(
+          onPressed: () async {
+            final agora = DateTime.now();
+            final dia =
+                int.tryParse((mensalidade['dia'] ?? '').toString()) ??
+                    agora.day;
+            final mes =
+                int.tryParse((mensalidade['mes'] ?? '').toString()) ??
+                    agora.month;
+            final ano =
+                int.tryParse((mensalidade['ano'] ?? '').toString()) ??
+                    agora.year;
+
+            final periodo =
+                (mensalidade['periodoAdiantamento'] ?? '')
+                    .toString()
+                    .trim();
+
+            final vencimento = periodo.isNotEmpty
+                ? periodo
+                : '${dia.toString().padLeft(2, '0')}/'
+                    '${mes.toString().padLeft(2, '0')}/$ano';
+
+            final dataRecebimento =
+                '${agora.day.toString().padLeft(2, '0')}/'
+                '${agora.month.toString().padLeft(2, '0')}/'
+                '${agora.year}';
+
+            final sucesso =
+                await ImpressoraBluetoothService.imprimirRecibo(
+              nomeMorador:
+                  (mensalidade['nome'] ?? 'Cliente').toString(),
+              valor: (mensalidade['valor'] ?? '0,00').toString(),
+              formaPagamento:
+                  (mensalidade['formaPagamento'] ?? 'Não informado')
+                      .toString(),
+              vencimento: vencimento,
+              dataRecebimento: dataRecebimento,
+            );
+
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  sucesso
+                      ? 'Recibo impresso.'
+                      : 'Não foi possível imprimir. Confira se a impressora está conectada.',
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.print),
+          label: const Text('Imprimir'),
+        ),
       ],
     ),
   ),

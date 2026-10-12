@@ -940,7 +940,7 @@ return ListView.builder(
                               Text(
   'Mês/Ano: ${(mensalidade['mes'] ?? '').toString().padLeft(2, '0')}/${mensalidade['ano'] ?? ''}',
   style: const TextStyle(
-    fontSize: 17,
+    fontSize: 13,
     fontWeight: FontWeight.bold,
   ),
 ),

@@ -1184,6 +1184,7 @@ if (confirmarRecebimento != true) return;
         (mensalidade['formaPagamento'] ?? 'Não informado').toString(),
     vencimento: vencimento,
     dataRecebimento: dataRecebimento,
+      status: 'RECEBIDO',
   );
 
   if (!mounted) return;

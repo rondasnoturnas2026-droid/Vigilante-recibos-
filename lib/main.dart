@@ -5085,11 +5085,11 @@ adicionarCampo(
   prefsRecibo.getString('vigilanteChavePix') ?? '',
 );
 
-if (mostrarCampo('data_pagamento', true)) {
-  linhasRecibo
-    ..add('Recebido em: $dataRecebimento')
-    ..add('');
-}
+linhasRecibo.add('');
+linhasRecibo.add('------------------------------');
+linhasRecibo.add('       PAGAMENTO RECEBIDO');
+linhasRecibo.add('------------------------------');
+linhasRecibo.add('');
 
 if (mostrarCampo('status', true)) {
   linhasRecibo.add('Status: RECEBIDO');

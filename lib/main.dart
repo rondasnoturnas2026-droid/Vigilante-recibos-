@@ -4874,24 +4874,6 @@ class ImpressoraBluetoothService {
   } catch (e) {
     return false;
   }
-}
-      return await PrintBluetoothThermal.connect(
-        macPrinterAddress: enderecoMac,
-      );
-    } catch (e) {
-      return false;
-    }
-  }
-
-  static Future<bool> estaConectada() async {
-    return await PrintBluetoothThermal.connectionStatus;
-  }
-
-  static Future<bool> desconectar() async {
-    return await PrintBluetoothThermal.disconnect;
-  }
-
-  static Future<bool> imprimirRecibo({
     required String nomeMorador,
     required String valor,
     required String formaPagamento,

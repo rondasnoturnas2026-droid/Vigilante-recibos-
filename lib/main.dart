@@ -5097,12 +5097,6 @@ if (mostrarCampo('status', true)) {
 
 
 
-linhasRecibo
-  ..add('')
-  ..add('--------------------------------')
-  ..add('       PAGAMENTO RECEBIDO')
-  ..add('--------------------------------')
-  ..add('');
 
 final recibo = linhasRecibo.join('\n');
 

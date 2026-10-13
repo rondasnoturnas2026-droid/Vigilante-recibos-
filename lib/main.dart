@@ -227,6 +227,32 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     bool buscaAberta = false;
   String pagamentoFiltro = 'Todas as formas';
     bool totalVisivel = true;
+      Map<String, String> _dadosClienteParaRecibo(
+    Map<String, dynamic> mensalidade,
+  ) {
+    String normalizar(Object? valor) =>
+        (valor ?? '').toString().trim().toLowerCase();
+
+    final nome = normalizar(mensalidade['nome']);
+    final bairro = normalizar(mensalidade['bairro']);
+    final rua = normalizar(mensalidade['rua']);
+    final numero = normalizar(mensalidade['numero']);
+
+    final cliente = widget.store.clientes.firstWhere(
+      (cliente) =>
+          normalizar(cliente['nome']) == nome &&
+          normalizar(cliente['bairro']) == bairro &&
+          normalizar(cliente['rua']) == rua &&
+          normalizar(cliente['numero']) == numero,
+      orElse: () => <String, String>{},
+    );
+
+    return <String, String>{
+      'bairro': (mensalidade['bairro'] ?? '').toString(),
+      'contato': (cliente['telefone'] ?? '').toString(),
+      'documento': (cliente['cpf'] ?? '').toString(),
+    };
+      }
 
   List<String> _valoresUnicos(String chave) {
     final valores = widget.store.mensalidades

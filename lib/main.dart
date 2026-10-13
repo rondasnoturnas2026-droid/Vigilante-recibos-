@@ -5053,11 +5053,31 @@ adicionarCampo(
       bairroCliente,
     );
 
-linhasRecibo
-  ..add('Valor: R\$ $valorFormatado')
-  ..add('Pagamento: $formaPagamento')
-  ..add('Vencimento: $vencimento')
-  ..add('');
+adicionarCampo(
+  mostrarCampo('cliente_contato', true),
+  'Contato',
+  contatoCliente,
+);
+
+adicionarCampo(
+  mostrarCampo('cliente_documento', false),
+  'CPF/CNPJ do cliente',
+  documentoCliente,
+);
+
+if (mostrarCampo('valor', true)) {
+  linhasRecibo.add('Valor: R\$ $valorFormatado');
+}
+
+if (mostrarCampo('forma_pagamento', true)) {
+  linhasRecibo.add('Pagamento: $formaPagamento');
+}
+
+if (mostrarCampo('vencimento', true)) {
+  linhasRecibo.add('Vencimento: $vencimento');
+}
+
+linhasRecibo.add('');
 
 adicionarCampo(
   mostrarCampo('pix', true),
@@ -5071,12 +5091,15 @@ if (mostrarCampo('data_pagamento', true)) {
     ..add('');
 }
 
-linhasRecibo.add('Status: RECEBIDO');
+if (mostrarCampo('status', true)) {
+  linhasRecibo.add('Status: RECEBIDO');
+}
 
-if (observacao.isNotEmpty) {
+if (mostrarCampo('observacao', true) &&
+    observacao.trim().isNotEmpty) {
   linhasRecibo
     ..add('')
-    ..add('Observação: $observacao');
+    ..add('Observação: ${observacao.trim()}');
 }
 
 linhasRecibo

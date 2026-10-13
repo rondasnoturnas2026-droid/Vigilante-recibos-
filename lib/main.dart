@@ -3747,6 +3747,21 @@ const Divider(),
 
           ),
           const Divider(),
+            ListTile(
+  leading: const Icon(Icons.receipt_long_outlined),
+  title: const Text('Personalizar recibo'),
+  subtitle: const Text('Escolha o que será impresso no recibo'),
+  trailing: const Icon(Icons.chevron_right),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PersonalizarReciboTermicoPage(),
+      ),
+    );
+  },
+),
+const Divider(),
           ListTile(
   leading: const Icon(Icons.palette_outlined),
   title: const Text('Tema do aplicativo'),

@@ -5037,6 +5037,11 @@ adicionarCampo(
   'CPF/CNPJ',
   prefsRecibo.getString('vigilanteCpfCnpj') ?? '',
 );
+          adicionarCampo(
+  mostrarCampo('pix', true),
+  'Chave Pix',
+  prefsRecibo.getString('vigilanteChavePix') ?? '',
+);
 
 linhasRecibo
   ..add('--------------------------------')

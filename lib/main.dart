@@ -4924,8 +4924,10 @@ class ImpressoraBluetoothService {
     required String formaPagamento,
     required String vencimento,
     required String dataRecebimento,
-    String observacao = '',
+        String observacao = '',
     String bairroCliente = '',
+    String contatoCliente = '',
+    String documentoCliente = '',
   }) async {
     final conectado =
         await PrintBluetoothThermal.connectionStatus;

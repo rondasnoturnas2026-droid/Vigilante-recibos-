@@ -5047,6 +5047,11 @@ adicionarCampo(
   'Cliente',
   nomeMorador,
 );
+              adicionarCampo(
+      mostrarCampo('cliente_bairro', true),
+      'Bairro',
+      bairroCliente,
+    );
 
 linhasRecibo
   ..add('Valor: R\$ $valorFormatado')

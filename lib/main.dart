@@ -4934,30 +4934,117 @@ class ImpressoraBluetoothService {
                 .replaceAll('.', ',') ??
             valor;
 
-    final recibo = '''
-================================
-       VIGILANTE RECIBOS
-================================
+        final prefsRecibo = await SharedPreferences.getInstance();
 
-Cliente: $nomeMorador
+    bool mostrarCampo(String chave, bool padrao) =>
+        prefsRecibo.getBool('recibo_$chave') ?? padrao;
 
-Value: R\$ $valorFormatado
+    final linhasRecibo = <String>[
+      '================================',
+      '       VIGILANTE RECIBOS',
+      '================================',
+      '',
+    ];
 
-Pagamento: $formaPagamento
+    void adicionarCampo(bool mostrar, String titulo, String valor) {
+      final texto = valor.trim();
+      if (mostrar && texto.isNotEmpty) {
+        linhasRecibo.add('$titulo: $texto');
+        linhasRecibo.add('');
+      }
+    }
 
-Vencimento: $vencimento
+    adicionarCampo(
+      mostrarCampo('fantasia', true),
+      'Empresa',
+      prefsRecibo.getString('vigilanteNomeFantasia') ?? '',
+    );
 
-Recebido em: $dataRecebimento
+    adicionarCampo(
+      mostrarCampo('segmento', true),
+      'Segmento',
+      prefsRecibo.getString('vigilanteSegmentoMercado') ?? '',
+    );
 
-Status: RECEBIDO
+    final inicioHorario =
+        prefsRecibo.getString('vigilanteHorarioInicio') ?? '';
+    final fimHorario =
+        prefsRecibo.getString('vigilanteHorarioFim') ?? '';
 
-${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
---------------------------------
-        PAGAMENTO RECEBIDO
---------------------------------
+    final horarios = [
+      inicioHorario,
+      fimHorario,
+    ].where((horario) => horario.trim().isNotEmpty).join(' às ');
 
+    adicionarCampo(
+      mostrarCampo('horarios', true),
+      'Horário',
+      horarios,
+    );
 
-''';
+    adicionarCampo(
+      mostrarCampo('site', false),
+      'Site',
+      prefsRecibo.getString('vigilanteSite') ?? '',
+    );
+
+    adicionarCampo(
+      mostrarCampo('endereco_vigilante', false),
+      'Endereço',
+      prefsRecibo.getString('vigilanteEndereco') ?? '',
+    );
+
+    adicionarCampo(
+      mostrarCampo('documento_vigilante', false),
+      'CPF/CNPJ',
+      prefsRecibo.getString('vigilanteCpfCnpj') ?? '',
+    );
+
+    linhasRecibo.add('--------------------------------');
+    linhasRecibo.add('');
+
+    adicionarCampo(
+      mostrarCampo('cliente_nome', true),
+      'Cliente',
+      nomeMorador,
+    );
+
+    linhasRecibo
+      ..add('Valor: R\$ $valorFormatado')
+      ..add('')
+      ..add('Pagamento: $formaPagamento')
+      ..add('')
+      ..add('Vencimento: $vencimento')
+      ..add('');
+
+    adicionarCampo(
+      mostrarCampo('pix', true),
+      'Chave Pix',
+      prefsRecibo.getString('vigilanteChavePix') ?? '',
+    );
+
+    if (mostrarCampo('data_pagamento', true)) {
+      linhasRecibo
+        ..add('Recebido em: $dataRecebimento')
+        ..add('');
+    }
+
+    linhasRecibo.add('Status: RECEBIDO');
+
+    if (observacao.isNotEmpty) {
+      linhasRecibo
+        ..add('')
+        ..add('Observação: $observacao');
+    }
+
+    linhasRecibo
+      ..add('')
+      ..add('--------------------------------')
+      ..add('       PAGAMENTO RECEBIDO')
+      ..add('--------------------------------')
+      ..add('');
+
+    final recibo = linhasRecibo.join('\n');
 
     final resultado =
         await PrintBluetoothThermal.writeString(

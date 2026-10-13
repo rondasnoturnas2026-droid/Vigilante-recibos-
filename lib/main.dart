@@ -4918,13 +4918,14 @@ class ImpressoraBluetoothService {
     return await PrintBluetoothThermal.disconnect;
   }
 
-    static Future<bool> imprimirRecibo({
+      static Future<bool> imprimirRecibo({
     required String nomeMorador,
     required String valor,
     required String formaPagamento,
     required String vencimento,
     required String dataRecebimento,
     String observacao = '',
+    String bairroCliente = '',
   }) async {
     final conectado =
         await PrintBluetoothThermal.connectionStatus;

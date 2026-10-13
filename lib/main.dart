@@ -5126,6 +5126,7 @@ final recibo = linhasRecibo.join('\n');
     return resultado;
   }
 }
+class Bairro {
   Bairro({
     required this.id,
     required this.nome,

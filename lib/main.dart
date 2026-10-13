@@ -5095,12 +5095,7 @@ if (mostrarCampo('status', true)) {
   linhasRecibo.add('Status: RECEBIDO');
 }
 
-if (mostrarCampo('observacao', true) &&
-    observacao.trim().isNotEmpty) {
-  linhasRecibo
-    ..add('')
-    ..add('Observação: ${observacao.trim()}');
-}
+
 
 linhasRecibo
   ..add('')

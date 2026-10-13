@@ -1186,8 +1186,15 @@ children: [
 );
 
 if (confirmarRecebimento != true) return;
-                                    mensalidade['status'] = 'recebida';
-                                    await widget.store.salvarMensalidades();
+
+final agora = DateTime.now();
+mensalidade['dataRecebimento'] =
+    '${agora.day.toString().padLeft(2, '0')}/'
+    '${agora.month.toString().padLeft(2, '0')}/'
+    '${agora.year}';
+
+mensalidade['status'] = 'recebida';
+await widget.store.salvarMensalidades();
 
                                     if (!mounted) return;
                                     setState(() {});

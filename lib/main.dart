@@ -5426,6 +5426,11 @@ class _PersonalizarReciboTermicoPageState
     'cliente_bairro': true,
     'cliente_documento': false,
     'data_pagamento': true,
+          'valor': true,
+    'forma_pagamento': true,
+    'vencimento': true,
+    'status': true,
+    'observacao': true,
   };
 
   String _modoQr = 'pendente';

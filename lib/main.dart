@@ -5077,11 +5077,7 @@ if (mostrarCampo('vencimento', true)) {
 adicionarCampo(mostrarCampo('observacao', true), 'Observação', observacao);
 linhasRecibo.add('');
 
-adicionarCampo(
-  mostrarCampo('pix', true),
-  'Chave Pix',
-  prefsRecibo.getString('vigilanteChavePix') ?? '',
-);
+
 
 
 

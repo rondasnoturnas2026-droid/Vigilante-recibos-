@@ -5455,11 +5455,7 @@ class _PersonalizarReciboTermicoPageState
 'status': true,
 'observacao': true,
           
-    'forma_pagamento': true,
-    'vencimento': true,
-    'status': true,
-    'observacao': true,
-  };
+
 
   String _modoQr = 'pendente';
   bool _carregando = true;

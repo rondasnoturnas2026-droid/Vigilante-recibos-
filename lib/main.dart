@@ -4867,7 +4867,14 @@ class ImpressoraBluetoothService {
   }
 
   static Future<bool> conectar(String enderecoMac) async {
-    try {
+  try {
+    return await PrintBluetoothThermal.connect(
+      macPrinterAddress: enderecoMac,
+    ).timeout(const Duration(seconds: 15));
+  } catch (e) {
+    return false;
+  }
+}
       return await PrintBluetoothThermal.connect(
         macPrinterAddress: enderecoMac,
       );

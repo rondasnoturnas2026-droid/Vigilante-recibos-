@@ -5069,9 +5069,7 @@ if (mostrarCampo('valor', true)) {
   linhasRecibo.add('Valor: R\$ $valorFormatado');
 }
 
-if (mostrarCampo('forma_pagamento', true)) {
-  linhasRecibo.add('Pagamento: $formaPagamento');
-}
+
 
 if (mostrarCampo('vencimento', true)) {
   linhasRecibo.add('Vencimento: $vencimento');

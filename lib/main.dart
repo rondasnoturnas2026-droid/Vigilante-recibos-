@@ -5454,7 +5454,7 @@ class _PersonalizarReciboTermicoPageState
 'vencimento': true,
 'status': true,
 'observacao': true,
-          
+  };          
 
 
   String _modoQr = 'pendente';

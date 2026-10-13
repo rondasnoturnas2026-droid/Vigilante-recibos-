@@ -5454,7 +5454,7 @@ class _PersonalizarReciboTermicoPageState
 'vencimento': true,
 'status': true,
 'observacao': true,
-          'valor': true,
+          
     'forma_pagamento': true,
     'vencimento': true,
     'status': true,

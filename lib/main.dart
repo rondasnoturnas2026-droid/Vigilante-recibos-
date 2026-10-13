@@ -4866,15 +4866,40 @@ class ImpressoraBluetoothService {
     return await PrintBluetoothThermal.pairedBluetooths;
   }
 
-  static Future<bool> conectar(String enderecoMac) async {
-  try {
-    return await PrintBluetoothThermal.connect(
-      macPrinterAddress: enderecoMac,
-    ).timeout(const Duration(seconds: 15));
-  } catch (e) {
-    return false;
+    static Future<bool>? _conexaoEmAndamento;
+  static String? _macEmConexao;
+
+  static Future<bool> conectar(String enderecoMac) {
+    final tentativaAtual = _conexaoEmAndamento;
+
+    if (tentativaAtual != null) {
+      if (_macEmConexao == enderecoMac) {
+        return tentativaAtual;
+      }
+      return tentativaAtual.then((_) => conectar(enderecoMac));
+    }
+
+    final tentativa = _conectarAgora(enderecoMac);
+    _macEmConexao = enderecoMac;
+    _conexaoEmAndamento = tentativa;
+
+    return tentativa.whenComplete(() {
+      if (identical(_conexaoEmAndamento, tentativa)) {
+        _conexaoEmAndamento = null;
+        _macEmConexao = null;
+      }
+    });
   }
-        }
+
+  static Future<bool> _conectarAgora(String enderecoMac) async {
+    try {
+      return await PrintBluetoothThermal.connect(
+        macPrinterAddress: enderecoMac,
+      ).timeout(const Duration(seconds: 15));
+    } catch (_) {
+      return false;
+    }
+  }
 
   static Future<bool> estaConectada() async {
     return await PrintBluetoothThermal.connectionStatus;

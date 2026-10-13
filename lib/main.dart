@@ -5076,7 +5076,7 @@ if (mostrarCampo('forma_pagamento', true)) {
 if (mostrarCampo('vencimento', true)) {
   linhasRecibo.add('Vencimento: $vencimento');
 }
-
+adicionarCampo(mostrarCampo('observacao', true), 'Observação', observacao);
 linhasRecibo.add('');
 
 adicionarCampo(

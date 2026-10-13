@@ -5057,6 +5057,16 @@ adicionarCampo(
       'Bairro',
       bairroCliente,
     );
+          _opcao(
+  'cliente_rua',
+  'Rua',
+  'Exibir a rua do cliente',
+),
+_opcao(
+  'cliente_numero',
+  'Número',
+  'Exibir o número do cliente',
+),
 
 adicionarCampo(
   mostrarCampo('cliente_contato', true),

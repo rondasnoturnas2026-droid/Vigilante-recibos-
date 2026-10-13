@@ -4910,66 +4910,6 @@ class ImpressoraBluetoothService {
   }
 
   static Future<bool> imprimirRecibo({
-    required String nomeMorador,
-    required String valor,
-    required String formaPagamento,
-    required String vencimento,
-    required String dataRecebimento,
-    String observacao = '',
-  }) async {
-    final conectado =
-        await PrintBluetoothThermal.connectionStatus;
-
-    if (!conectado) {
-      return false;
-    }
-      final valorNumerico = valor.contains(',')
-    ? valor.replaceAll('.', '').replaceAll(',', '.')
-    : valor;
-final valorFormatado =
-    double.tryParse(valorNumerico)?.toStringAsFixed(2).replaceAll('.', ',') ?? valor;
-
-    final recibo = '''
-================================
-       VIGILANTE RECIBOS
-================================
-
-Cliente: $nomeMorador
-
-Value: R\$ ${valorFormatado}
-
-Pagamento: $formaPagamento
-
-Vencimento: $vencimento
-
-Recebido em: $dataRecebimento
-
-Status: RECEBIDO
-
-${observacao.isNotEmpty ? 'Observacao: $observacao\n' : ''}
---------------------------------
-        PAGAMENTO RECEBIDO
---------------------------------
-
-
-''';
-
-    final resultado =
-        await PrintBluetoothThermal.writeString(
-      printText: PrintTextSize(
-        size: 1,
-        text: recibo,
-          
-      ),
-    );
-
-    await PrintBluetoothThermal.writeBytes(
-  '\n\n\n'.codeUnits,
-);
-
-return resultado;
-  }
-      }
 
     class Bairro {
   Bairro({

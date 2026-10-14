@@ -1291,15 +1291,21 @@ await widget.store.salvarMensalidades();
       '${agora.month.toString().padLeft(2, '0')}/'
       '${agora.year}';
 
-  final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
-    nomeMorador: (mensalidade['nome'] ?? 'Cliente').toString(),
-    valor: (mensalidade['valor'] ?? '0,00').toString(),
-    formaPagamento:
-        (mensalidade['formaPagamento'] ?? 'Não informado').toString(),
-    vencimento: vencimento,
-    dataRecebimento: dataRecebimento,
+  final dadosCliente = _dadosClienteParaRecibo(mensalidade);
 
- );
+final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
+  nomeMorador: (mensalidade['nome'] ?? 'Cliente').toString(),
+  valor: (mensalidade['valor'] ?? '0,00').toString(),
+  formaPagamento:
+      (mensalidade['formaPagamento'] ?? 'Não informado').toString(),
+  vencimento: vencimento,
+  dataRecebimento: dataRecebimento,
+  bairroCliente: dadosCliente['bairro'] ?? '',
+  ruaCliente: (mensalidade['rua'] ?? '').toString(),
+  numeroCliente: (mensalidade['numero'] ?? '').toString(),
+  contatoCliente: dadosCliente['contato'] ?? '',
+  documentoCliente: dadosCliente['documento'] ?? '',
+);
 
   if (!mounted) return;
 

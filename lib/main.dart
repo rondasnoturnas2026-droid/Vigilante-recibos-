@@ -4960,6 +4960,73 @@ class ImpressoraBluetoothService {
   static Future<bool> desconectar() async {
     return await PrintBluetoothThermal.disconnect;
   }
+    static String _campoPix(String id, String valor) {
+  final tamanho = utf8.encode(valor).length.toString().padLeft(2, '0');
+  return '$id$tamanho$valor';
+}
+
+static String _gerarPixCopiaECola({
+  required String chavePix,
+  required String nomeVigilante,
+  required String valor,
+}) {
+  String nome = nomeVigilante.trim().toUpperCase();
+  nome = nome
+      .replaceAll('Á', 'A')
+      .replaceAll('À', 'A')
+      .replaceAll('Â', 'A')
+      .replaceAll('Ã', 'A')
+      .replaceAll('É', 'E')
+      .replaceAll('Ê', 'E')
+      .replaceAll('Í', 'I')
+      .replaceAll('Ó', 'O')
+      .replaceAll('Ô', 'O')
+      .replaceAll('Õ', 'O')
+      .replaceAll('Ú', 'U')
+      .replaceAll('Ü', 'U')
+      .replaceAll('Ç', 'C')
+      .replaceAll(RegExp(r'[^A-Z0-9 ]'), '');
+
+  if (nome.isEmpty) nome = 'VIGILANTE';
+  if (nome.length > 25) nome = nome.substring(0, 25);
+
+  final valorNumerico = valor.contains(',')
+      ? valor.replaceAll('.', '').replaceAll(',', '.')
+      : valor;
+  final valorPix =
+      (double.tryParse(valorNumerico) ?? 0).toStringAsFixed(2);
+
+  final chave = chavePix.trim();
+  final contaPix = _campoPix('00', 'BR.GOV.BCB.PIX') +
+      _campoPix('01', chave);
+
+  final identificador = _campoPix('05', '***');
+  var payload = _campoPix('00', '01') +
+      _campoPix('01', '11') +
+      _campoPix('26', contaPix) +
+      _campoPix('52', '0000') +
+      _campoPix('53', '986') +
+      _campoPix('54', valorPix) +
+      _campoPix('58', 'BR') +
+      _campoPix('59', nome) +
+      _campoPix('60', 'BRASIL') +
+      _campoPix('62', identificador) +
+      '6304';
+
+  var crc = 0xFFFF;
+  for (final byte in utf8.encode(payload)) {
+    crc ^= byte << 8;
+    for (var i = 0; i < 8; i++) {
+      crc = (crc & 0x8000) != 0
+          ? ((crc << 1) ^ 0x1021)
+          : (crc << 1);
+      crc &= 0xFFFF;
+    }
+  }
+
+  payload += crc.toRadixString(16).toUpperCase().padLeft(4, '0');
+  return payload;
+}
 
       static Future<bool> imprimirRecibo({
     required String nomeMorador,

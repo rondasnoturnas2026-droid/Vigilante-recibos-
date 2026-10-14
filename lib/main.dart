@@ -4981,6 +4981,7 @@ class ImpressoraBluetoothService {
 
 static String _gerarPixCopiaECola({
   required String chavePix,
+    String tipoChavePix = 'Telefone',
   required String nomeVigilante,
   required String valor,
 }) {

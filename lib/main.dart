@@ -1492,11 +1492,14 @@ final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
       (mensalidade['formaPagamento'] ?? 'Não informado').toString(),
   vencimento: vencimento,
   dataRecebimento: dataRecebimento,
-  bairroCliente: dadosCliente['bairro'] ?? '',
-  ruaCliente: (mensalidade['rua'] ?? '').toString(),
-  numeroCliente: (mensalidade['numero'] ?? '').toString(),
-  contatoCliente: dadosCliente['contato'] ?? '',
-  documentoCliente: dadosCliente['documento'] ?? '',
+      bairroCliente:
+        (dadosCliente['bairro'] ?? mensalidade['bairro'] ?? '').toString(),
+    ruaCliente:
+        (dadosCliente['rua'] ?? mensalidade['rua'] ?? '').toString(),
+    numeroCliente:
+        (dadosCliente['numero'] ?? mensalidade['numero'] ?? '').toString(),
+    contatoCliente: (dadosCliente['contato'] ?? '').toString(),
+    documentoCliente: (dadosCliente['documento'] ?? '').toString(),
 );
 
             if (!mounted) return;

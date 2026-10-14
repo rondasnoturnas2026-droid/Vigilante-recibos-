@@ -5222,8 +5222,31 @@ final resultado = await PrintBluetoothThermal.writeString(
   ),
 );
 
-final chavePixQr =
+final chavePixOriginal =
     prefsRecibo.getString('vigilanteChavePix') ?? '';
+final tipoChavePixSalvo =
+    prefsRecibo.getString('vigilanteTipoChavePix') ?? 'Telefone';
+
+final String chavePixQr;
+if (chavePixOriginal.trim().isEmpty) {
+  chavePixQr = '';
+} else if (tipoChavePixSalvo == 'Telefone') {
+  final numeros = chavePixOriginal.replaceAll(RegExp(r'\D'), '');
+
+  if ((numeros.length == 12 || numeros.length == 13) &&
+      numeros.startsWith('55')) {
+    chavePixQr = '+$numeros';
+  } else if (numeros.length == 10 || numeros.length == 11) {
+    chavePixQr = '+55$numeros';
+  } else {
+    chavePixQr = chavePixOriginal.trim();
+  }
+} else if (tipoChavePixSalvo == 'CPF/CNPJ') {
+  chavePixQr =
+      chavePixOriginal.replaceAll(RegExp(r'[^A-Za-z0-9]'), '');
+} else {
+  chavePixQr = chavePixOriginal.trim();
+}
 
 if (mostrarCampo('pix', true) && chavePixQr.trim().isNotEmpty) {
   final pixCopiaECola = _gerarPixCopiaECola(

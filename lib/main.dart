@@ -5443,6 +5443,8 @@ class _PersonalizarReciboTermicoPageState
     'cliente_nome': true,
     'cliente_contato': true,
     'cliente_bairro': true,
+      'cliente_rua': true,
+'cliente_numero': true,
     'cliente_documento': false,
     'data_pagamento': true,
       'valor': true,

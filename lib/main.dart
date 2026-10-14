@@ -5655,6 +5655,7 @@ class _PersonalizarReciboTermicoPageState
                     'Bairro',
                     'Exibir o bairro do cliente',),
                       _opcao(
+                          _opcao(
   'cliente_rua',
   'Rua',
   'Exibir a rua do cliente',

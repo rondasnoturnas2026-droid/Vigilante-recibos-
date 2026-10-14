@@ -5200,19 +5200,45 @@ if (mostrarCampo('status', true)) {
 
 final recibo = linhasRecibo.join('\n');
 
-    final resultado =
-        await PrintBluetoothThermal.writeString(
-      printText: PrintTextSize(
-        size: 1,
-        text: recibo,
-      ),
-    );
+final resultado = await PrintBluetoothThermal.writeString(
+  printText: PrintTextSize(
+    size: 1,
+    text: recibo,
+  ),
+);
 
-    await PrintBluetoothThermal.writeBytes(
-      '\n\n\n'.codeUnits,
-    );
+final chavePixQr =
+    prefsRecibo.getString('vigilanteChavePix') ?? '';
 
-    return resultado;
+if (mostrarCampo('pix', true) && chavePixQr.trim().isNotEmpty) {
+  final pixCopiaECola = _gerarPixCopiaECola(
+    chavePix: chavePixQr,
+    nomeVigilante:
+        prefsRecibo.getString('vigilanteNomeFantasia') ?? 'VIGILANTE',
+    valor: valorFormatado,
+  );
+
+  final perfilQr = await CapabilityProfile.load();
+  final geradorQr = Generator(PaperSize.mm58, perfilQr);
+
+  final bytesQr = <int>[
+    ...geradorQr.feed(1),
+    ...geradorQr.text(
+      'PAGUE COM PIX',
+      styles: PosStyles(align: PosAlign.center, bold: true),
+    ),
+    ...geradorQr.qrcode(pixCopiaECola),
+    ...geradorQr.feed(1),
+  ];
+
+  await PrintBluetoothThermal.writeBytes(bytesQr);
+}
+
+await PrintBluetoothThermal.writeBytes(
+  '\n\n\n'.codeUnits,
+);
+
+return resultado;
   }
 }
 class Bairro {

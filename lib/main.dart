@@ -5097,12 +5097,27 @@ if (mostrarCampo('valor', true)) {
   linhasRecibo.add('Valor: R\$ $valorFormatado');
 }
 
+adicionarCampo(
+  mostrarCampo('forma_pagamento', true),
+  'Forma de pagamento',
+  formaPagamento,
+);
 
+adicionarCampo(
+  mostrarCampo('data_pagamento', true),
+  'Data do pagamento',
+  dataRecebimento,
+);
 
 if (mostrarCampo('vencimento', true)) {
   linhasRecibo.add('Vencimento: $vencimento');
 }
-adicionarCampo(mostrarCampo('observacao', true), 'Observação', observacao);
+
+adicionarCampo(
+  mostrarCampo('observacao', true),
+  'Observação',
+  observacao,
+);
 linhasRecibo.add('');
 
 

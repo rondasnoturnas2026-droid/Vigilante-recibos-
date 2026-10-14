@@ -5651,16 +5651,25 @@ class _PersonalizarReciboTermicoPageState
                     'Exibir o telefone ou contato',
                   ),
                   _opcao(
-                    'cliente_bairro',
-                    'Bairro',
-                    'Exibir o bairro do cliente',),
-                      _opcao(
-                        
-                  _opcao(
-                    'data_pagamento',
-                    'Data do pagamento',
-                    'Exibir a data do pagamento',
-                  ),
+  'cliente_bairro',
+  'Bairro',
+  'Exibir o bairro do cliente',
+),
+_opcao(
+  'cliente_rua',
+  'Rua',
+  'Exibir a rua do cliente',
+),
+_opcao(
+  'cliente_numero',
+  'Número',
+  'Exibir o número do cliente',
+),
+_opcao(
+  'data_pagamento',
+  'Data do pagamento',
+  'Exibir a data do pagamento',
+),
                 ]),
               ],
             ),

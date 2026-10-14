@@ -422,7 +422,7 @@ final pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
           const Text('QR Code Pix:'),
 const SizedBox(height: 8),
 QrImageView(
-  data: pixCopiaCola,
+  data: pixCopiaECola,
   version: QrVersions.auto,
   size: 220,
   backgroundColor: Colors.white,

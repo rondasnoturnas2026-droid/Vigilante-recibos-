@@ -22,7 +22,7 @@ dependencies:
   print_bluetooth_thermal: ^1.2.1
   esc_pos_utils_plus: ^2.0.4
   image_picker: ^1.1.2
-        
+    qr_flutter: ^4.1.0      
   url_launcher: ^6.3.2
   share_plus: ^12.0.2
 dev_dependencies:

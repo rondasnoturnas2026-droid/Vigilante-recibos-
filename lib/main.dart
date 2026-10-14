@@ -419,10 +419,19 @@ final pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
         children: [
           Text('Cliente: ${mensalidade['nome'] ?? 'Cliente'}'),
           const SizedBox(height: 8),
-          const Text('Chave Pix:'),
-          SelectableText(chavePix),
-          const SizedBox(height: 8),
-          Text('Valor: R\$ ${mensalidade['valor'] ?? '0,00'}'),
+          const Text('QR Code Pix:'),
+const SizedBox(height: 8),
+QrImageView(
+  data: pixCopiaCola,
+  version: QrVersions.auto,
+  size: 220,
+  backgroundColor: Colors.white,
+),
+const SizedBox(height: 8),
+const Text('Chave Pix:'),
+SelectableText(chavePix),
+const SizedBox(height: 8),
+Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
         ],
       ),
       actions: [

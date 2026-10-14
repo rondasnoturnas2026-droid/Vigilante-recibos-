@@ -5011,8 +5011,8 @@ static String _gerarPixCopiaECola({
       (double.tryParse(valorNumerico) ?? 0).toStringAsFixed(2);
 
   final chave = chavePix.trim();
-  final contaPix = _campoPix('00', 'BR.GOV.BCB.PIX') +
-      _campoPix('01', chave);
+final contaPix = _campoPix('00', 'br.gov.bcb.pix') +
+    _campoPix('01', chave);
 
   final identificador = _campoPix('05', '***');
   var payload = _campoPix('00', '01') +

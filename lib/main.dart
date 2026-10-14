@@ -5066,10 +5066,8 @@ adicionarCampo(
 );
 
 adicionarCampo(
-  mostrarCampo('cliente_numero', true),
-  'Número',
-  numeroCliente,
-);
+  adicionarCampo(true, 'Rua', ruaCliente);
+adicionarCampo(true, 'Número', numeroCliente);
 
 adicionarCampo(
   mostrarCampo('cliente_contato', true),

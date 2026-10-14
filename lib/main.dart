@@ -404,7 +404,11 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     );
     return;
   }
-
+final pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
+  chavePix: chavePix,
+  nomeVigilante: widget.store.vigilanteNomeFantasia,
+  valor: (mensalidade['valor'] ?? '0,00').toString(),
+);
   await showDialog<void>(
     context: context,
     builder: (dialogContext) => AlertDialog(

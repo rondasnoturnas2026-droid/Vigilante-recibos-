@@ -5059,11 +5059,7 @@ adicionarCampo(
       'Bairro',
       bairroCliente,
     );
-          adicionarCampo(
-  mostrarCampo('cliente_rua', true),
-  'Rua',
-  ruaCliente,
-);
+          
 
 adicionarCampo(true, 'Rua', ruaCliente);
 adicionarCampo(true, 'Número', numeroCliente);

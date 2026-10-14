@@ -4952,6 +4952,8 @@ class ImpressoraBluetoothService {
     required String dataRecebimento,
         String observacao = '',
     String bairroCliente = '',
+          String ruaCliente = '',
+String numeroCliente = '',
     String contatoCliente = '',
     String documentoCliente = '',
   }) async {

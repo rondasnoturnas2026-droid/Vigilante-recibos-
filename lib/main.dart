@@ -5065,8 +5065,7 @@ adicionarCampo(
   ruaCliente,
 );
 
-adicionarCampo(
-  adicionarCampo(true, 'Rua', ruaCliente);
+adicionarCampo(true, 'Rua', ruaCliente);
 adicionarCampo(true, 'Número', numeroCliente);
 
 adicionarCampo(

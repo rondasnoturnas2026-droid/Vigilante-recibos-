@@ -5499,6 +5499,8 @@ final mostrarQrTermico = modoQrTermico == 'sempre';
 if (mostrarQrTermico &&
     mostrarCampo('pix', true) &&
     chavePixQr.trim().isNotEmpty) {
+  final pixCopiaECola =
+      ImpressoraBluetoothService._gerarPixCopiaECola(
     chavePix: chavePixQr,
     nomeVigilante:
         prefsRecibo.getString('vigilanteNomeFantasia') ?? 'VIGILANTE',

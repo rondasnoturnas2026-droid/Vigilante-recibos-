@@ -534,7 +534,7 @@ Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
         ellipsis: '…',
       );
 
-      pintor.layout(maxWidth: 880);
+      pintor.layout(maxWidth: texto == empresa ? 700 : 880);
       pintor.paint(canvas, ui.Offset(100, y));
     }
 

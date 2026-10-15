@@ -659,6 +659,7 @@ adicionarCampoRecibo(
   widget.store.vigilanteCpfCnpj,
   false,
 );
+      final quantidadeCamposVigilante = campos.length;
 adicionarCampoRecibo('cliente_nome', 'Cliente', cliente, true);
 adicionarCampoRecibo(
   'cliente_contato',

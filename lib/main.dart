@@ -548,45 +548,45 @@ Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
       );
     }
           final prefsRecibo = await SharedPreferences.getInstance();
-final mostrarLogo = prefsRecibo.getBool('recibo_logo') ?? true;
-final caminhoLogo = mostrarLogo ? widget.store.vigilanteLogo.trim() : '';
-    if (caminhoLogo.isNotEmpty) {
-      try {
-        final bytesLogo = await File(caminhoLogo).readAsBytes();
-        final codecLogo = await ui.instantiateImageCodec(bytesLogo);
-        final frameLogo = await codecLogo.getNextFrame();
-        final imagemLogo = frameLogo.image;
 
-        final larguraOriginal = imagemLogo.width.toDouble();
-        final alturaOriginal = imagemLogo.height.toDouble();
-        final maiorLado = larguraOriginal > alturaOriginal
-            ? larguraOriginal
-            : alturaOriginal;
-        final escalaLogo = 110 / maiorLado;
-        final larguraLogo = larguraOriginal * escalaLogo;
-        final alturaLogo = alturaOriginal * escalaLogo;
+bool mostrarCampo(String chave, bool padrao) =>
+    prefsRecibo.getBool('recibo_$chave') ?? padrao;
 
-        canvas.drawImageRect(
-          imagemLogo,
-          ui.Rect.fromLTWH(
-            0,
-            0,
-            larguraOriginal,
-            alturaOriginal,
-          ),
-          ui.Rect.fromLTWH(
-            910 - larguraLogo / 2,
-            180 - alturaLogo / 2,
-            larguraLogo,
-            alturaLogo,
-          ),
-          ui.Paint(),
-        );
-      } catch (_) {}
-    }
+final mostrarLogo = mostrarCampo('logo', true);
+final caminhoLogo =
+    mostrarLogo ? widget.store.vigilanteLogo.trim() : '';
 
-        if ((prefsRecibo.getBool('recibo_fantasia') ?? true) &&
-    empresa.trim().isNotEmpty) {
+if (caminhoLogo.isNotEmpty) {
+  try {
+    final bytesLogo = await File(caminhoLogo).readAsBytes();
+    final codecLogo = await ui.instantiateImageCodec(bytesLogo);
+    final frameLogo = await codecLogo.getNextFrame();
+    final imagemLogo = frameLogo.image;
+
+    final larguraOriginal = imagemLogo.width.toDouble();
+    final alturaOriginal = imagemLogo.height.toDouble();
+    final maiorLado = larguraOriginal > alturaOriginal
+        ? larguraOriginal
+        : alturaOriginal;
+    final escalaLogo = 110 / maiorLado;
+    final larguraLogo = larguraOriginal * escalaLogo;
+    final alturaLogo = alturaOriginal * escalaLogo;
+
+    canvas.drawImageRect(
+      imagemLogo,
+      ui.Rect.fromLTWH(0, 0, larguraOriginal, alturaOriginal),
+      ui.Rect.fromLTWH(
+        910 - larguraLogo / 2,
+        180 - alturaLogo / 2,
+        larguraLogo,
+        alturaLogo,
+      ),
+      ui.Paint(),
+    );
+  } catch (_) {}
+}
+
+if (mostrarCampo('fantasia', true) && empresa.trim().isNotEmpty) {
   escrever(
     empresa.trim(),
     95,
@@ -594,64 +594,244 @@ final caminhoLogo = mostrarLogo ? widget.store.vigilanteLogo.trim() : '';
     cor: Colors.white,
     peso: FontWeight.bold,
   );
-        }
-    escrever(
-      'RECIBO DE PAGAMENTO',
-      165,
-      tamanho: 38,
-      cor: const Color(0xFFFFD166),
-      peso: FontWeight.bold,
-    );
-    escrever(
-      'PAGAMENTO RECEBIDO',
-      225,
-      tamanho: 30,
-      cor: Colors.white,
-    );
+}
 
-    escrever('CLIENTE', 390, tamanho: 28, cor: Colors.blueGrey);
-    escrever(cliente, 435, tamanho: 44, peso: FontWeight.bold);
-    separador(520);
-
-    escrever('VALOR PAGO', 560, tamanho: 28, cor: Colors.blueGrey);
-    escrever(
-      'R\$ $valor',
-      605,
-      tamanho: 54,
-      cor: const Color(0xFF17365D),
-      peso: FontWeight.bold,
-    );
-    separador(700);
-
-    escrever('FORMA DE PAGAMENTO', 740, tamanho: 28, cor: Colors.blueGrey);
-    escrever(pagamento, 785, tamanho: 40, peso: FontWeight.bold);
-    separador(865);
-
-    escrever(
-  ehAdiantamento ? 'PERÍODO ADIANTADO' : 'VENCIMENTO',
-  905,
-  tamanho: 28,
-  cor: Colors.blueGrey,
-);
 escrever(
-  ehAdiantamento
-      ? periodoAdiantamento
-      : dataFormatada(DateTime(anoVencimento, mesVencimento, diaVencimento)),
-  950,
-  tamanho: 40,
+  'RECIBO DE PAGAMENTO',
+  165,
+  tamanho: 38,
+  cor: const Color(0xFFFFD166),
   peso: FontWeight.bold,
 );
-    separador(1030);
+escrever(
+  'PAGAMENTO RECEBIDO',
+  225,
+  tamanho: 30,
+  cor: Colors.white,
+);
 
-    escrever('RECEBIDO EM', 1070, tamanho: 28, cor: Colors.blueGrey);
-    escrever(dataFormatada(agora), 1115, tamanho: 40, peso: FontWeight.bold);
+final clientesEncontrados = widget.store.clientes.where(
+  (item) =>
+      (item['nome'] ?? '').trim().toLowerCase() ==
+      cliente.trim().toLowerCase(),
+);
+final dadosCliente = clientesEncontrados.isNotEmpty
+    ? clientesEncontrados.first
+    : <String, String>{};
+
+final campos = <MapEntry<String, String>>[];
+
+void adicionarCampoRecibo(
+  String chave,
+  String titulo,
+  Object? valorCampo,
+  bool padrao,
+) {
+  final texto = (valorCampo ?? '').toString().trim();
+  if (mostrarCampo(chave, padrao) && texto.isNotEmpty) {
+    campos.add(MapEntry(titulo, texto));
+  }
+}
+
+adicionarCampoRecibo(
+  'segmento',
+  'Segmento',
+  widget.store.vigilanteSegmentoMercado,
+  true,
+);
+
+final horarios = [
+  widget.store.vigilanteHorarioInicio,
+  widget.store.vigilanteHorarioFim,
+].where((item) => item.trim().isNotEmpty).join(' às ');
+
+adicionarCampoRecibo('horarios', 'Horário', horarios, true);
+adicionarCampoRecibo('site', 'Site', widget.store.vigilanteSite, false);
+adicionarCampoRecibo(
+  'endereco_vigilante',
+  'Endereço',
+  widget.store.vigilanteEndereco,
+  false,
+);
+adicionarCampoRecibo(
+  'documento_vigilante',
+  'CPF/CNPJ do vigilante',
+  widget.store.vigilanteCpfCnpj,
+  false,
+);
+adicionarCampoRecibo('cliente_nome', 'Cliente', cliente, true);
+adicionarCampoRecibo(
+  'cliente_contato',
+  'Contato',
+  mensalidade['contato'] ??
+      mensalidade['telefone'] ??
+      dadosCliente['telefone'],
+  true,
+);
+adicionarCampoRecibo(
+  'cliente_bairro',
+  'Bairro',
+  mensalidade['bairro'] ?? dadosCliente['bairro'],
+  true,
+);
+adicionarCampoRecibo(
+  'cliente_rua',
+  'Rua',
+  mensalidade['rua'] ?? dadosCliente['rua'],
+  true,
+);
+adicionarCampoRecibo(
+  'cliente_numero',
+  'Número',
+  mensalidade['numero'] ?? dadosCliente['numero'],
+  true,
+);
+adicionarCampoRecibo(
+  'cliente_documento',
+  'CPF/CNPJ do cliente',
+  mensalidade['cpfCnpj'] ??
+      dadosCliente['cpf'] ??
+      dadosCliente['cpfCnpj'],
+  false,
+);
+adicionarCampoRecibo(
+  'valor',
+  'Valor pago',
+  'R\$ $valor',
+  true,
+);
+adicionarCampoRecibo(
+  'forma_pagamento',
+  'Forma de pagamento',
+  pagamento,
+  true,
+);
+adicionarCampoRecibo(
+  'vencimento',
+  ehAdiantamento ? 'Período adiantado' : 'Vencimento',
+  ehAdiantamento
+      ? periodoAdiantamento
+      : dataFormatada(
+          DateTime(anoVencimento, mesVencimento, diaVencimento),
+        ),
+  true,
+);
+adicionarCampoRecibo(
+  'data_pagamento',
+  'Recebido em',
+  dataFormatada(agora),
+  true,
+);
+adicionarCampoRecibo(
+  'status',
+  'Status',
+  'RECEBIDO',
+  true,
+);
+adicionarCampoRecibo(
+  'observacao',
+  'Observação',
+  mensalidade['observacao'],
+  true,
+);
+adicionarCampoRecibo(
+  'pix',
+  'Chave Pix',
+  widget.store.vigilanteChavePix,
+  true,
+);
+
+void escreverCampoRecibo(String texto, double x, double y) {
+  final pintor = TextPainter(
+    text: TextSpan(
+      text: texto,
+      style: const TextStyle(
+        color: Color(0xFF202938),
+        fontSize: 25,
+      ),
+    ),
+    textDirection: ui.TextDirection.ltr,
+    maxLines: 2,
+    ellipsis: '…',
+  );
+
+  pintor.layout(maxWidth: 420);
+  pintor.paint(canvas, ui.Offset(x, y));
+}
+
+for (var i = 0; i < campos.length; i++) {
+  final coluna = i % 2;
+  final linha = i ~/ 2;
+  final x = coluna == 0 ? 100.0 : 550.0;
+  final y = 350.0 + linha * 68.0;
+
+  escreverCampoRecibo(
+    '${campos[i].key}: ${campos[i].value}',
+    x,
+    y,
+  );
+}
+
+final modoQr = prefsRecibo.getString('recibo_modo_qr') ?? 'pendente';
+final statusMensalidade =
+    (mensalidade['status'] ?? 'recebido').toString().toLowerCase();
+final mostrarQr =
+    modoQr == 'sempre' ||
+    (modoQr == 'pendente' && statusMensalidade.contains('pend'));
+
+final chavePix = widget.store.vigilanteChavePix.trim();
+
+if (mostrarQr && chavePix.isNotEmpty) {
+  try {
+    final pixCopiaECola =
+        ImpressoraBluetoothService._gerarPixCopiaECola(
+      chavePix: chavePix,
+      nomeVigilante: empresa,
+      valor: valor,
+    );
+
     escrever(
-      'Obrigado pela confiança!',
-      1270,
-      tamanho: 34,
+      'PAGUE COM PIX',
+      1040,
+      tamanho: 26,
       cor: const Color(0xFF17365D),
       peso: FontWeight.bold,
     );
+
+    final dadosQr = await QrPainter(
+      data: pixCopiaECola,
+      version: QrVersions.auto,
+      gapless: true,
+    ).toImageData(200);
+
+    if (dadosQr != null) {
+      final codecQr = await ui.instantiateImageCodec(
+        dadosQr.buffer.asUint8List(),
+      );
+      final frameQr = await codecQr.getNextFrame();
+
+      canvas.drawImageRect(
+        frameQr.image,
+        ui.Rect.fromLTWH(
+          0,
+          0,
+          frameQr.image.width.toDouble(),
+          frameQr.image.height.toDouble(),
+        ),
+        ui.Rect.fromLTWH(440, 1070, 200, 200),
+        ui.Paint(),
+      );
+    }
+  } catch (_) {}
+}
+
+escrever(
+  'Obrigado pela confiança!',
+  1270,
+  tamanho: 34,
+  cor: const Color(0xFF17365D),
+  peso: FontWeight.bold,
+);
 
     final imagem = await gravador.endRecording().toImage(largura, altura);
     final dados = await imagem.toByteData(format: ui.ImageByteFormat.png);

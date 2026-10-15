@@ -5840,7 +5840,7 @@ class _PersonalizarReciboTermicoPageState
   static const Color _azul = Color(0xFF10243A);
   static const Color _dourado = Color(0xFFD6AE52);
 
-  final Map<String, bool> _campos = {
+  final Map<String, bool> _camposPadrao = {
     'logo': true,
     'fantasia': true,
     'segmento': true,
@@ -5852,19 +5852,24 @@ class _PersonalizarReciboTermicoPageState
     'cliente_nome': true,
     'cliente_contato': true,
     'cliente_bairro': true,
-      'cliente_rua': true,
-'cliente_numero': true,
+    'cliente_rua': true,
+    'cliente_numero': true,
     'cliente_documento': false,
     'data_pagamento': true,
-      'valor': true,
-'forma_pagamento': true,
-'vencimento': true,
-'status': true,
-'observacao': true,
-  };          
+    'valor': true,
+    'forma_pagamento': true,
+    'vencimento': true,
+    'status': true,
+    'observacao': true,
+  };
 
+  late final Map<String, bool> _camposTermico =
+      Map<String, bool>.from(_camposPadrao);
+  late final Map<String, bool> _camposWhatsapp =
+      Map<String, bool>.from(_camposPadrao);
 
-  String _modoQr = 'pendente';
+  String _modoQrTermico = 'pendente';
+  String _modoQrWhatsapp = 'pendente';
   bool _carregando = true;
 
   @override
@@ -5876,31 +5881,71 @@ class _PersonalizarReciboTermicoPageState
   Future<void> _carregarPreferencias() async {
     final prefs = await SharedPreferences.getInstance();
 
-    for (final chave in _campos.keys.toList()) {
-      _campos[chave] = prefs.getBool('recibo_$chave') ?? _campos[chave]!;
+    for (final chave in _camposPadrao.keys) {
+      final valorTermico =
+          prefs.getBool('recibo_$chave') ?? _camposPadrao[chave]!;
+
+      _camposTermico[chave] = valorTermico;
+      _camposWhatsapp[chave] =
+          prefs.getBool('recibo_whatsapp_$chave') ?? valorTermico;
+
+      if (!prefs.containsKey('recibo_whatsapp_$chave')) {
+        await prefs.setBool('recibo_whatsapp_$chave', valorTermico);
+      }
+    }
+
+    final modoTermico = prefs.getString('recibo_modo_qr') ?? 'pendente';
+    final modoWhatsapp =
+        prefs.getString('recibo_whatsapp_modo_qr') ?? modoTermico;
+
+    if (!prefs.containsKey('recibo_whatsapp_modo_qr')) {
+      await prefs.setString('recibo_whatsapp_modo_qr', modoWhatsapp);
     }
 
     if (!mounted) return;
+
     setState(() {
-      _modoQr = prefs.getString('recibo_modo_qr') ?? 'pendente';
+      _modoQrTermico = modoTermico;
+      _modoQrWhatsapp = modoWhatsapp;
       _carregando = false;
     });
   }
 
-  Future<void> _alterarCampo(String chave, bool valor) async {
-    setState(() => _campos[chave] = valor);
+  Future<void> _alterarCampo(
+    String chave,
+    bool valor, {
+    required bool whatsapp,
+  }) async {
+    final campos = whatsapp ? _camposWhatsapp : _camposTermico;
+
+    setState(() => campos[chave] = valor);
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('recibo_$chave', valor);
+    final prefixo = whatsapp ? 'recibo_whatsapp_' : 'recibo_';
+
+    await prefs.setBool('$prefixo$chave', valor);
   }
 
-  Future<void> _alterarModoQr(String? valor) async {
+  Future<void> _alterarModoQr(
+    String? valor, {
+    required bool whatsapp,
+  }) async {
     if (valor == null) return;
 
-    setState(() => _modoQr = valor);
+    setState(() {
+      if (whatsapp) {
+        _modoQrWhatsapp = valor;
+      } else {
+        _modoQrTermico = valor;
+      }
+    });
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('recibo_modo_qr', valor);
+
+    await prefs.setString(
+      whatsapp ? 'recibo_whatsapp_modo_qr' : 'recibo_modo_qr',
+      valor,
+    );
   }
 
   Widget _secao(String titulo, List<Widget> itens) {
@@ -5935,9 +5980,16 @@ class _PersonalizarReciboTermicoPageState
     );
   }
 
-  Widget _opcao(String chave, String titulo, String descricao) {
+  Widget _opcao(
+    String chave,
+    String titulo,
+    String descricao, {
+    required bool whatsapp,
+  }) {
+    final campos = whatsapp ? _camposWhatsapp : _camposTermico;
+
     return SwitchListTile(
-      value: _campos[chave] ?? false,
+      value: campos[chave] ?? false,
       activeThumbColor: _dourado,
       title: Text(
         titulo,
@@ -5947,140 +5999,215 @@ class _PersonalizarReciboTermicoPageState
         ),
       ),
       subtitle: Text(descricao),
-      onChanged: (valor) => _alterarCampo(chave, valor),
+      onChanged: (valor) => _alterarCampo(
+        chave,
+        valor,
+        whatsapp: whatsapp,
+      ),
+    );
+  }
+
+  Widget _conteudo(bool whatsapp) {
+    final modoQr = whatsapp ? _modoQrWhatsapp : _modoQrTermico;
+    final destino =
+        whatsapp ? 'no recibo do WhatsApp' : 'no recibo térmico';
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Card(
+          color: _azul,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.shield_outlined,
+                  color: _dourado,
+                  size: 38,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'VIGILANTE RECIBOS',
+                        style: TextStyle(
+                          color: _dourado,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Escolha o que aparecerá $destino.',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        _secao('Dados do vigilante', [
+          _opcao(
+            'logo',
+            'Logo',
+            'Exibir a marca no recibo',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'fantasia',
+            'Nome fantasia',
+            'Exibir o nome da empresa',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'segmento',
+            'Segmento',
+            'Exibir o tipo de serviço',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'horarios',
+            'Horários',
+            'Exibir os horários do serviço',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'site',
+            'Site',
+            'Exibir o endereço do site',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'endereco_vigilante',
+            'Endereço',
+            'Exibir o endereço do vigilante',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'documento_vigilante',
+            'CPF ou CNPJ',
+            'Exibir o documento do vigilante',
+            whatsapp: whatsapp,
+          ),
+        ]),
+        _secao('Pagamento', [
+          _opcao(
+            'pix',
+            'Chave Pix',
+            'Exibir a chave Pix',
+            whatsapp: whatsapp,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: DropdownButtonFormField<String>(
+              value: modoQr,
+              decoration: const InputDecoration(
+                labelText: 'QR Code Pix',
+                border: OutlineInputBorder(),
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: 'nunca',
+                  child: Text('Não exibir'),
+                ),
+                DropdownMenuItem(
+                  value: 'sempre',
+                  child: Text('Exibir sempre'),
+                ),
+                DropdownMenuItem(
+                  value: 'pendente',
+                  child: Text('Exibir somente se estiver pendente'),
+                ),
+              ],
+              onChanged: (valor) => _alterarModoQr(
+                valor,
+                whatsapp: whatsapp,
+              ),
+            ),
+          ),
+        ]),
+        _secao('Dados do cliente', [
+          _opcao(
+            'cliente_nome',
+            'Nome',
+            'Exibir o nome do cliente',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'cliente_contato',
+            'Contato',
+            'Exibir o telefone ou contato',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'cliente_bairro',
+            'Bairro',
+            'Exibir o bairro do cliente',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'cliente_rua',
+            'Rua',
+            'Exibir a rua do cliente',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'cliente_numero',
+            'Número',
+            'Exibir o número do cliente',
+            whatsapp: whatsapp,
+          ),
+          _opcao(
+            'data_pagamento',
+            'Data do pagamento',
+            'Exibir a data do pagamento',
+            whatsapp: whatsapp,
+          ),
+        ]),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F3EE),
-      appBar: AppBar(
-        backgroundColor: _azul,
-        foregroundColor: Colors.white,
-        title: const Text('Personalizar recibo'),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF5F3EE),
+        appBar: AppBar(
+          backgroundColor: _azul,
+          foregroundColor: Colors.white,
+          title: const Text('Personalizar recibo'),
+          bottom: const TabBar(
+            indicatorColor: _dourado,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            tabs: [
+              Tab(text: 'Térmico'),
+              Tab(text: 'WhatsApp'),
+            ],
+          ),
+        ),
+        body: _carregando
+            ? const Center(child: CircularProgressIndicator())
+            : TabBarView(
+                children: [
+                  _conteudo(false),
+                  _conteudo(true),
+                ],
+              ),
       ),
-      body: _carregando
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                Card(
-                  color: _azul,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(18),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.shield_outlined,
-                          color: _dourado,
-                          size: 38,
-                        ),
-                        SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'VIGILANTE RECIBOS',
-                                style: TextStyle(
-                                  color: _dourado,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                'Escolha o que será impresso no recibo.',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _secao('Dados do vigilante', [
-                  _opcao('logo', 'Logo', 'Exibir a marca no recibo'),
-                  _opcao('fantasia', 'Nome fantasia', 'Exibir o nome da empresa'),
-                  _opcao('segmento', 'Segmento', 'Exibir o tipo de serviço'),
-                  _opcao('horarios', 'Horários', 'Exibir os horários do serviço'),
-                  _opcao('site', 'Site', 'Exibir o endereço do site'),
-                  _opcao(
-                    'endereco_vigilante',
-                    'Endereço',
-                    'Exibir o endereço do vigilante',
-                  ),
-                  _opcao(
-                    'documento_vigilante',
-                    'CPF ou CNPJ',
-                    'Exibir o documento do vigilante',
-                  ),
-                ]),
-                _secao('Pagamento', [
-                  _opcao('pix', 'Chave Pix', 'Exibir a chave Pix'),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                    child: DropdownButtonFormField<String>(
-                      value: _modoQr,
-                      decoration: const InputDecoration(
-                        labelText: 'QR Code Pix',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'nunca',
-                          child: Text('Não exibir'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'sempre',
-                          child: Text('Exibir sempre'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'pendente',
-                          child: Text('Exibir somente se estiver pendente'),
-                        ),
-                      ],
-                      onChanged: _alterarModoQr,
-                    ),
-                  ),
-                ]),
-                _secao('Dados do cliente', [
-                  _opcao('cliente_nome', 'Nome', 'Exibir o nome do cliente'),
-                  _opcao(
-                    'cliente_contato',
-                    'Contato',
-                    'Exibir o telefone ou contato',
-                  ),
-                  _opcao(
-  'cliente_bairro',
-  'Bairro',
-  'Exibir o bairro do cliente',
-),
-_opcao(
-  'cliente_rua',
-  'Rua',
-  'Exibir a rua do cliente',
-),
-_opcao(
-  'cliente_numero',
-  'Número',
-  'Exibir o número do cliente',
-),
-_opcao(
-  'data_pagamento',
-  'Data do pagamento',
-  'Exibir a data do pagamento',
-),
-                ]),
-              ],
-            ),
     );
   }
 }
+                        
 

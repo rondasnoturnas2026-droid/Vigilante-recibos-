@@ -585,14 +585,16 @@ final caminhoLogo = mostrarLogo ? widget.store.vigilanteLogo.trim() : '';
       } catch (_) {}
     }
 
-        if (prefsRecibo.getBool('recibo_fantasia') ?? true)
-      escrever(
-        empresa,
-        95,
-        tamanho: 44,
-        cor: Colors.white,
-        peso: FontWeight.bold,
-      );
+        if ((prefsRecibo.getBool('recibo_fantasia') ?? true) &&
+    empresa.trim().isNotEmpty) {
+  escrever(
+    empresa.trim(),
+    95,
+    tamanho: 44,
+    cor: Colors.white,
+    peso: FontWeight.bold,
+  );
+        }
     escrever(
       'RECIBO DE PAGAMENTO',
       165,

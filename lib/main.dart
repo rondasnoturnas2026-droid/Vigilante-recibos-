@@ -852,7 +852,7 @@ escrever(
     await SharePlus.instance.share(
       ShareParams(
         title: 'Recibo de pagamento',
-        text: 'Recibo de pagamento de $cliente',
+        text: 'Pagamento recebido, $cliente. Agradecemos pela confiança no nosso trabalho. Nosso compromisso com sua segurança continua. Conte sempre conosco.',
         files: [
           XFile(arquivo.path, mimeType: 'image/png'),
         ],

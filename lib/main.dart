@@ -5457,7 +5457,35 @@ if (mostrarCampo('status', true)) {
 
 
 
+final caminhoLogoTermico =
+    prefsRecibo.getString('vigilanteLogoPretoBranco') ?? '';
 
+if (mostrarCampo('logo', true) &&
+    caminhoLogoTermico.isNotEmpty) {
+  final arquivoLogo = File(caminhoLogoTermico);
+
+  if (await arquivoLogo.exists()) {
+    final bytesImagem = await arquivoLogo.readAsBytes();
+    final imagemLogo = img.decodeImage(bytesImagem);
+
+    if (imagemLogo != null) {
+      final perfilLogo = await CapabilityProfile.load();
+      final geradorLogo = Generator(PaperSize.mm58, perfilLogo);
+
+      final imagemAjustada = imagemLogo.width > 360
+          ? img.copyResize(imagemLogo, width: 360)
+          : imagemLogo;
+
+      await PrintBluetoothThermal.writeBytes([
+        ...geradorLogo.image(
+          imagemAjustada,
+          align: PosAlign.center,
+        ),
+        ...geradorLogo.feed(1),
+      ]);
+    }
+  }
+}
 final recibo = linhasRecibo.join('\n');
           final resultado = await PrintBluetoothThermal.writeString(
   printText: PrintTextSize(

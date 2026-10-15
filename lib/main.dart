@@ -5483,6 +5483,7 @@ if (logoRecibo.isNotEmpty) {
           ),
           ...geradorLogo.feed(1),
         ]);
+          await PrintBluetoothThermal.writeBytes([0x1B, 0x40]);
       }
     }
   } catch (_) {}

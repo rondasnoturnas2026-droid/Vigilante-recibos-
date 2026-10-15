@@ -549,8 +549,7 @@ Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
     }
           final prefsRecibo = await SharedPreferences.getInstance();
 final mostrarLogo = prefsRecibo.getBool('recibo_logo') ?? true;
-final caminhoLogo =
-    mostrarLogo ? widget.store.vigilanteLogo.trim() : '';
+final caminhoLogo = mostrarLogo ? widget.store.vigilanteLogoPretoBranco.trim() : '';
     if (caminhoLogo.isNotEmpty) {
       try {
         final bytesLogo = await File(caminhoLogo).readAsBytes();

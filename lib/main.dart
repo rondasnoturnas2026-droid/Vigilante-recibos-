@@ -760,11 +760,33 @@ void escreverCampoRecibo(String texto, double x, double y) {
   pintor.paint(canvas, ui.Offset(x, y));
 }
 
+final int linhasVigilante = (quantidadeCamposVigilante + 1) ~/ 2;
+
 for (var i = 0; i < campos.length; i++) {
-  final coluna = i % 2;
-  final linha = i ~/ 2;
-  final x = coluna == 0 ? 100.0 : 550.0;
-  final y = 350.0 + linha * 68.0;
+  final bool campoCliente = i >= quantidadeCamposVigilante;
+  final int indiceGrupo =
+      campoCliente ? i - quantidadeCamposVigilante : i;
+
+  if (campoCliente && i == quantidadeCamposVigilante) {
+    final double yDivisoria =
+        350.0 + linhasVigilante * 68.0 - 18.0;
+
+    canvas.drawLine(
+      Offset(80.0, yDivisoria),
+      Offset(1050.0, yDivisoria),
+      Paint()
+        ..color = const Color(0xFF202938)
+        ..strokeWidth = 2,
+    );
+  }
+
+  final int coluna = indiceGrupo % 2;
+  final int linha = campoCliente
+      ? linhasVigilante + 1 + indiceGrupo ~/ 2
+      : indiceGrupo ~/ 2;
+
+  final double x = coluna == 0 ? 100.0 : 550.0;
+  final double y = 350.0 + linha * 68.0;
 
   escreverCampoRecibo(
     '${campos[i].key}: ${campos[i].value}',

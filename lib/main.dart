@@ -547,6 +547,41 @@ Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
           ..strokeWidth = 3,
       );
     }
+          final caminhoLogo = widget.store.vigilanteLogo.trim();
+    if (caminhoLogo.isNotEmpty) {
+      try {
+        final bytesLogo = await File(caminhoLogo).readAsBytes();
+        final codecLogo = await ui.instantiateImageCodec(bytesLogo);
+        final frameLogo = await codecLogo.getNextFrame();
+        final imagemLogo = frameLogo.image;
+
+        final larguraOriginal = imagemLogo.width.toDouble();
+        final alturaOriginal = imagemLogo.height.toDouble();
+        final maiorLado = larguraOriginal > alturaOriginal
+            ? larguraOriginal
+            : alturaOriginal;
+        final escalaLogo = 110 / maiorLado;
+        final larguraLogo = larguraOriginal * escalaLogo;
+        final alturaLogo = alturaOriginal * escalaLogo;
+
+        canvas.drawImageRect(
+          imagemLogo,
+          ui.Rect.fromLTWH(
+            0,
+            0,
+            larguraOriginal,
+            alturaOriginal,
+          ),
+          ui.Rect.fromLTWH(
+            910 - larguraLogo / 2,
+            180 - alturaLogo / 2,
+            larguraLogo,
+            alturaLogo,
+          ),
+          ui.Paint(),
+        );
+      } catch (_) {}
+    }
 
     escrever(
       empresa,

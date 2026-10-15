@@ -550,7 +550,7 @@ Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
           final prefsRecibo = await SharedPreferences.getInstance();
 
 bool mostrarCampo(String chave, bool padrao) =>
-    prefsRecibo.getBool('recibo_$chave') ?? padrao;
+    prefsRecibo.getBool('recibo_whatsapp_$chave') ?? padrao;
 
 final mostrarLogo = mostrarCampo('logo', true);
 final caminhoLogo =

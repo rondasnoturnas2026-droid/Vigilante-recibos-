@@ -5492,8 +5492,13 @@ if (chavePixOriginal.trim().isEmpty) {
   chavePixQr = chavePixOriginal.trim();
 }
 
-if (mostrarCampo('pix', true) && chavePixQr.trim().isNotEmpty) {
-  final pixCopiaECola = _gerarPixCopiaECola(
+final modoQrTermico =
+    prefsRecibo.getString('recibo_modo_qr') ?? 'pendente';
+final mostrarQrTermico = modoQrTermico == 'sempre';
+
+if (mostrarQrTermico &&
+    mostrarCampo('pix', true) &&
+    chavePixQr.trim().isNotEmpty) {
     chavePix: chavePixQr,
     nomeVigilante:
         prefsRecibo.getString('vigilanteNomeFantasia') ?? 'VIGILANTE',

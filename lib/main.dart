@@ -5214,6 +5214,34 @@ if (mostrarCampo('status', true)) {
 
 
 final recibo = linhasRecibo.join('\n');
+          final logoRecibo =
+    prefsRecibo.getString('vigilanteLogoPretoBranco') ?? '';
+
+if (logoRecibo.isNotEmpty) {
+  try {
+    final arquivoLogo = File(logoRecibo);
+
+    if (await arquivoLogo.exists()) {
+      final imagemOriginal =
+          img.decodeImage(await arquivoLogo.readAsBytes());
+
+      if (imagemOriginal != null) {
+        final imagemRedimensionada =
+            img.copyResize(imagemOriginal, width: 360);
+        final perfilLogo = await CapabilityProfile.load();
+        final geradorLogo = Generator(PaperSize.mm58, perfilLogo);
+
+        await PrintBluetoothThermal.writeBytes([
+          ...geradorLogo.imageRaster(
+            imagemRedimensionada,
+            align: PosAlign.center,
+          ),
+          ...geradorLogo.feed(1),
+        ]);
+      }
+    }
+  } catch (_) {}
+}
 
 final resultado = await PrintBluetoothThermal.writeString(
   printText: PrintTextSize(

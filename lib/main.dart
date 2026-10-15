@@ -5466,13 +5466,6 @@ final recibo = linhasRecibo.join('\n');
   ),
 );
 
-final resultado = await PrintBluetoothThermal.writeString(
-  printText: PrintTextSize(
-    size: 1,
-    text: recibo,
-  ),
-);
-
 final chavePixOriginal =
     prefsRecibo.getString('vigilanteChavePix') ?? '';
 final tipoChavePixSalvo =

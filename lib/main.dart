@@ -821,9 +821,11 @@ if (mostrarQr && chavePix.isNotEmpty) {
       peso: FontWeight.bold,
     );
 
-    final dadosQr = await QrPainter(
+        final dadosQr = await QrPainter(
       data: pixCopiaECola,
       version: QrVersions.auto,
+      color: Colors.black,
+      emptyColor: Colors.white,
       gapless: true,
     ).toImageData(200);
 

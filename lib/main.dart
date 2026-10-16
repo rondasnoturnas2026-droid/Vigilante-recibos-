@@ -6244,7 +6244,7 @@ class _PersonalizarReciboTermicoPageState
     );
   }
 }
-class CobrancaPersonalizacaoTab extends StatefulWidget {
+ class CobrancaPersonalizacaoTab extends StatefulWidget {
   const CobrancaPersonalizacaoTab({super.key});
 
   @override
@@ -6254,57 +6254,78 @@ class CobrancaPersonalizacaoTab extends StatefulWidget {
 
 class _CobrancaPersonalizacaoTabState
     extends State<CobrancaPersonalizacaoTab> {
-  static const String _mensagemPadrao =
+  static const String _mensagemCobrancaPadrao =
       '🔔 AVISO DE PAGAMENTO DA MENSALIDADE\n\n'
-      'Olá, {cliente}! Este é um aviso para realizar o pagamento '
-      'da mensalidade referente a {mes}.\n\n'
-      'Valor: R\$ {valor}\n'
-      'Vencimento: {vencimento}';
+      'Olá, {nome do cliente}! Este é um aviso sobre a mensalidade de '
+      '{mês}, no valor de {valor}, com vencimento em {data}.\n\n'
+      'Para pagar pelo Pix:\n'
+      'Chave Pix: {chave Pix}\n'
+      'Pix copia e cola: {código Pix}\n'
+      'O QR Code Pix acompanha o aviso.';
 
-  final TextEditingController _mensagemController =
-      TextEditingController(text: _mensagemPadrao);
+  static const String _mensagemTextoPadrao =
+      'Olá, {nome do cliente}. Este é um aviso importante: '
+      '{escreva aqui o aviso}.';
+
+  final TextEditingController _cobrancaController =
+      TextEditingController(text: _mensagemCobrancaPadrao);
+
+  final TextEditingController _avisoTextoController =
+      TextEditingController(text: _mensagemTextoPadrao);
 
   bool _carregando = true;
 
   @override
   void initState() {
     super.initState();
-    _carregarMensagem();
+    _carregarMensagens();
   }
 
-  Future<void> _carregarMensagem() async {
+  Future<void> _carregarMensagens() async {
     final prefs = await SharedPreferences.getInstance();
-    final mensagemSalva = prefs.getString('cobranca_mensagem');
+
+    final cobrancaSalva = prefs.getString('cobranca_mensagem');
+    final avisoTextoSalvo = prefs.getString('aviso_texto_mensagem');
 
     if (!mounted) return;
 
-    if (mensagemSalva != null && mensagemSalva.isNotEmpty) {
-      _mensagemController.text = mensagemSalva;
+    if (cobrancaSalva != null && cobrancaSalva.isNotEmpty) {
+      _cobrancaController.text = cobrancaSalva;
+    }
+
+    if (avisoTextoSalvo != null && avisoTextoSalvo.isNotEmpty) {
+      _avisoTextoController.text = avisoTextoSalvo;
     }
 
     setState(() => _carregando = false);
   }
 
-  Future<void> _salvarMensagem() async {
+  Future<void> _salvarMensagens() async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setString(
       'cobranca_mensagem',
-      _mensagemController.text.trim(),
+      _cobrancaController.text.trim(),
+    );
+
+    await prefs.setString(
+      'aviso_texto_mensagem',
+      _avisoTextoController.text.trim(),
     );
 
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Mensagem de cobrança salva.'),
+        content: Text('Mensagens salvas.'),
       ),
     );
   }
 
   @override
   void dispose() {
-    _mensagemController.dispose();
+    _cobrancaController.dispose();
+    _avisoTextoController.dispose();
     super.dispose();
   }
 
@@ -6321,37 +6342,71 @@ class _CobrancaPersonalizacaoTabState
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Text(
-              'Configure o aviso de pagamento da mensalidade '
-              'que será enviado ao cliente pelo WhatsApp. '
-              'A cobrança incluirá a chave Pix, o código copia e cola '
-              'e o QR Code.',
+              'Configure as mensagens enviadas pelo WhatsApp para informar '
+              'o cliente sobre a mensalidade ou enviar um aviso escrito por '
+              'você. Confira a mensagem antes de enviá-la.',
             ),
           ),
         ),
         const SizedBox(height: 12),
+        const Text(
+          'Cobrança da mensalidade',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 6),
+        const Text(
+          'Envia um aviso com o mês, o valor e o vencimento da mensalidade. '
+          'Inclui a chave Pix e o código Pix copia e cola; o QR Code '
+          'acompanha o aviso.',
+        ),
+        const SizedBox(height: 10),
         TextField(
-          controller: _mensagemController,
+          controller: _cobrancaController,
           minLines: 7,
           maxLines: 12,
           decoration: const InputDecoration(
-            labelText: 'Mensagem do aviso',
+            labelText: 'Mensagem de cobrança',
             border: OutlineInputBorder(),
             helperText:
-                'Use {cliente}, {mes}, {valor} e {vencimento} '
-                'para inserir os dados da mensalidade.',
+                'Os dados entre chaves serão preenchidos com as informações '
+                'do cliente e da mensalidade.',
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Text(
+          'Aviso em texto',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 6),
+        const Text(
+          'Permite escrever e salvar um aviso personalizado para enviar ao '
+          'cliente. Você pode editar o texto antes de abrir a conversa no '
+          'WhatsApp.',
+        ),
+        const SizedBox(height: 10),
+        TextField(
+          controller: _avisoTextoController,
+          minLines: 4,
+          maxLines: 8,
+          decoration: const InputDecoration(
+            labelText: 'Texto do aviso',
+            border: OutlineInputBorder(),
+            helperText:
+                'Edite o modelo aqui. Depois, você poderá revisar o aviso '
+                'do cliente antes de abrir o WhatsApp.',
           ),
         ),
         const SizedBox(height: 16),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: _salvarMensagem,
+            onPressed: _salvarMensagens,
             icon: const Icon(Icons.save),
-            label: const Text('Salvar mensagem'),
+            label: const Text('Salvar mensagens'),
           ),
         ),
       ],
     );
   }
-}                        
+}                 
 

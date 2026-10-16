@@ -1571,6 +1571,15 @@ const SizedBox(height: 2),
     'Retorno: ${mensalidade['retorno']}',
     style: const TextStyle(fontSize: 15),
   ),
+                              if (abaAtual == 0)
+  Align(
+    alignment: Alignment.centerLeft,
+    child: TextButton.icon(
+      onPressed: () => _avisarCliente(mensalidade),
+      icon: const Icon(Icons.notifications_active_outlined),
+      label: const Text('Avisar'),
+    ),
+  ),
                           ],
                         ),
                         trailing: Row(

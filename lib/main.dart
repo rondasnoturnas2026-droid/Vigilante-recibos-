@@ -1197,6 +1197,7 @@ const espacoAntesQr = 64.0;
         content: Text('Não foi possível preparar a cobrança com QR.'),
       ),
     );
+      }
   }
   @override
   Widget build(BuildContext context) {

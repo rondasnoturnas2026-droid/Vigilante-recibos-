@@ -1081,23 +1081,54 @@ escrever(
   }
 
   try {
-    final dadosQr = await QrPainter(
-      data: pixCopiaECola,
-      version: QrVersions.auto,
-    ).toImageData(500);
+    const tamanhoQr = 500;
+const margemQr = 48.0;
+const tamanhoImagem = tamanhoQr + 96;
 
-    if (dadosQr == null) {
-      throw Exception('Não foi possível gerar o QR Code.');
-    }
+final gravadorQr = ui.PictureRecorder();
+final canvasQr = ui.Canvas(gravadorQr);
 
-    final arquivo = File(
-      '${Directory.systemTemp.path}/cobranca_pix_${DateTime.now().millisecondsSinceEpoch}.png',
-    );
+canvasQr.drawColor(Colors.white, ui.BlendMode.src);
+canvasQr.save();
+canvasQr.translate(margemQr, margemQr);
 
-    await arquivo.writeAsBytes(
-      dadosQr.buffer.asUint8List(),
-      flush: true,
-    );
+final pintorQr = QrPainter(
+  data: pixCopiaECola,
+  version: QrVersions.auto,
+  color: Colors.black,
+  emptyColor: Colors.white,
+  gapless: true,
+);
+
+pintorQr.paint(
+  canvasQr,
+  const ui.Size(tamanhoQr.toDouble(), tamanhoQr.toDouble()),
+);
+canvasQr.restore();
+
+final imagemQr = await gravadorQr
+    .endRecording()
+    .toImage(tamanhoImagem, tamanhoImagem);
+
+final dadosQr = await imagemQr.toByteData(
+  format: ui.ImageByteFormat.png,
+);
+
+if (dadosQr == null) {
+  throw Exception('Não foi possível gerar o QR Code.');
+}
+
+final arquivo = File(
+  '${Directory.systemTemp.path}/cobranca_pix_${DateTime.now().millisecondsSinceEpoch}.png',
+);
+
+await arquivo.writeAsBytes(
+  dadosQr.buffer.asUint8List(
+    dadosQr.offsetInBytes,
+    dadosQr.lengthInBytes,
+  ),
+  flush: true,
+);
 
     await SharePlus.instance.share(
       ShareParams(

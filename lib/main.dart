@@ -1184,6 +1184,10 @@ const espacoAntesQr = 64.0;
     await SharePlus.instance.share(
       ShareParams(
         title: 'Cobrança da mensalidade',
+          ShareParams(
+  title: 'Cobrança da mensalidade',
+  text: textoFinal,
+  files: [
         files: [
           XFile(arquivo.path, mimeType: 'image/png'),
         ],

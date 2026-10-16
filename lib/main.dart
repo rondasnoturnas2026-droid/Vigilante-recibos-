@@ -1081,39 +1081,109 @@ escrever(
   }
 
   try {
+      try {
+    const larguraImagem = 1040.0;
+    const margem = 56.0;
+    const tamanhoQr = 400.0;
+    const espacoAntesQr = 32.0;
+
+    final textoPintor = TextPainter(
+      text: TextSpan(
+        text: textoFinal,
+        style: const TextStyle(
+          color: Color(0xFF202938),
+          fontSize: 32,
+          height: 1.25,
+        ),
+      ),
+      textDirection: ui.TextDirection.ltr,
+    );
+    textoPintor.layout(maxWidth: larguraImagem - margem * 2);
+
     final painterQr = QrPainter(
-  data: pixCopiaECola,
-  version: QrVersions.auto,
-  color: Colors.black,
-  emptyColor: Colors.white,
-  gapless: true,
-);
+      data: pixCopiaECola,
+      version: QrVersions.auto,
+      color: Colors.black,
+      emptyColor: Colors.white,
+      gapless: true,
+    );
+    final dadosQr = await painterQr.toImageData(
+      600,
+      format: ui.ImageByteFormat.png,
+    );
 
-final dadosQr = await painterQr.toImageData(
-  1000,
-  format: ui.ImageByteFormat.png,
-);
+    if (dadosQr == null) {
+      throw Exception('Não foi possível gerar o QR Code.');
+    }
 
-if (dadosQr == null) {
-  throw Exception('Não foi possível gerar o QR Code.');
-}
+    final alturaImagem =
+        (margem + textoPintor.height + espacoAntesQr + tamanhoQr + margem)
+            .ceil();
+    final gravador = ui.PictureRecorder();
+    final canvas = ui.Canvas(gravador);
 
-final arquivo = File(
-  '${Directory.systemTemp.path}/cobranca_pix_${DateTime.now().millisecondsSinceEpoch}.png',
-);
+    canvas.drawColor(const Color(0xFFF2F4F8), ui.BlendMode.src);
+    canvas.drawRRect(
+      ui.RRect.fromRectAndRadius(
+        ui.Rect.fromLTWH(
+          20,
+          20,
+          larguraImagem - 40,
+          alturaImagem - 40,
+        ),
+        const ui.Radius.circular(28),
+      ),
+      ui.Paint()..color = Colors.white,
+    );
+    textoPintor.paint(canvas, const ui.Offset(margem, margem));
 
-await arquivo.writeAsBytes(
-  dadosQr.buffer.asUint8List(
-    dadosQr.offsetInBytes,
-    dadosQr.lengthInBytes,
-  ),
-  flush: true,
-);
+    final codecQr = await ui.instantiateImageCodec(
+      dadosQr.buffer.asUint8List(
+        dadosQr.offsetInBytes,
+        dadosQr.lengthInBytes,
+      ),
+    );
+    final frameQr = await codecQr.getNextFrame();
+    final posicaoQr = ui.Rect.fromLTWH(
+      (larguraImagem - tamanhoQr) / 2,
+      margem + textoPintor.height + espacoAntesQr,
+      tamanhoQr,
+      tamanhoQr,
+    );
+    canvas.drawImageRect(
+      frameQr.image,
+      ui.Rect.fromLTWH(
+        0,
+        0,
+        frameQr.image.width.toDouble(),
+        frameQr.image.height.toDouble(),
+      ),
+      posicaoQr,
+      ui.Paint()..filterQuality = FilterQuality.high,
+    );
+
+    final imagemCobranca = await gravador.endRecording().toImage(
+      larguraImagem.toInt(),
+      alturaImagem,
+    );
+    final dadosImagem = await imagemCobranca.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
+    if (dadosImagem == null) {
+      throw Exception('Não foi possível montar a cobrança com QR.');
+    }
+
+    final arquivo = File(
+      '${Directory.systemTemp.path}/cobranca_pix_${DateTime.now().millisecondsSinceEpoch}.png',
+    );
+    await arquivo.writeAsBytes(
+      dadosImagem.buffer.asUint8List(),
+      flush: true,
+    );
 
     await SharePlus.instance.share(
       ShareParams(
         title: 'Cobrança da mensalidade',
-        text: textoFinal,
         files: [
           XFile(arquivo.path, mimeType: 'image/png'),
         ],
@@ -1128,7 +1198,6 @@ await arquivo.writeAsBytes(
       ),
     );
   }
-    }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

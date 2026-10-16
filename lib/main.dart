@@ -1081,36 +1081,16 @@ escrever(
   }
 
   try {
-    const tamanhoQr = 500;
-const margemQr = 48.0;
-const tamanhoImagem = tamanhoQr + 96;
-
-final gravadorQr = ui.PictureRecorder();
-final canvasQr = ui.Canvas(gravadorQr);
-
-canvasQr.drawColor(Colors.white, ui.BlendMode.src);
-canvasQr.save();
-canvasQr.translate(margemQr, margemQr);
-
-final pintorQr = QrPainter(
+    final painterQr = QrPainter(
   data: pixCopiaECola,
   version: QrVersions.auto,
   color: Colors.black,
   emptyColor: Colors.white,
-  gapless: true,
+  gapless: false,
 );
 
-pintorQr.paint(
-  canvasQr,
-  const ui.Size(tamanhoQr.toDouble(), tamanhoQr.toDouble()),
-);
-canvasQr.restore();
-
-final imagemQr = await gravadorQr
-    .endRecording()
-    .toImage(tamanhoImagem, tamanhoImagem);
-
-final dadosQr = await imagemQr.toByteData(
+final dadosQr = await painterQr.toImageData(
+  500,
   format: ui.ImageByteFormat.png,
 );
 

@@ -5474,8 +5474,9 @@ try {
         final geradorLogo = Generator(PaperSize.mm58, perfilLogo);
 
         final imagemAjustada = imagemLogo.width > 360
-            ? img.copyResize(imagemLogo, width: 360)
-            : imagemLogo;
+            final imagemAjustada = imagemLogo.width > 200
+    ? img.copyResize(imagemLogo, width: 200)
+    : imagemLogo;
 
         await PrintBluetoothThermal.writeBytes([
           ...geradorLogo.image(

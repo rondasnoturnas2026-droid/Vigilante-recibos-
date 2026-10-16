@@ -6241,5 +6241,114 @@ class _PersonalizarReciboTermicoPageState
     );
   }
 }
-                        
+class CobrancaPersonalizacaoTab extends StatefulWidget {
+  const CobrancaPersonalizacaoTab({super.key});
+
+  @override
+  State<CobrancaPersonalizacaoTab> createState() =>
+      _CobrancaPersonalizacaoTabState();
+}
+
+class _CobrancaPersonalizacaoTabState
+    extends State<CobrancaPersonalizacaoTab> {
+  static const String _mensagemPadrao =
+      '🔔 AVISO DE PAGAMENTO DA MENSALIDADE\n\n'
+      'Olá, {cliente}! Este é um aviso para realizar o pagamento '
+      'da mensalidade referente a {mes}.\n\n'
+      'Valor: R\$ {valor}\n'
+      'Vencimento: {vencimento}';
+
+  final TextEditingController _mensagemController =
+      TextEditingController(text: _mensagemPadrao);
+
+  bool _carregando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarMensagem();
+  }
+
+  Future<void> _carregarMensagem() async {
+    final prefs = await SharedPreferences.getInstance();
+    final mensagemSalva = prefs.getString('cobranca_mensagem');
+
+    if (!mounted) return;
+
+    if (mensagemSalva != null && mensagemSalva.isNotEmpty) {
+      _mensagemController.text = mensagemSalva;
+    }
+
+    setState(() => _carregando = false);
+  }
+
+  Future<void> _salvarMensagem() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(
+      'cobranca_mensagem',
+      _mensagemController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Mensagem de cobrança salva.'),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _mensagemController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_carregando) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        const Card(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Configure o aviso de pagamento da mensalidade '
+              'que será enviado ao cliente pelo WhatsApp. '
+              'A cobrança incluirá a chave Pix, o código copia e cola '
+              'e o QR Code.',
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _mensagemController,
+          minLines: 7,
+          maxLines: 12,
+          decoration: const InputDecoration(
+            labelText: 'Mensagem do aviso',
+            border: OutlineInputBorder(),
+            helperText:
+                'Use {cliente}, {mes}, {valor} e {vencimento} '
+                'para inserir os dados da mensalidade.',
+          ),
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: _salvarMensagem,
+            icon: const Icon(Icons.save),
+            label: const Text('Salvar mensagem'),
+          ),
+        ),
+      ],
+    );
+  }
+}                        
 

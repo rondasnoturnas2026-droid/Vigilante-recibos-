@@ -891,6 +891,231 @@ escrever(
     );
   }
     }
+    Future<void> _avisarCliente(Map<String, dynamic> mensalidade) async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final nome = (mensalidade['nome'] ?? 'Cliente').toString();
+  final valor = (mensalidade['valor'] ?? '0,00').toString();
+  final bairro = (mensalidade['bairro'] ?? '').toString();
+  final rua = (mensalidade['rua'] ?? '').toString();
+  final numero = (mensalidade['numero'] ?? '').toString();
+
+  Map<String, dynamic> cliente = {};
+  for (final item in widget.store.clientes) {
+    if ((item['nome'] ?? '').toString().trim().toLowerCase() ==
+            nome.trim().toLowerCase() &&
+        (item['bairro'] ?? '').toString() == bairro &&
+        (item['rua'] ?? '').toString() == rua &&
+        (item['numero'] ?? '').toString() == numero) {
+      cliente = Map<String, dynamic>.from(item);
+      break;
+    }
+  }
+
+  final tipoAviso = await showDialog<String>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Avisar cliente'),
+      content: const Text('Escolha o tipo de mensagem:'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, 'texto'),
+          child: const Text('Aviso em texto'),
+        ),
+        FilledButton.icon(
+          onPressed: () => Navigator.pop(dialogContext, 'cobranca'),
+          icon: const Icon(Icons.qr_code_2),
+          label: const Text('Cobrança com QR'),
+        ),
+      ],
+    ),
+  );
+
+  if (!mounted || tipoAviso == null) return;
+
+  final telefone = (mensalidade['telefone'] ??
+          mensalidade['contato'] ??
+          cliente['telefone'] ??
+          '')
+      .toString()
+      .replaceAll(RegExp(r'\D'), '');
+
+  if (tipoAviso == 'texto' && telefone.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Este cliente não tem telefone cadastrado.')),
+    );
+    return;
+  }
+
+  final modeloCobranca = prefs.getString('cobranca_mensagem') ??
+      '🔔 AVISO DE PAGAMENTO DA MENSALIDADE\n\n'
+          'Olá, {nome do cliente}! Este é um aviso sobre a mensalidade de '
+          '{mês}, no valor de {valor}, com vencimento em {data}.\n\n'
+          'Para pagar pelo Pix:\n'
+          'Chave Pix: {chave Pix}\n'
+          'Pix copia e cola: {código Pix}\n'
+          'O QR Code Pix acompanha o aviso.';
+
+  final modeloTexto = prefs.getString('aviso_texto_mensagem') ??
+      'Olá, {nome do cliente}. Este é um aviso importante: '
+          '{escreva aqui o aviso}.';
+
+  String mensagem = modeloTexto.replaceAll('{nome do cliente}', nome);
+  String pixCopiaECola = '';
+
+  if (tipoAviso == 'cobranca') {
+    final chavePix = widget.store.vigilanteChavePix.trim();
+
+    if (chavePix.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cadastre a chave Pix nas configurações.'),
+        ),
+      );
+      return;
+    }
+
+    final agora = DateTime.now();
+    final dia =
+        int.tryParse((mensalidade['dia'] ?? '').toString()) ?? agora.day;
+    final mes =
+        int.tryParse((mensalidade['mes'] ?? '').toString()) ?? agora.month;
+    final ano =
+        int.tryParse((mensalidade['ano'] ?? '').toString()) ?? agora.year;
+
+    const meses = [
+      '',
+      'janeiro',
+      'fevereiro',
+      'março',
+      'abril',
+      'maio',
+      'junho',
+      'julho',
+      'agosto',
+      'setembro',
+      'outubro',
+      'novembro',
+      'dezembro',
+    ];
+
+    final mesTexto = mes >= 1 && mes <= 12
+        ? '${meses[mes]} de $ano'
+        : '$mes/$ano';
+
+    final vencimento =
+        '${dia.toString().padLeft(2, '0')}/'
+        '${mes.toString().padLeft(2, '0')}/$ano';
+
+    pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
+      chavePix: chavePix,
+      nomeVigilante: widget.store.vigilanteNomeFantasia,
+      valor: valor,
+    );
+
+    mensagem = modeloCobranca
+        .replaceAll('{nome do cliente}', nome)
+        .replaceAll('{mês}', mesTexto)
+        .replaceAll('{valor}', 'R\$ $valor')
+        .replaceAll('{data}', vencimento)
+        .replaceAll('{chave Pix}', chavePix)
+        .replaceAll('{código Pix}', pixCopiaECola);
+  }
+
+  final controlador = TextEditingController(text: mensagem);
+
+  final confirmar = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Revisar mensagem'),
+      content: TextField(
+        controller: controlador,
+        minLines: 5,
+        maxLines: 10,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: Text(
+            tipoAviso == 'cobranca' ? 'Compartilhar cobrança' : 'Abrir WhatsApp',
+          ),
+        ),
+      ],
+    ),
+  );
+
+  final textoFinal = controlador.text.trim();
+  controlador.dispose();
+
+  if (!mounted || confirmar != true || textoFinal.isEmpty) return;
+
+  if (tipoAviso == 'texto') {
+    final telefoneInternacional =
+        telefone.startsWith('55') ? telefone : '55$telefone';
+
+    final uri = Uri.parse(
+      'https://wa.me/$telefoneInternacional'
+      '?text=${Uri.encodeComponent(textoFinal)}',
+    );
+
+    final abriu = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!abriu && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível abrir o WhatsApp.')),
+      );
+    }
+    return;
+  }
+
+  try {
+    final dadosQr = await QrPainter(
+      data: pixCopiaECola,
+      version: QrVersions.auto,
+    ).toImageData(500);
+
+    if (dadosQr == null) {
+      throw Exception('Não foi possível gerar o QR Code.');
+    }
+
+    final arquivo = File(
+      '${Directory.systemTemp.path}/cobranca_pix_${DateTime.now().millisecondsSinceEpoch}.png',
+    );
+
+    await arquivo.writeAsBytes(
+      dadosQr.buffer.asUint8List(),
+      flush: true,
+    );
+
+    await SharePlus.instance.share(
+      ShareParams(
+        title: 'Cobrança da mensalidade',
+        text: textoFinal,
+        files: [
+          XFile(arquivo.path, mimeType: 'image/png'),
+        ],
+      ),
+    );
+  } catch (_) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Não foi possível preparar a cobrança com QR.'),
+      ),
+    );
+  }
+    }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

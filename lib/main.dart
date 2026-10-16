@@ -6209,23 +6209,25 @@ class _PersonalizarReciboTermicoPageState
     );
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F3EE),
         appBar: AppBar(
           backgroundColor: _azul,
           foregroundColor: Colors.white,
-          title: const Text('Personalizar recibo'),
+          title: const Text('Personalizar recibos'),
           bottom: const TabBar(
+            isScrollable: true,
             indicatorColor: _dourado,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
             tabs: [
               Tab(text: 'Térmico'),
               Tab(text: 'WhatsApp'),
+              Tab(text: 'Aviso de cobrança'),
             ],
           ),
         ),
@@ -6235,6 +6237,7 @@ class _PersonalizarReciboTermicoPageState
                 children: [
                   _conteudo(false),
                   _conteudo(true),
+                  CobrancaPersonalizacaoTab(),
                 ],
               ),
       ),

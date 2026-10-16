@@ -1084,7 +1084,7 @@ escrever(
       try {
     const larguraImagem = 1040.0;
     const margem = 56.0;
-    const tamanhoQr = 400.0;
+    const tamanhoQr = 180.0;
     const espacoAntesQr = 32.0;
 
     final textoPintor = TextPainter(

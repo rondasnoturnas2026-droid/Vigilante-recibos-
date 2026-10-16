@@ -1086,7 +1086,7 @@ escrever(
   version: QrVersions.auto,
   color: Colors.black,
   emptyColor: Colors.white,
-  gapless: false,
+  gapless: true,
 );
 
 final dadosQr = await painterQr.toImageData(

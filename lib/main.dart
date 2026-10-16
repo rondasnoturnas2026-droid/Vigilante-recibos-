@@ -1090,7 +1090,7 @@ escrever(
 );
 
 final dadosQr = await painterQr.toImageData(
-  500,
+  1000,
   format: ui.ImageByteFormat.png,
 );
 

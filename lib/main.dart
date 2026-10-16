@@ -1081,7 +1081,7 @@ escrever(
   }
 
   try {
-      try {
+      
     const larguraImagem = 1040.0;
     const margem = 56.0;
     const tamanhoQr = 120.0;

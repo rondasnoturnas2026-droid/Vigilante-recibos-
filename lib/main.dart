@@ -6571,8 +6571,8 @@ class _PersonalizarReciboTermicoPageState
 
     @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
+        return DefaultTabController(
+      length: 4,
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F3EE),
         appBar: AppBar(
@@ -6588,6 +6588,7 @@ class _PersonalizarReciboTermicoPageState
               Tab(text: 'Térmico'),
               Tab(text: 'WhatsApp'),
               Tab(text: 'Aviso de cobrança'),
+              Tab(text: 'Décimo terceiro'),
             ],
           ),
         ),
@@ -6597,9 +6598,12 @@ class _PersonalizarReciboTermicoPageState
                 children: [
                   _conteudo(false),
                   _conteudo(true),
+                  const CobrancaPersonalizacaoTab(),
                   const DecimoTerceiroPersonalizacaoTab(),
                 ],
               ),
+      ),
+    );
       ),
     );
   }

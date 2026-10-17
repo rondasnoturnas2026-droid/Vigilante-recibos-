@@ -962,7 +962,7 @@ escrever(
       'Olá, {nome do cliente}. Este é um aviso importante: '
           '{escreva aqui o aviso}.';
 
-  String mensagem = modeloTexto.replaceAll('{nome do cliente}', nome);
+  String mensagem = tipoAviso == 'texto' ? modeloTexto : modeloCobranca;
   String pixCopiaECola = '';
 
   if (tipoAviso == 'cobranca' || tipoAviso == 'texto') {

@@ -5823,6 +5823,23 @@ if (mostrarCampo('valor', true)) {
   linhasRecibo.add('Valor: R\$ $valorFormatado');
 }
 
+final valorDecimoTexto = valorDecimoTerceiro.trim();
+final valorDecimoNumero = valorDecimoTexto.contains(',')
+    ? valorDecimoTexto.replaceAll('.', '').replaceAll(',', '.')
+    : valorDecimoTexto;
+final valorDecimoDouble = double.tryParse(valorDecimoNumero) ?? 0;
+
+if (valorDecimoDouble > 0) {
+  final totalFormatado = valorTotalRecebido.trim().isNotEmpty
+      ? valorTotalRecebido.trim()
+      : ((double.tryParse(valorNumerico) ?? 0) + valorDecimoDouble)
+          .toStringAsFixed(2)
+          .replaceAll('.', ',');
+
+  linhasRecibo.add('Décimo terceiro: R\$ $valorDecimoTexto');
+  linhasRecibo.add('Total recebido: R\$ $totalFormatado');
+}
+
 adicionarCampo(
   mostrarCampo('forma_pagamento', true),
   'Forma de pagamento',

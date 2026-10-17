@@ -5901,7 +5901,6 @@ if (mostrarQrTermico &&
   final geradorQr = Generator(PaperSize.mm58, perfilQr);
 
   final bytesQr = <int>[
-    
     ...geradorQr.text(
       'PAGUE COM PIX',
       styles: PosStyles(align: PosAlign.center, bold: true),

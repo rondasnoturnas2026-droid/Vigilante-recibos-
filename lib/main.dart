@@ -6625,6 +6625,7 @@ class _DecimoTerceiroPersonalizacaoTabState
 
   bool _ativo = true;
   bool dobrado = false;
+    bool _carregando = true;
 
   @override
   void initState() {

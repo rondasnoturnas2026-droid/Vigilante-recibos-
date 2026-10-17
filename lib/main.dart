@@ -1871,6 +1871,13 @@ mensalidade['dataRecebimento'] =
     '${agora.year}';
 
 mensalidade['status'] = 'recebida';
+                                      mensalidade['valorDecimoTerceiro'] =
+    incluirDecimoTerceiro
+        ? formatarValor(valorDecimoTerceiroNumero)
+        : '0,00';
+
+mensalidade['valorTotalRecebido'] =
+    formatarValor(valorTotalRecebido);
 await widget.store.salvarMensalidades();
 
                                     if (!mounted) return;

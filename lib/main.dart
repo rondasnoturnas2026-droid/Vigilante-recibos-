@@ -6689,6 +6689,22 @@ class _DecimoTerceiroPersonalizacaoTabState
             await prefs.setBool('recibo_decimo_terceiro_ativo', valor);
           },
         ),
+                  SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Ativar opção do décimo terceiro em dezembro'),
+          subtitle: const Text(
+            'Você poderá incluir o valor extra ao receber a mensalidade de dezembro.',
+          ),
+          value: dobrado,
+          onChanged: (valor) async {
+            setState(() => dobrado = valor);
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setBool(
+              'recibo_decimo_terceiro_dobrado',
+              valor,
+            );
+          },
+        ),
         const SizedBox(height: 12),
         TextField(
           controller: _mensagemController,

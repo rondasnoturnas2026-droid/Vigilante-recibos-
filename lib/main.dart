@@ -6564,7 +6564,7 @@ class _PersonalizarReciboTermicoPageState
     @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F3EE),
         appBar: AppBar(

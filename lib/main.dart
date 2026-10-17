@@ -6596,6 +6596,111 @@ class _PersonalizarReciboTermicoPageState
     );
   }
 }
+class DecimoTerceiroPersonalizacaoTab extends StatefulWidget {
+  const DecimoTerceiroPersonalizacaoTab({super.key});
+
+  static const String mensagemPadrao =
+      'Olá, {nome do cliente}! Este é um aviso sobre o décimo terceiro do vigilante responsável pelo trabalho de segurança no local.\n\n'
+      'Pedimos a colaboração de todos com essa contribuição, que ajuda a reconhecer e valorizar o trabalho realizado ao longo do ano. Agradecemos pela compreensão, parceria e apoio de sempre.';
+
+  @override
+  State<DecimoTerceiroPersonalizacaoTab> createState() =>
+      _DecimoTerceiroPersonalizacaoTabState();
+}
+
+class _DecimoTerceiroPersonalizacaoTabState
+    extends State<DecimoTerceiroPersonalizacaoTab> {
+  final TextEditingController _mensagemController =
+      TextEditingController(
+    text: DecimoTerceiroPersonalizacaoTab.mensagemPadrao,
+  );
+
+  bool _ativo = true;
+  bool _carregando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregar();
+  }
+
+  Future<void> _carregar() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!mounted) return;
+
+    setState(() {
+      _ativo = prefs.getBool('recibo_decimo_terceiro_ativo') ?? true;
+      _mensagemController.text =
+          prefs.getString('recibo_decimo_terceiro_mensagem') ??
+              DecimoTerceiroPersonalizacaoTab.mensagemPadrao;
+      _carregando = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _mensagemController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _salvarMensagem() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      'recibo_decimo_terceiro_mensagem',
+      _mensagemController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Mensagem salva.')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_carregando) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Exibir aviso no recibo de novembro'),
+          subtitle: const Text(
+            'O aviso será incluído nos recibos de novembro.',
+          ),
+          value: _ativo,
+          onChanged: (valor) async {
+            setState(() => _ativo = valor);
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setBool('recibo_decimo_terceiro_ativo', valor);
+          },
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _mensagemController,
+          minLines: 6,
+          maxLines: null,
+          decoration: const InputDecoration(
+            labelText: 'Mensagem sobre o décimo terceiro',
+            border: OutlineInputBorder(),
+            alignLabelWithHint: true,
+          ),
+        ),
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          onPressed: _salvarMensagem,
+          icon: const Icon(Icons.save_outlined),
+          label: const Text('Salvar mensagem'),
+        ),
+      ],
+    );
+  }
+}
  class CobrancaPersonalizacaoTab extends StatefulWidget {
   const CobrancaPersonalizacaoTab({super.key});
 

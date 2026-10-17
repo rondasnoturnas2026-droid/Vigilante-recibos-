@@ -965,7 +965,7 @@ escrever(
   String mensagem = modeloTexto.replaceAll('{nome do cliente}', nome);
   String pixCopiaECola = '';
 
-  if (tipoAviso == 'cobranca') {
+  if (tipoAviso == 'cobranca' || tipoAviso == 'texto') {
     final chavePix = widget.store.vigilanteChavePix.trim();
 
     if (chavePix.isEmpty) {

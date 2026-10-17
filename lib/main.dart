@@ -5842,7 +5842,7 @@ try {
             imagemAjustada,
             align: PosAlign.center,
           ),
-          ...geradorLogo.feed(1),
+        
         ]);
       }
     }

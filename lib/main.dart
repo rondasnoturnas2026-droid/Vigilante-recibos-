@@ -6639,6 +6639,7 @@ class _DecimoTerceiroPersonalizacaoTabState
 
     setState(() {
       _ativo = prefs.getBool('recibo_decimo_terceiro_ativo') ?? true;
+        dobrado = prefs.getBool('recibo_decimo_terceiro_dobrado') ?? false;
       _mensagemController.text =
           prefs.getString('recibo_decimo_terceiro_mensagem') ??
               DecimoTerceiroPersonalizacaoTab.mensagemPadrao;

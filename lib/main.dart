@@ -453,6 +453,22 @@ Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
           icon: const Icon(Icons.copy),
           label: const Text('Copiar chave'),
         ),
+                  FilledButton.icon(
+          onPressed: () async {
+            await Clipboard.setData(
+              ClipboardData(text: pixCopiaECola),
+            );
+            if (!dialogContext.mounted) return;
+            Navigator.pop(dialogContext);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Pix copia e cola copiado.'),
+              ),
+            );
+          },
+          icon: const Icon(Icons.copy),
+          label: const Text('Copiar código Pix'),
+        ),
       ],
     ),
   );

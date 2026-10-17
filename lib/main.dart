@@ -1963,6 +1963,10 @@ final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
   numeroCliente: (mensalidade['numero'] ?? '').toString(),
   contatoCliente: dadosCliente['contato'] ?? '',
   documentoCliente: dadosCliente['documento'] ?? '',
+      valorDecimoTerceiro:
+      (mensalidade['valorDecimoTerceiro'] ?? '0,00').toString(),
+  valorTotalRecebido:
+      (mensalidade['valorTotalRecebido'] ?? '').toString(),
 );
 
   if (!mounted) return;

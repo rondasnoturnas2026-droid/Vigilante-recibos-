@@ -6589,7 +6589,7 @@ class _PersonalizarReciboTermicoPageState
                 children: [
                   _conteudo(false),
                   _conteudo(true),
-                  CobrancaPersonalizacaoTab(),
+                  const DecimoTerceiroPersonalizacaoTab(),
                 ],
               ),
       ),

@@ -5687,7 +5687,7 @@ String numeroCliente = '',
   '================================',
   '       VIGILANTE RECIBOS',
   '================================',
-  '',
+
 ];
 
 void adicionarCampo(bool mostrar, String titulo, String texto) {

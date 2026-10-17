@@ -5693,9 +5693,7 @@ String numeroCliente = '',
 void adicionarCampo(bool mostrar, String titulo, String texto) {
   final valor = texto.trim();
   if (mostrar && valor.isNotEmpty) {
-    linhasRecibo
-      ..add('$titulo: $valor')
-      ..add('');
+    linhasRecibo.add('$titulo: $valor');
   }
 }
 

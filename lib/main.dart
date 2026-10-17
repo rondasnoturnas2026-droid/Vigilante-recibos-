@@ -6604,8 +6604,7 @@ class _PersonalizarReciboTermicoPageState
               ),
       ),
     );
-      ),
-    );
+      
   }
 }
 class DecimoTerceiroPersonalizacaoTab extends StatefulWidget {

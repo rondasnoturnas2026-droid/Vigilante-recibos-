@@ -893,7 +893,15 @@ escrever(
     await SharePlus.instance.share(
       ShareParams(
         title: 'Recibo de pagamento',
-        text: 'Pagamento recebido, $cliente. Agradecemos pela confiança no nosso trabalho. Nosso compromisso com sua segurança continua. Conte sempre conosco.',
+        text: [
+  'Pagamento recebido, $cliente. Agradecemos pela confiança no nosso trabalho. '
+      'Nosso compromisso com sua segurança continua. Conte sempre conosco.',
+  if (mesVencimento == 11 &&
+      (prefsRecibo.getBool('recibo_decimo_terceiro_ativo') ?? true))
+    (prefsRecibo.getString('recibo_decimo_terceiro_mensagem') ??
+            DecimoTerceiroPersonalizacaoTab.mensagemPadrao)
+        .replaceAll('{nome do cliente}', cliente),
+].join('\n\n'),
         files: [
           XFile(arquivo.path, mimeType: 'image/png'),
         ],

@@ -1059,6 +1059,22 @@ escrever(
           onPressed: () => Navigator.pop(dialogContext, false),
           child: const Text('Cancelar'),
         ),
+          if (tipoAviso == 'cobranca')
+  TextButton.icon(
+    onPressed: () async {
+      await Clipboard.setData(
+        ClipboardData(text: pixCopiaECola),
+      );
+      if (!dialogContext.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Pix copia e cola copiado.'),
+        ),
+      );
+    },
+    icon: const Icon(Icons.copy),
+    label: const Text('Copiar código Pix'),
+  ),
         FilledButton(
           onPressed: () => Navigator.pop(dialogContext, true),
           child: Text(

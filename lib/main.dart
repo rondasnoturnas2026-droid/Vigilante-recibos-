@@ -5749,7 +5749,7 @@ adicionarCampo(
 
 linhasRecibo
   ..add('--------------------------------')
-  ..add('');
+  
 
 adicionarCampo(
   mostrarCampo('cliente_nome', true),

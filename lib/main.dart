@@ -5812,7 +5812,27 @@ adicionarCampo(
 if (mostrarCampo('status', true)) {
   linhasRecibo.add('Status: RECEBIDO');
 }
+final partesVencimento = vencimento.split('/');
+final mesVencimento = partesVencimento.length > 1
+    ? int.tryParse(partesVencimento[1])
+    : null;
 
+final avisoDecimoTerceiroAtivo =
+    prefsRecibo.getBool('recibo_decimo_terceiro_ativo') ?? true;
+
+if (mesVencimento == 11 && avisoDecimoTerceiroAtivo) {
+  final mensagemDecimoTerceiro =
+      (prefsRecibo.getString('recibo_decimo_terceiro_mensagem') ??
+              DecimoTerceiroPersonalizacaoTab.mensagemPadrao)
+          .replaceAll('{nome do cliente}', nomeMorador);
+
+  linhasRecibo.addAll(
+    mensagemDecimoTerceiro
+        .split('\n')
+        .map((linha) => linha.trim())
+        .where((linha) => linha.isNotEmpty),
+  );
+}
 
 
 final caminhoLogoTermico =

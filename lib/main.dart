@@ -5803,7 +5803,7 @@ adicionarCampo(
   'Observação',
   observacao,
 );
-linhasRecibo.add('');
+
 
 
 

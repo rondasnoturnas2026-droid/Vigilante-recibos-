@@ -1187,9 +1187,7 @@ const espacoAntesQr = 64.0;
     text: textoFinal,
     files: [
       XFile(arquivo.path, mimeType: 'image/png'),
-    ],
-  ),
-);
+    
         ],
       ),
     );

@@ -5699,6 +5699,8 @@ final contaPix = _campoPix('00', 'br.gov.bcb.pix') +
 String numeroCliente = '',
     String contatoCliente = '',
     String documentoCliente = '',
+          String valorDecimoTerceiro = '0,00',
+String valorTotalRecebido = '',
   }) async {
     final conectado =
         await PrintBluetoothThermal.connectionStatus;

@@ -1812,11 +1812,43 @@ children: [
                                 width: double.infinity,
                                 child: FilledButton.icon(
                                   onPressed: () async {
-                                      final confirmarRecebimento = await showDialog<bool>(
+                                      double valorParaNumero(Object? valor) {
+  var texto = (valor ?? '0').toString().replaceAll('R\$', '').trim();
+  if (texto.contains(',')) {
+    texto = texto.replaceAll('.', '').replaceAll(',', '.');
+  }
+  return double.tryParse(texto) ?? 0;
+}
+
+String formatarValor(double valor) =>
+    valor.toStringAsFixed(2).replaceAll('.', ',');
+
+final mesParaReceber =
+    int.tryParse((mensalidade['mes'] ?? '').toString()) ??
+        DateTime.now().month;
+final prefsDecimoTerceiro = await SharedPreferences.getInstance();
+final incluirDecimoTerceiro =
+    mesParaReceber == 12 &&
+    (prefsDecimoTerceiro.getBool('recibo_decimo_terceiro_dobrado') ?? false);
+final valorMensalidadeBase = (mensalidade['valor'] ?? '0,00').toString();
+final valorMensalidadeNumero = valorParaNumero(valorMensalidadeBase);
+final valorDecimoTerceiroNumero =
+    incluirDecimoTerceiro ? valorMensalidadeNumero : 0.0;
+final valorTotalRecebido =
+    valorMensalidadeNumero + valorDecimoTerceiroNumero;
+
+final confirmarRecebimento = await showDialog<bool>(
   context: context,
   builder: (dialogContext) => AlertDialog(
     title: const Text('Confirmar recebimento'),
-    content: const Text('Confirma o recebimento desta mensalidade?'),
+    content: Text(
+      incluirDecimoTerceiro
+          ? 'Confirma o recebimento?\n\n'
+              'Mensalidade: R\$ ${formatarValor(valorMensalidadeNumero)}\n'
+              'Décimo terceiro: R\$ ${formatarValor(valorDecimoTerceiroNumero)}\n'
+              'Total: R\$ ${formatarValor(valorTotalRecebido)}'
+          : 'Confirma o recebimento desta mensalidade?',
+    ),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(dialogContext, false),

@@ -5748,7 +5748,7 @@ adicionarCampo(
 );
 
 linhasRecibo
-  ..add('--------------------------------')
+    ..add('--------------------------------');
   
 
 adicionarCampo(

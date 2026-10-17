@@ -5914,7 +5914,7 @@ if (mostrarQrTermico &&
 }
 
 await PrintBluetoothThermal.writeBytes(
-  '\n\n\n'.codeUnits,
+  '\n'.codeUnits,
 );
 
 return resultado;

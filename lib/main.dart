@@ -1281,7 +1281,155 @@ const espacoAntesQr = 64.0;
     );
  }
 }
- 
+ Future<void> _criarMensalidadesOutroMes() async {
+  final clientes = widget.store.clientes.asMap().entries.where(
+    (item) =>
+        (item.value['ativo'] ?? 'true').toString().toLowerCase() != 'false',
+  ).toList();
+
+  if (clientes.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Não há Clientes ativos cadastrados.')),
+    );
+    return;
+  }
+
+  final agora = DateTime.now();
+  const meses = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+  ];
+  final anos = List.generate(
+    41,
+    (i) => agora.year - 20 + i,
+  );
+
+  var mes = agora.month;
+  var ano = agora.year;
+  final selecionados = <int>{};
+
+  final confirmou = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => StatefulBuilder(
+      builder: (context, atualizar) => AlertDialog(
+        title: const Text('Criar mensalidades em outro mês'),
+        scrollable: true,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DropdownButtonFormField<int>(
+              value: mes,
+              decoration: const InputDecoration(labelText: 'Mês'),
+              items: List.generate(
+                12,
+                (i) => DropdownMenuItem(
+                  value: i + 1,
+                  child: Text(meses[i]),
+                ),
+              ),
+              onChanged: (valor) {
+                if (valor != null) atualizar(() => mes = valor);
+              },
+            ),
+            DropdownButtonFormField<int>(
+              value: ano,
+              decoration: const InputDecoration(labelText: 'Ano'),
+              items: anos.map(
+                (item) => DropdownMenuItem(
+                  value: item,
+                  child: Text('$item'),
+                ),
+              ).toList(),
+              onChanged: (valor) {
+                if (valor != null) atualizar(() => ano = valor);
+              },
+            ),
+            const SizedBox(height: 8),
+            ...clientes.map((item) {
+              final cliente = item.value;
+              return CheckboxListTile(
+                dense: true,
+                value: selecionados.contains(item.key),
+                title: Text((cliente['nome'] ?? 'Sem nome').toString()),
+                subtitle: Text(
+                  '${cliente['bairro'] ?? ''} • '
+                  '${cliente['rua'] ?? ''}, Nº ${cliente['numero'] ?? ''}',
+                ),
+                onChanged: (marcado) => atualizar(() {
+                  if (marcado == true) {
+                    selecionados.add(item.key);
+                  } else {
+                    selecionados.remove(item.key);
+                  }
+                }),
+              );
+            }),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: selecionados.isEmpty
+                ? null
+                : () => Navigator.pop(dialogContext, true),
+            child: const Text('Criar mensalidades'),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  if (confirmou != true) return;
+
+  String normalizar(Object? valor) =>
+      (valor ?? '').toString().trim().toLowerCase();
+
+  var criadas = 0;
+
+  for (final indice in selecionados) {
+    final cliente = widget.store.clientes[indice];
+
+    final jaExiste = widget.store.mensalidades.any((mensalidade) =>
+        normalizar(mensalidade['nome']) == normalizar(cliente['nome']) &&
+        normalizar(mensalidade['bairro']) == normalizar(cliente['bairro']) &&
+        normalizar(mensalidade['rua']) == normalizar(cliente['rua']) &&
+        normalizar(mensalidade['numero']) == normalizar(cliente['numero']) &&
+        normalizar(mensalidade['mes']) == mes.toString() &&
+        normalizar(mensalidade['ano']) == ano.toString());
+
+    if (jaExiste) continue;
+
+    widget.store.mensalidades.add({
+      'nome': cliente['nome'] ?? '',
+      'bairro': cliente['bairro'] ?? '',
+      'rua': cliente['rua'] ?? '',
+      'numero': cliente['numero'] ?? '',
+      'dia': cliente['dia'] ?? '',
+      'valor': cliente['valor'] ?? '0,00',
+      'formaPagamento': cliente['formaPagamento'] ?? 'Pix',
+      'status': 'pendente',
+      'mes': mes,
+      'ano': ano,
+    });
+
+    criadas++;
+  }
+
+  if (criadas > 0) {
+    await widget.store.salvarMensalidades();
+    await widget.store.carregarMensalidades();
+  }
+
+  if (!mounted) return;
+  setState(() {});
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('$criadas mensalidade(s) criada(s).')),
+  );
+ }
     @override
   Widget build(BuildContext context) {
     return Scaffold(

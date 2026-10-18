@@ -33,14 +33,10 @@ void main() async {
   if (temaSalvo == 'escuro') {
     temaApp.value = ThemeMode.dark;
   } else if (temaSalvo == 'claro') {
-      if (temaSalvo == 'escuro') {
-    temaApp.value = ThemeMode.dark;
-  } else if (temaSalvo == 'claro') {
-    temaApp.value = ThemeMode.light;
-  } else {
-    temaApp.value = ThemeMode.system;
+  temaApp.value = ThemeMode.light;
+} else {
+  temaApp.value = ThemeMode.system;
   }
-    temaApp.value = ThemeMode.light;
   } else {
     temaApp.value = ThemeMode.system;
   }

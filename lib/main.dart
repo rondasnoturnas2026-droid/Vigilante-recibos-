@@ -33,6 +33,10 @@ void main() async {
   if (temaSalvo == 'escuro') {
     temaApp.value = ThemeMode.dark;
   } else if (temaSalvo == 'claro') {
+            - name: Configurar regra R8 do leitor PDF
+        run: |
+          printf '%s\n' '-dontwarn com.gemalto.jp2.JP2Decoder' > android/app/proguard-rules.pro
+          sed -i '/signingConfig = signingConfigs.getByName("debug")/a\            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")' android/app/build.gradle.kts
     temaApp.value = ThemeMode.light;
   } else {
     temaApp.value = ThemeMode.system;

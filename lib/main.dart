@@ -2951,7 +2951,30 @@ ScaffoldMessenger.of(context).showSnackBar(
   Future<void> _editarMensalidade(
   Map<String, dynamic> mensalidade,
 ) async {
-  String novoValor = (mensalidade['valor'] ?? '0,00').toString();
+    double converterValor(String valor) {
+    var texto = valor.replaceAll('R\$', '').trim();
+    if (texto.contains(',')) {
+      texto = texto.replaceAll('.', '').replaceAll(',', '.');
+    }
+    return double.tryParse(texto) ?? 0.0;
+  }
+
+  String formatarValor(double valor) =>
+      valor.toStringAsFixed(2).replaceAll('.', ',');
+
+  final mesEdicao =
+      int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
+  final valorBaseAntes = converterValor(
+    (mensalidade['valor'] ?? '0,00').toString(),
+  );
+  final incluirDecimoNaEdicao =
+      mesEdicao == 12 &&
+      _decimoTerceiroDobrado &&
+      mensalidade['incluirDecimoTerceiro'] != false;
+
+  String novoValor = formatarValor(
+    incluirDecimoNaEdicao ? valorBaseAntes * 2 : valorBaseAntes,
+  );
   String formaPagamento =
       (mensalidade['formaPagamento'] ?? 'Pix').toString();
 

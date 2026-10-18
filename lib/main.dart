@@ -4732,6 +4732,7 @@ class _TelaRelatorioState extends State<TelaRelatorio> {
           _cartao('Pix', pix, Icons.pix),
           _cartao('Dinheiro', dinheiro, Icons.money),
           _cartao('Cartão', cartao, Icons.credit_card),
+            _graficoBalanco(recebido, pendente),
         ],
       ),
     );

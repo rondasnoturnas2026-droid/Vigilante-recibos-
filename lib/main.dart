@@ -2972,7 +2972,7 @@ final valorBaseAntes = converterValor(
 final incluirDecimoNaEdicao =
     mesEdicao == 12 &&
     _decimoTerceiroCobrando &&
-    mensalidade['incluirDecimoTerceiro'] == true;
+    mensalidade['incluirDecimoTerceiro'] != false;
 
 String novoValor = formatarValor(
   incluirDecimoNaEdicao ? valorBaseAntes * 2 : valorBaseAntes,

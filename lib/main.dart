@@ -1026,10 +1026,41 @@ escrever(
       'Olá, {nome do cliente}. Este é um aviso importante: '
           '{escreva aqui o aviso}.';
 
-  String mensagem = tipoAviso == 'texto' ? modeloTexto : modeloCobranca;
+    double valorComoNumero(Object? valorOriginal) {
+    var texto = (valorOriginal ?? '0').toString().replaceAll('R\$', '').trim();
+    if (texto.contains(',')) {
+      texto = texto.replaceAll('.', '').replaceAll(',', '.');
+    }
+    return double.tryParse(texto) ?? 0;
+  }
+
+  String formatarValor(double valorNumero) =>
+      valorNumero.toStringAsFixed(2).replaceAll('.', ',');
+
+  final agora = DateTime.now();
+  final dia =
+      int.tryParse((mensalidade['dia'] ?? '').toString()) ?? agora.day;
+  final mesDaMensalidade =
+      int.tryParse((mensalidade['mes'] ?? '').toString()) ?? agora.month;
+  final ano =
+      int.tryParse((mensalidade['ano'] ?? '').toString()) ?? agora.year;
+
+  final valorMensalidade = valorComoNumero(valor);
+  final incluirDecimoEmDezembro =
+      mesDaMensalidade == 12 &&
+      (prefs.getBool('recibo_decimo_terceiro_dobrado') ?? false);
+  final valorDecimoTerceiro =
+      incluirDecimoEmDezembro ? valorMensalidade : 0.0;
+  final valorTotalCobranca =
+      valorMensalidade + valorDecimoTerceiro;
+  final valorParaMensagem = incluirDecimoEmDezembro
+      ? formatarValor(valorTotalCobranca)
+      : valor;
+
+  String mensagem;
   String pixCopiaECola = '';
 
-  if (tipoAviso == 'cobranca' || tipoAviso == 'texto') {
+  if (tipoAviso == 'cobranca') {
     final chavePix = widget.store.vigilanteChavePix.trim();
 
     if (chavePix.isEmpty) {
@@ -1040,14 +1071,6 @@ escrever(
       );
       return;
     }
-
-    final agora = DateTime.now();
-    final dia =
-        int.tryParse((mensalidade['dia'] ?? '').toString()) ?? agora.day;
-    final mes =
-        int.tryParse((mensalidade['mes'] ?? '').toString()) ?? agora.month;
-    final ano =
-        int.tryParse((mensalidade['ano'] ?? '').toString()) ?? agora.year;
 
     const meses = [
       '',
@@ -1065,27 +1088,50 @@ escrever(
       'dezembro',
     ];
 
-    final mesTexto = mes >= 1 && mes <= 12
-        ? '${meses[mes]} de $ano'
-        : '$mes/$ano';
+    final mesTexto = mesDaMensalidade >= 1 && mesDaMensalidade <= 12
+        ? '${meses[mesDaMensalidade]} de $ano'
+        : '$mesDaMensalidade/$ano';
 
     final vencimento =
         '${dia.toString().padLeft(2, '0')}/'
-        '${mes.toString().padLeft(2, '0')}/$ano';
+        '${mesDaMensalidade.toString().padLeft(2, '0')}/$ano';
 
     pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
       chavePix: chavePix,
       nomeVigilante: widget.store.vigilanteNomeFantasia,
-      valor: valor,
+      valor: valorParaMensagem,
     );
 
     mensagem = modeloCobranca
         .replaceAll('{nome do cliente}', nome)
         .replaceAll('{mês}', mesTexto)
-        .replaceAll('{valor}', 'R\$ $valor')
+        .replaceAll('{valor}', 'R\$ $valorParaMensagem')
         .replaceAll('{data}', vencimento)
         .replaceAll('{chave Pix}', chavePix)
         .replaceAll('{código Pix}', pixCopiaECola);
+
+    if (incluirDecimoEmDezembro) {
+      mensagem +=
+          '\n\nMensalidade: R\$ ${formatarValor(valorMensalidade)}'
+          '\nDécimo terceiro: R\$ ${formatarValor(valorDecimoTerceiro)}'
+          '\nTotal para pagamento: R\$ ${formatarValor(valorTotalCobranca)}';
+    }
+  } else {
+    mensagem = modeloTexto
+        .replaceAll('{nome do cliente}', nome)
+        .replaceAll('{escreva aqui o aviso}', '');
+  }
+
+  final avisoDecimoTerceiroAtivo =
+      prefs.getBool('recibo_decimo_terceiro_ativo') ?? true;
+
+  if (mesDaMensalidade == 11 && avisoDecimoTerceiroAtivo) {
+    final textoDecimoTerceiro =
+        (prefs.getString('recibo_decimo_terceiro_mensagem') ??
+                DecimoTerceiroPersonalizacaoTab.mensagemPadrao)
+            .replaceAll('{nome do cliente}', nome);
+
+    mensagem = '$mensagem\n\n$textoDecimoTerceiro';
   }
 
   final controlador = TextEditingController(text: mensagem);

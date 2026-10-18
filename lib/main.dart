@@ -3619,9 +3619,33 @@ List<Map<String, String>> _lerClientesDoPdf(String texto) {
 final clientesEncontrados = _lerClientesDoPdf(textoExtraido);
 
 if (clientesEncontrados.isEmpty) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text('Não encontrei clientes válidos nesse PDF.'),
+  final linhasExtraidas = textoExtraido
+      .split(RegExp(r'[\r\n]+'))
+      .where((linha) => linha.trim().isNotEmpty)
+      .take(8)
+      .map((linha) => linha
+          .replaceAll(RegExp(r'[A-Za-zÀ-ÿ0-9]+'), 'X')
+          .replaceAll(' ', '·')
+          .replaceAll('\t', '→'))
+      .join('\n');
+
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Diagnóstico da leitura'),
+      content: SingleChildScrollView(
+        child: SelectableText(
+          linhasExtraidas.isEmpty
+              ? 'O PDF não retornou texto selecionável.'
+              : 'Formato extraído (dados ocultos):\n\n$linhasExtraidas',
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext),
+          child: const Text('Fechar'),
+        ),
+      ],
     ),
   );
   return;

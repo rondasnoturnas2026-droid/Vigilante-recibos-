@@ -2963,18 +2963,20 @@ ScaffoldMessenger.of(context).showSnackBar(
       valor.toStringAsFixed(2).replaceAll('.', ',');
 
   final mesEdicao =
-      int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
-  final valorBaseAntes = converterValor(
-    (mensalidade['valor'] ?? '0,00').toString(),
-  );
-  final incluirDecimoNaEdicao =
-      mesEdicao == 12 &&
-      _decimoTerceiroDobrado &&
-      mensalidade['incluirDecimoTerceiro'] != false;
+    int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
 
-  String novoValor = formatarValor(
-    incluirDecimoNaEdicao ? valorBaseAntes * 2 : valorBaseAntes,
-  );
+final valorBaseAntes = converterValor(
+  (mensalidade['valor'] ?? '0,00').toString(),
+);
+
+final incluirDecimoNaEdicao =
+    mesEdicao == 12 &&
+    _decimoTerceiroCobrando &&
+    mensalidade['incluirDecimoTerceiro'] == true;
+
+String novoValor = formatarValor(
+  incluirDecimoNaEdicao ? valorBaseAntes * 2 : valorBaseAntes,
+);
   String formaPagamento =
       (mensalidade['formaPagamento'] ?? 'Pix').toString();
 

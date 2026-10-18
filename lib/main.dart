@@ -3642,7 +3642,39 @@ List<Map<String, String>> _lerClientesDoPdf(String texto) {
 
     return montarCliente(campos);
   }
+Map<String, String> camposVerticais = <String, String>{};
 
+void salvarClienteVertical() {
+  final cliente = montarCliente(camposVerticais);
+  if (cliente != null) {
+    clientesLidos.add(cliente);
+  }
+  camposVerticais = <String, String>{};
+}
+
+final rotuloVertical = RegExp(
+  r'^\s*(nome\s+do\s+cliente|nome|cliente|bairro|endere[cç]o|rua|numero|n[º°.]?|dia|vencimento|valor|mensalidade|telefone|contato|whatsapp|celular|forma\s+de\s+pagamento|pagamento)\s*[:=]\s*(.*?)\s*$',
+  caseSensitive: false,
+);
+
+for (final original in texto.split(RegExp(r'[\r\n]+'))) {
+  final linha = original.trim();
+  if (linha.isEmpty) continue;
+
+  final rotulo = rotuloVertical.firstMatch(linha);
+  if (rotulo == null) continue;
+
+  final campo = identificarCampo(rotulo.group(1) ?? '');
+  if (campo == null) continue;
+
+  if (campo == 'nome' && camposVerticais.containsKey('nome')) {
+    salvarClienteVertical();
+  }
+
+  camposVerticais[campo] = (rotulo.group(2) ?? '').trim();
+}
+
+salvarClienteVertical();
   for (final original in texto.split(RegExp(r'[\r\n]+'))) {
     final linha = original.trim();
     if (linha.isEmpty) continue;

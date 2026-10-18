@@ -111,7 +111,7 @@ class _TelaPrincipalState extends State<TelaPrincipal>
     paginas = [
       TelaMensalidades(store: store),
       TelaClientes(store: store),
-      const TelaRelatorio(),
+      TelaRelatorio(store: store),
       TelaConfiguracoes(store: store),
     ];
 

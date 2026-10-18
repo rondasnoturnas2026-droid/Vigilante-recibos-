@@ -3535,18 +3535,29 @@ String dataFiltro = 'Todas as datas';
     IconButton(
   tooltip: 'Importar clientes',
   icon: const Icon(Icons.file_upload_outlined),
-  onPressed: () {
+    onPressed: () async {
+    final resultado = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (resultado == null || resultado.files.isEmpty || !mounted) {
+      return;
+    }
+
+    final arquivo = resultado.files.single;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Importar clientes'),
-        content: const Text(
-          'A opção para escolher o arquivo de clientes ficará nesta tela. '
-          'A importação será ativada em uma próxima etapa.',
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('PDF selecionado'),
+        content: Text(
+          'Arquivo: ${arquivo.name}\n\n'
+          'A leitura e o cadastro dos clientes serão preparados depois.',
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Entendi'),
           ),
         ],

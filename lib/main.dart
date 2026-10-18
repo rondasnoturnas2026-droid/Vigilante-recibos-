@@ -3503,7 +3503,59 @@ String dataFiltro = 'Todas as datas';
     if (!mounted) return;
     setState(() {});
   }
+List<Map<String, dynamic>> _lerClientesDoPdf(String texto) {
+  final clientesLidos = <Map<String, dynamic>>[];
 
+  for (final linha in texto.split(RegExp(r'[\r\n]+'))) {
+    final colunas = linha.trim().split(RegExp(r'\s{2,}'));
+
+    // O PDF completo tem: Bairro, Endereço, Dia, Valor, Nome e Contato.
+    if (colunas.length < 6 ||
+        colunas[0].trim().toLowerCase() == 'bairro') {
+      continue;
+    }
+
+    final dia = int.tryParse(colunas[2].trim());
+    if (dia == null || dia < 1 || dia > 31) continue;
+
+    final valor = colunas[3]
+        .replaceAll('R\$', '')
+        .replaceAll(' ', '')
+        .trim();
+
+    final endereco = colunas[1].trim();
+    final numeroMatch =
+        RegExp(r'(?:,|\s)\s*(\d+)\s*$').firstMatch(endereco);
+
+    if (numeroMatch == null) continue;
+
+    final rua = endereco.substring(0, numeroMatch.start).trim();
+    final numero = numeroMatch.group(1) ?? '';
+    final telefone = colunas[5].replaceAll(RegExp(r'\D'), '');
+
+    if (colunas[4].trim().isEmpty || rua.isEmpty || numero.isEmpty) {
+      continue;
+    }
+
+    clientesLidos.add({
+      'nome': colunas[4].trim(),
+      'bairro': colunas[0].trim(),
+      'rua': rua,
+      'numero': numero,
+      'complemento': '',
+      'dia': dia.toString().padLeft(2, '0'),
+      'valor': valor,
+      'formaPagamento': 'Não informado',
+      'telefone': telefone.length >= 10 ? telefone : '',
+      'contato2Nome': '',
+      'contato2Telefone': '',
+      'contato2Relacao': '',
+      'ativo': 'true',
+    });
+  }
+
+  return clientesLidos;
+}
   @override
   Widget build(BuildContext context) {
       final clientesFiltrados = widget.store.clientes.where((cliente) {

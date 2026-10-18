@@ -3507,121 +3507,210 @@ List<Map<String, String>> _lerClientesDoPdf(String texto) {
   final clientesLidos = <Map<String, String>>[];
   Map<String, int> indices = {};
 
-  String normalizarCabecalho(String valor) {
-    return valor.trim().toLowerCase()
-        .replaceAll(RegExp(r'[áàâãä]'), 'a')
-        .replaceAll(RegExp(r'[éèêë]'), 'e')
-        .replaceAll(RegExp(r'[íìîï]'), 'i')
-        .replaceAll(RegExp(r'[óòôõö]'), 'o')
-        .replaceAll(RegExp(r'[úùûü]'), 'u')
-        .replaceAll('ç', 'c');
+  String normalizar(String valor) => valor.trim().toLowerCase()
+      .replaceAll(RegExp(r'[áàâãä]'), 'a')
+      .replaceAll(RegExp(r'[éèêë]'), 'e')
+      .replaceAll(RegExp(r'[íìîï]'), 'i')
+      .replaceAll(RegExp(r'[óòôõö]'), 'o')
+      .replaceAll(RegExp(r'[úùûü]'), 'u')
+      .replaceAll('ç', 'c');
+
+  String? identificarCampo(String titulo) {
+    final t = normalizar(titulo);
+    if (t.contains('nome') || t == 'cliente') return 'nome';
+    if (t.contains('bairro')) return 'bairro';
+    if (t.contains('numero')) return 'numero';
+    if (t.contains('endereco') || t.contains('rua')) return 'endereco';
+    if (t == 'dia' || t.contains('vencimento')) return 'dia';
+    if (t.contains('valor') || t.contains('mensalidade')) return 'valor';
+    if (t.contains('telefone') ||
+        t.contains('contato') ||
+        t.contains('whatsapp') ||
+        t.contains('celular')) return 'telefone';
+    if (t.contains('forma') || t.contains('pagamento')) {
+      return 'formaPagamento';
+    }
+    return null;
   }
 
-  for (final linha in texto.split(RegExp(r'[\r\n]+'))) {
-    final colunas = linha
-        .trim()
-        .split(RegExp(r'\s{2,}'))
+  List<String> separarColunas(String linha) {
+    final separador = RegExp(r'\t+| {2,}|[|;]');
+    if (!separador.hasMatch(linha)) return [];
+    return linha
+        .split(separador)
         .map((coluna) => coluna.trim())
+        .where((coluna) => coluna.isNotEmpty)
         .toList();
+  }
 
-    if (colunas.length < 2) continue;
+  Map<String, String>? montarCliente(Map<String, String> campos) {
+    final nome = (campos['nome'] ?? '').trim();
+    final bairro = (campos['bairro'] ?? '').trim();
+    var endereco = (campos['endereco'] ?? '').trim();
+    var numero = (campos['numero'] ?? '').trim();
 
-    final novosIndices = <String, int>{};
-
-    for (var i = 0; i < colunas.length; i++) {
-      final titulo = normalizarCabecalho(colunas[i]);
-
-      if (titulo.contains('bairro')) {
-        novosIndices['bairro'] = i;
-      } else if (titulo.contains('endereco') ||
-          titulo == 'rua' ||
-          titulo.contains('rua e numero')) {
-        novosIndices['endereco'] = i;
-      } else if (titulo == 'dia' || titulo.contains('vencimento')) {
-        novosIndices['dia'] = i;
-      } else if (titulo.contains('valor') ||
-          titulo.contains('mensalidade')) {
-        novosIndices['valor'] = i;
-      } else if (titulo.contains('nome') ||
-          titulo == 'cliente' ||
-          titulo.contains('nome do cliente')) {
-        novosIndices['nome'] = i;
-      } else if (titulo.contains('telefone') ||
-          titulo.contains('contato') ||
-          titulo.contains('whatsapp') ||
-          titulo.contains('celular')) {
-        novosIndices['telefone'] = i;
-      }
-    }
-
-    final encontrouCabecalho =
-        novosIndices.containsKey('bairro') &&
-        novosIndices.containsKey('endereco') &&
-        novosIndices.containsKey('dia') &&
-        novosIndices.containsKey('valor') &&
-        novosIndices.containsKey('nome');
-
-    if (encontrouCabecalho) {
-      indices = novosIndices;
-      continue;
-    }
-
-    if (indices.isEmpty) continue;
-
-    String campo(String nome) {
-      final indice = indices[nome];
-      if (indice == null || indice >= colunas.length) return '';
-      return colunas[indice].trim();
-    }
-
-    final nome = campo('nome');
-    final bairro = campo('bairro');
-    final endereco = campo('endereco');
-    final diaTexto = campo('dia');
-    final dia = int.tryParse(diaTexto.replaceAll(RegExp(r'\D'), ''));
-    final valor = campo('valor')
+    final diaTexto = (campos['dia'] ?? '').replaceAll(RegExp(r'\D'), '');
+    final dia = int.tryParse(diaTexto);
+    final valor = (campos['valor'] ?? '')
         .replaceAll('R\$', '')
         .replaceAll(' ', '')
         .trim();
-    final telefone = campo('telefone').replaceAll(RegExp(r'\D'), '');
+    final telefone =
+        (campos['telefone'] ?? '').replaceAll(RegExp(r'\D'), '');
+    final forma = (campos['formaPagamento'] ?? '').trim();
 
-    final numeroMatch =
-        RegExp(r'(?:,|\s)\s*(\d+)\s*$').firstMatch(endereco);
+    if (numero.isEmpty) {
+      final encontrado =
+          RegExp(r'(?:,|\s)\s*(\d+[A-Za-z]?)\s*$').firstMatch(endereco);
+      if (encontrado != null) {
+        numero = encontrado.group(1) ?? '';
+        endereco = endereco.substring(0, encontrado.start).trim();
+      }
+    }
 
     if (nome.isEmpty ||
         bairro.isEmpty ||
-        dia == null ||
-        dia < 1 ||
-        dia > 31 ||
-        valor.isEmpty ||
-        numeroMatch == null) {
-      continue;
+        endereco.isEmpty ||
+        numero.isEmpty) {
+      return null;
     }
+    if (dia != null && (dia < 1 || dia > 31)) return null;
 
-    final rua = endereco.substring(0, numeroMatch.start).trim();
-    final numero = numeroMatch.group(1) ?? '';
-
-    if (rua.isEmpty || numero.isEmpty) continue;
-
-    clientesLidos.add({
+    return {
       'nome': nome,
       'bairro': bairro,
-      'rua': rua,
+      'rua': endereco,
       'numero': numero,
       'complemento': '',
-      'dia': dia.toString().padLeft(2, '0'),
-      'valor': valor,
-      'formaPagamento': 'Não informado',
+      'dia': dia == null ? '' : dia.toString().padLeft(2, '0'),
+      'valor': valor.isEmpty ? '0,00' : valor,
+      'formaPagamento': forma.isEmpty ? 'Não informado' : forma,
       'telefone': telefone.length >= 10 ? telefone : '',
       'contato2Nome': '',
       'contato2Telefone': '',
       'contato2Relacao': '',
       'ativo': 'true',
-    });
+    };
   }
 
-  return clientesLidos;
+  Map<String, String>? lerLinhaRotulada(String linha) {
+    final rotulos = <Map<String, dynamic>>[];
+    const expressoes = <String, String>{
+      'nome': r'nome\s+do\s+cliente|nome|cliente',
+      'bairro': r'bairro',
+      'endereco': r'endereco|rua',
+      'numero': r'numero|n[º°.]',
+      'dia': r'dia|vencimento',
+      'valor': r'valor|mensalidade',
+      'telefone': r'telefone|contato|whatsapp|celular',
+      'formaPagamento': r'forma\s+de\s+pagamento|pagamento',
+    };
+
+    for (final item in expressoes.entries) {
+      final regex = RegExp(
+        r'(?:^|[|;]\s*|\s)(' +
+            item.value +
+            r')\s*[:=]\s*',
+        caseSensitive: false,
+      );
+      for (final match in regex.allMatches(linha)) {
+        rotulos.add({
+          'campo': item.key,
+          'inicio': match.start,
+          'fim': match.end,
+        });
+      }
+    }
+
+    if (rotulos.length < 3) return null;
+    rotulos.sort(
+      (a, b) => (a['inicio'] as int).compareTo(b['inicio'] as int),
+    );
+
+    final campos = <String, String>{};
+    for (var i = 0; i < rotulos.length; i++) {
+      final atual = rotulos[i];
+      final fim = i + 1 < rotulos.length
+          ? rotulos[i + 1]['inicio'] as int
+          : linha.length;
+      campos[atual['campo'] as String] = linha
+          .substring(atual['fim'] as int, fim)
+          .replaceAll(RegExp(r'^[|;,\s]+|[|;,\s]+$'), '')
+          .trim();
+    }
+
+    return montarCliente(campos);
+  }
+
+  for (final original in texto.split(RegExp(r'[\r\n]+'))) {
+    final linha = original.trim();
+    if (linha.isEmpty) continue;
+
+    final rotulado = lerLinhaRotulada(linha);
+    if (rotulado != null) {
+      clientesLidos.add(rotulado);
+      continue;
+    }
+
+    final colunas = separarColunas(linha);
+    if (colunas.length < 2) continue;
+
+    final novosIndices = <String, int>{};
+    for (var i = 0; i < colunas.length; i++) {
+      final campo = identificarCampo(colunas[i]);
+      if (campo != null) novosIndices[campo] = i;
+    }
+
+    final temCabecalho = novosIndices.containsKey('nome') &&
+        novosIndices.containsKey('bairro') &&
+        novosIndices.containsKey('endereco') &&
+        novosIndices.containsKey('valor');
+
+    if (temCabecalho) {
+      indices = novosIndices;
+      continue;
+    }
+
+    final campos = <String, String>{};
+
+    if (indices.isNotEmpty) {
+      for (final item in indices.entries) {
+        if (item.value < colunas.length) {
+          campos[item.key] = colunas[item.value];
+        }
+      }
+    } else if (colunas.length >= 5) {
+      const ordem = [
+        'bairro',
+        'endereco',
+        'dia',
+        'valor',
+        'nome',
+        'telefone',
+      ];
+      for (var i = 0; i < ordem.length && i < colunas.length; i++) {
+        campos[ordem[i]] = colunas[i];
+      }
+    }
+
+    final cliente = montarCliente(campos);
+    if (cliente != null) clientesLidos.add(cliente);
+  }
+
+  final unicos = <String, Map<String, String>>{};
+  for (final cliente in clientesLidos) {
+    final chave = [
+      cliente['nome'],
+      cliente['bairro'],
+      cliente['rua'],
+      cliente['numero'],
+    ].map((valor) => (valor ?? '').trim().toLowerCase()).join('|');
+    unicos.putIfAbsent(chave, () => cliente);
+  }
+
+  return unicos.values.toList();
 }
+    
   @override
   Widget build(BuildContext context) {
       final clientesFiltrados = widget.store.clientes.where((cliente) {

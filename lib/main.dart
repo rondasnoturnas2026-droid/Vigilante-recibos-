@@ -230,6 +230,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     bool buscaAberta = false;
   String pagamentoFiltro = 'Todas as formas';
     bool totalVisivel = true;
+    bool _decimoTerceiroDobrado = false;
       Map<String, String> _dadosClienteParaRecibo(
     Map<String, dynamic> mensalidade,
   ) {

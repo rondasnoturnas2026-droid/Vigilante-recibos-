@@ -4864,6 +4864,7 @@ class _TelaRelatorioState extends State<TelaRelatorio> {
           _cartao('Cartão', cartao, Icons.credit_card),
             _graficoBalanco(recebido, pendente),
             _comparativoMensal(mensalidades, anoSelecionado),
+            _crescimentoAnual(mensalidades, anoSelecionado),
         ],
       ),
     );

@@ -1457,6 +1457,11 @@ size: 18,
               );
             },
           ),
+            IconButton(
+  tooltip: 'Criar em outro mês',
+  icon: const Icon(Icons.calendar_month),
+  onPressed: _criarMensalidadesOutroMes,
+),
           IconButton(
             style: IconButton.styleFrom(
               shape: const CircleBorder(),

@@ -3033,10 +3033,20 @@ String novoValor = formatarValor(
   if (salvou != true) return;
 
   novoValor = novoValor.trim();
-  if (novoValor.isEmpty) return;
+if (novoValor.isEmpty) return;
 
-  mensalidade['valor'] = novoValor;
-  mensalidade['formaPagamento'] = formaPagamento;
+final valorDigitado = converterValor(novoValor);
+
+if (incluirDecimoNaEdicao && valorDigitado == valorBaseAntes) {
+  mensalidade['incluirDecimoTerceiro'] = false;
+  mensalidade['valor'] = formatarValor(valorDigitado);
+} else if (incluirDecimoNaEdicao) {
+  mensalidade['valor'] = formatarValor(valorDigitado / 2);
+} else {
+  mensalidade['valor'] = formatarValor(valorDigitado);
+}
+
+mensalidade['formaPagamento'] = formaPagamento;
 
   await widget.store.salvarMensalidades();
 

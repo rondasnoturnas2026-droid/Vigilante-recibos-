@@ -4524,67 +4524,167 @@ FilledButton.icon(
   }
 }
                 
-class TelaRelatorio extends StatelessWidget {
+class TelaRelatorio extends StatefulWidget {
   final AppStore? store;
 
   const TelaRelatorio({super.key, this.store});
 
   @override
+  State<TelaRelatorio> createState() => _TelaRelatorioState();
+}
+
+class _TelaRelatorioState extends State<TelaRelatorio> {
+  int mesSelecionado = DateTime.now().month;
+  int anoSelecionado = DateTime.now().year;
+
+  static const meses = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril',
+    'Maio', 'Junho', 'Julho', 'Agosto',
+    'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+  ];
+
+  double _valor(Object? valor) {
+    var texto = (valor ?? '0').toString()
+        .replaceAll('R\$', '')
+        .replaceAll(' ', '')
+        .trim();
+
+    if (texto.contains(',')) {
+      texto = texto.replaceAll('.', '').replaceAll(',', '.');
+    }
+
+    return double.tryParse(texto) ?? 0;
+  }
+
+  String _reais(double valor) =>
+      'R\$ ${valor.toStringAsFixed(2).replaceAll('.', ',')}';
+
+  Widget _cartao(String titulo, double valor, IconData icone) {
+    return Card(
+      child: ListTile(
+        leading: Icon(icone),
+        title: Text(titulo),
+        trailing: Text(
+          _reais(valor),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final mensalidades = widget.store?.mensalidades ?? [];
+
+    final doMes = mensalidades.where((item) {
+      final mes = int.tryParse((item['mes'] ?? '').toString()) ?? 0;
+      final ano = int.tryParse((item['ano'] ?? '').toString()) ?? 0;
+      final status = (item['status'] ?? '').toString().toLowerCase();
+
+      return mes == mesSelecionado &&
+          ano == anoSelecionado &&
+          !status.contains('inativo');
+    }).toList();
+
+    double recebido = 0;
+    double pendente = 0;
+    double pix = 0;
+    double dinheiro = 0;
+    double cartao = 0;
+
+    for (final item in doMes) {
+      final valor = _valor(item['valor']);
+      final status = (item['status'] ?? '').toString().toLowerCase();
+      final forma =
+          (item['formaPagamento'] ?? '').toString().toLowerCase();
+
+      if (status.contains('recebid')) {
+        recebido += valor;
+
+        if (forma.contains('pix')) pix += valor;
+        if (forma.contains('dinheiro')) dinheiro += valor;
+        if (forma.contains('cartão') || forma.contains('cartao')) {
+          cartao += valor;
+        }
+      } else if (status.contains('pendente')) {
+        pendente += valor;
+      }
+    }
+
+    final anos = <int>{
+      DateTime.now().year,
+      ...mensalidades.map(
+        (item) => int.tryParse((item['ano'] ?? '').toString()) ?? 0,
+      ),
+    }..remove(0);
+
+    final listaAnos = anos.toList()..sort();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Relatório mensal',
+          'Relatório',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.check_circle_outline),
-                title: Text('Recebido'),
-                trailing: Text(
-                  'R\$ 0,00',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<int>(
+                  value: mesSelecionado,
+                  decoration: const InputDecoration(labelText: 'Mês'),
+                  items: List.generate(
+                    12,
+                    (i) => DropdownMenuItem(
+                      value: i + 1,
+                      child: Text(meses[i]),
+                    ),
+                  ),
+                  onChanged: (valor) {
+                    if (valor != null) {
+                      setState(() => mesSelecionado = valor);
+                    }
+                  },
                 ),
               ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.pending_actions),
-                title: Text('Pendente'),
-                trailing: Text(
-                  'R\$ 0,00',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DropdownButtonFormField<int>(
+                  value: listaAnos.contains(anoSelecionado)
+                      ? anoSelecionado
+                      : DateTime.now().year,
+                  decoration: const InputDecoration(labelText: 'Ano'),
+                  items: listaAnos
+                      .map((ano) => DropdownMenuItem(
+                            value: ano,
+                            child: Text(ano.toString()),
+                          ))
+                      .toList(),
+                  onChanged: (valor) {
+                    if (valor != null) {
+                      setState(() => anoSelecionado = valor);
+                    }
+                  },
                 ),
               ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.pix),
-                title: Text('Pix'),
-                trailing: Text('R\$ 0,00'),
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.money),
-                title: Text('Dinheiro'),
-                trailing: Text('R\$ 0,00'),
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.credit_card),
-                title: Text('Cartão'),
-                trailing: Text('R\$ 0,00'),
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _cartao('Total do mês', recebido + pendente, Icons.account_balance),
+          _cartao('Recebido', recebido, Icons.check_circle_outline),
+          _cartao('Pendente', pendente, Icons.pending_actions),
+          const SizedBox(height: 8),
+          const Text(
+            'Recebido por forma de pagamento',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          _cartao('Pix', pix, Icons.pix),
+          _cartao('Dinheiro', dinheiro, Icons.money),
+          _cartao('Cartão', cartao, Icons.credit_card),
+        ],
       ),
     );
   }

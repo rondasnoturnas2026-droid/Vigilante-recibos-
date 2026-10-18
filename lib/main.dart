@@ -3533,16 +3533,27 @@ String dataFiltro = 'Todas as datas';
   title: const Text('Clientes'),
   actions: [
     IconButton(
-      tooltip: 'Importar clientes',
-      icon: const Icon(Icons.file_upload_outlined),
-      onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('A importação será configurada nesta etapa.'),
+  tooltip: 'Importar clientes',
+  icon: const Icon(Icons.file_upload_outlined),
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Importar clientes'),
+        content: const Text(
+          'A opção para escolher o arquivo de clientes ficará nesta tela. '
+          'A importação será ativada em uma próxima etapa.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Entendi'),
           ),
-        );
-      },
-    ),
+        ],
+      ),
+    );
+  },
+),
   ],
 ),
                   body: Column(

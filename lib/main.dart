@@ -3715,7 +3715,8 @@ ScaffoldMessenger.of(context).showSnackBar(
     ),
   ),
 );
-      if (!mounted) return;
+      } catch (erro) {
+  if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

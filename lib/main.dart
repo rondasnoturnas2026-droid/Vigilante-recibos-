@@ -3530,8 +3530,21 @@ String dataFiltro = 'Todas as datas';
     .toList();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clientes'),
-      ),
+  title: const Text('Clientes'),
+  actions: [
+    IconButton(
+      tooltip: 'Importar clientes',
+      icon: const Icon(Icons.file_upload_outlined),
+      onPressed: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('A importação será configurada nesta etapa.'),
+          ),
+        );
+      },
+    ),
+  ],
+),
                   body: Column(
         children: [
             Padding(

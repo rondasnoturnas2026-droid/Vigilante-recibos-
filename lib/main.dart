@@ -4620,6 +4620,66 @@ class _TelaRelatorioState extends State<TelaRelatorio> {
       ),
     );
   }
+      Widget _crescimentoAnual(Iterable<dynamic> mensalidades, int ano) {
+    double totalRecebido(int anoComparado) {
+      var total = 0.0;
+
+      for (final item in mensalidades) {
+        final anoItem =
+            int.tryParse((item['ano'] ?? '').toString()) ?? 0;
+        final status =
+            (item['status'] ?? '').toString().toLowerCase();
+
+        if (anoItem == anoComparado && status.contains('recebid')) {
+          total += _valor(item['valor']);
+        }
+      }
+
+      return total;
+    }
+
+    final recebidoAtual = totalRecebido(ano);
+    final recebidoAnterior = totalRecebido(ano - 1);
+    final temComparacao = recebidoAnterior > 0;
+
+    final variacao = temComparacao
+        ? ((recebidoAtual - recebidoAnterior) / recebidoAnterior) * 100
+        : 0.0;
+
+    final cor = !temComparacao
+        ? Colors.blue
+        : variacao >= 0
+            ? Colors.green
+            : Colors.red;
+
+    return Card(
+      child: ListTile(
+        leading: Icon(
+          !temComparacao
+              ? Icons.info_outline
+              : variacao >= 0
+                  ? Icons.trending_up
+                  : Icons.trending_down,
+          color: cor,
+        ),
+        title: const Text('Crescimento anual recebido'),
+        subtitle: Text(
+          '$ano: ${_reais(recebidoAtual)} | '
+          '${ano - 1}: ${_reais(recebidoAnterior)}',
+        ),
+        trailing: Text(
+          temComparacao
+              ? '${variacao >= 0 ? '+' : ''}'
+                  '${variacao.toStringAsFixed(1)}%'
+              : 'Sem base',
+          style: TextStyle(
+            color: cor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+      }
       Widget _comparativoMensal(Iterable<dynamic> mensalidades, int ano) {
     final totais = List<double>.filled(12, 0.0);
 

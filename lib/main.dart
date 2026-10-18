@@ -7551,4 +7551,160 @@ class _CobrancaPersonalizacaoTabState
     );
   }
 }                 
+class _GraficoPizzaRecebidos extends StatelessWidget {
+  const _GraficoPizzaRecebidos({
+    required this.pix,
+    required this.dinheiro,
+    required this.cartao,
+  });
 
+  final double pix;
+  final double dinheiro;
+  final double cartao;
+
+  String _reais(double valor) =>
+      'R\$ ${valor.toStringAsFixed(2).replaceAll('.', ',')}';
+
+  Widget _legenda(String nome, double valor, Color cor, double total) {
+    final percentual =
+        total == 0 ? 0 : (valor / total * 100).round();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              color: cor,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('$nome • $percentual%'),
+                Text(
+                  _reais(valor),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final total = pix + dinheiro + cartao;
+    const cores = [Colors.blue, Colors.green, Colors.orange];
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Recebidos por forma de pagamento',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            if (total == 0)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text('Nenhum valor recebido neste mês'),
+                ),
+              )
+            else
+              Row(
+                children: [
+                  CustomPaint(
+                    size: const Size(150, 150),
+                    painter: _PizzaRecebidosPainter(
+                      valores: [pix, dinheiro, cartao],
+                      cores: cores,
+                    ),
+                    child: SizedBox(
+                      width: 150,
+                      height: 150,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(30),
+                          child: FittedBox(
+                            child: Text(
+                              _reais(total),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _legenda('Pix', pix, cores[0], total),
+                        _legenda('Dinheiro', dinheiro, cores[1], total),
+                        _legenda('Cartão', cartao, cores[2], total),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PizzaRecebidosPainter extends CustomPainter {
+  const _PizzaRecebidosPainter({
+    required this.valores,
+    required this.cores,
+  });
+
+  final List<double> valores;
+  final List<Color> cores;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final total = valores.fold<double>(0, (soma, valor) => soma + valor);
+    final centro = Offset(size.width / 2, size.height / 2);
+    final raio = size.shortestSide / 2;
+    final area = Rect.fromCircle(center: centro, radius: raio);
+
+    if (total <= 0) return;
+
+    var anguloInicial = -1.5707963267948966;
+    const circuloCompleto = 6.283185307179586;
+
+    for (var i = 0; i < valores.length; i++) {
+      final valor = valores[i];
+      if (valor <= 0) continue;
+
+      final angulo = circuloCompleto * valor / total;
+      canvas.drawArc(
+        area,
+        anguloInicial,
+        angulo,
+        true,
+        Paint()..color = cores[i],
+      );
+      anguloInicial += angulo;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _PizzaRecebidosPainter oldDelegate) => true;
+}

@@ -4571,7 +4571,55 @@ class _TelaRelatorioState extends State<TelaRelatorio> {
       ),
     );
   }
+  Widget _graficoBalanco(double recebido, double pendente) {
+    final total = recebido + pendente;
+    final percentual = total == 0 ? 0.0 : recebido / total;
 
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const Text(
+              'Balanço do mês',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: 150,
+              height: 150,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: percentual,
+                    strokeWidth: 16,
+                    backgroundColor: Colors.orange.shade200,
+                    color: Colors.green,
+                  ),
+                  Text(
+                    '${(percentual * 100).toStringAsFixed(0)}%',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text('Recebido: ${_reais(recebido)}'),
+                Text('Pendente: ${_reais(pendente)}'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final mensalidades = widget.store?.mensalidades ?? [];

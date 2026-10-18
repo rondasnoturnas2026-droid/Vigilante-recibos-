@@ -303,6 +303,9 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   Future<void> _carregarMensalidades() async {
   await widget.store.carregarClientes();
   await widget.store.carregarMensalidades();
+        final prefsDecimo = await SharedPreferences.getInstance();
+  _decimoTerceiroDobrado =
+      prefsDecimo.getBool('recibo_decimo_terceiro_dobrado') ?? false;
   if (!mounted) return;
       await _gerarMensalidadesAutomaticas();
   setState(() {});

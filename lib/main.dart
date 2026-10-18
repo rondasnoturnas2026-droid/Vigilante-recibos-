@@ -1901,7 +1901,7 @@ final mesCartao =
 
 final valor = mesCartao == 12 &&
         _decimoTerceiroDobrado &&
-        mensalidade['incluirDecimoTerceiro'] == true
+        mensalidade['incluirDecimoTerceiro'] != false
     ? (valorNumero * 2).toStringAsFixed(2).replaceAll('.', ',')
     : valorOriginal;
                     final nome =

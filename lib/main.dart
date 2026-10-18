@@ -3616,30 +3616,105 @@ List<Map<String, String>> _lerClientesDoPdf(String texto) {
 
       if (!mounted) return;
 
-      await showDialog<void>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text('Prévia do PDF'),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 420,
-            child: SingleChildScrollView(
-              child: SelectableText(
-                textoExtraido.trim().isEmpty
-                    ? 'Não foi possível encontrar texto nesse PDF.'
-                    : textoExtraido,
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Fechar'),
-            ),
-          ],
-        ),
-      );
-    } catch (_) {
+final clientesEncontrados = _lerClientesDoPdf(textoExtraido);
+
+if (clientesEncontrados.isEmpty) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Não encontrei clientes válidos nesse PDF.'),
+    ),
+  );
+  return;
+}
+
+final confirmouImportacao = await showDialog<bool>(
+  context: context,
+  builder: (dialogContext) => AlertDialog(
+    title: const Text('Importar clientes'),
+    content: Text(
+      'Encontrei ${clientesEncontrados.length} cliente(s). '
+      'A forma de pagamento ficará como “Não informado” '
+      'e poderá ser atualizada depois. Quer importar?',
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(dialogContext, false),
+        child: const Text('Cancelar'),
+      ),
+      FilledButton(
+        onPressed: () => Navigator.pop(dialogContext, true),
+        child: const Text('Importar'),
+      ),
+    ],
+  ),
+);
+
+if (confirmouImportacao != true || !mounted) return;
+
+var importados = 0;
+var duplicados = 0;
+
+String normalizar(Object? valor) =>
+    (valor ?? '').toString().trim().toLowerCase();
+
+for (final cliente in clientesEncontrados) {
+  final jaExiste = widget.store.clientes.any((existente) =>
+      normalizar(existente['nome']) == normalizar(cliente['nome']) &&
+      normalizar(existente['bairro']) == normalizar(cliente['bairro']) &&
+      normalizar(existente['rua']) == normalizar(cliente['rua']) &&
+      normalizar(existente['numero']) == normalizar(cliente['numero']));
+
+  if (jaExiste) {
+    duplicados++;
+    continue;
+  }
+
+  Bairro? bairroCadastrado;
+  for (final bairro in widget.store.bairros) {
+    if (normalizar(bairro.nome) == normalizar(cliente['bairro'])) {
+      bairroCadastrado = bairro;
+      break;
+    }
+  }
+
+  if (bairroCadastrado == null) {
+    await widget.store.adicionarBairro(cliente['bairro'] ?? '');
+
+    for (final bairro in widget.store.bairros) {
+      if (normalizar(bairro.nome) == normalizar(cliente['bairro'])) {
+        bairroCadastrado = bairro;
+        break;
+      }
+    }
+  }
+
+  if (bairroCadastrado != null) {
+    await widget.store.adicionarRua(
+      bairroCadastrado,
+      cliente['rua'] ?? '',
+    );
+  }
+
+  widget.store.clientes.add(cliente);
+  importados++;
+}
+
+if (importados > 0) {
+  await widget.store.salvarClientes();
+}
+
+if (!mounted) return;
+
+setState(() {});
+
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text(
+      '$importados cliente(s) importado(s); '
+      '$duplicados duplicado(s) ignorado(s).',
+    ),
+  ),
+);
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(

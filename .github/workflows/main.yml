@@ -34,7 +34,7 @@ jobs:
           fi
           - name: Configurar regra R8 do leitor PDF
   run: |
-    cat > android/app/proguard-rules.pro <<'EOF'
+cat > android/app/proguard-rules.pro <<'EOF'
     -dontwarn com.gemalto.jp2.**
     -dontwarn com.tom_roush.pdfbox.filter.JPXFilter
     EOF

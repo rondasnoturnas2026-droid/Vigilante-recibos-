@@ -1878,8 +1878,23 @@ return ListView.builder(
 
     final mensalidade =
         itemLista['mensalidade'] as Map<String, dynamic>;
-                    final valor =
-                        (mensalidade['valor'] ?? '0,00').toString();
+                    final valorOriginal =
+    (mensalidade['valor'] ?? '0,00').toString();
+var valorNumeroTexto =
+    valorOriginal.replaceAll('R\$', '').trim();
+
+if (valorNumeroTexto.contains(',')) {
+  valorNumeroTexto =
+      valorNumeroTexto.replaceAll('.', '').replaceAll(',', '.');
+}
+
+final valorNumero = double.tryParse(valorNumeroTexto) ?? 0.0;
+final mesCartao =
+    int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
+
+final valor = mesCartao == 12 && _decimoTerceiroDobrado
+    ? (valorNumero * 2).toStringAsFixed(2).replaceAll('.', ',')
+    : valorOriginal;
                     final nome =
                         (mensalidade['nome'] ?? 'Cliente').toString();
 

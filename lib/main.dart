@@ -1773,23 +1773,29 @@ size: 18,
                     ),
                   );
                 }
+double valorParaNumero(Object? valorBruto) {
+  var texto = (valorBruto ?? '0').toString()
+      .replaceAll('R\$', '')
+      .trim();
+
+  if (texto.contains(',')) {
+    texto = texto.replaceAll('.', '').replaceAll(',', '.');
+  }
+
+  return double.tryParse(texto) ?? 0.0;
+}
+
 final totalMensalidades = mensalidadesFiltradas.fold<double>(
   0.0,
   (soma, mensalidade) {
-    final valorBruto = mensalidade['valor'];
-    final valor = valorBruto is num
-        ? valorBruto.toDouble()
-        : (double.tryParse(
-              valorBruto
-                  .toString()
-                  .replaceAll('R\$', '')
-                  .replaceAll('.', '')
-                  .replaceAll(',', '.')
-                  .trim(),
-            ) ??
-            0.0);
+    final valorBase = valorParaNumero(mensalidade['valor']);
+    final mes = int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
+    final incluirDecimoTerceiro =
+        mes == 12 &&
+        _decimoTerceiroDobrado &&
+        mensalidade['incluirDecimoTerceiro'] != false;
 
-    return soma + valor;
+    return soma + (incluirDecimoTerceiro ? valorBase * 2 : valorBase);
   },
 );
                   if (abaAtual == 0 || abaAtual == 1) {

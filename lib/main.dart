@@ -3547,22 +3547,54 @@ String dataFiltro = 'Todas as datas';
 
     final arquivo = resultado.files.single;
 
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('PDF selecionado'),
-        content: Text(
-          'Arquivo: ${arquivo.name}\n\n'
-          'A leitura e o cadastro dos clientes serão preparados depois.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Entendi'),
+        try {
+      final caminho = arquivo.path;
+
+      if (caminho == null || caminho.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Não foi possível abrir esse arquivo PDF.'),
           ),
-        ],
-      ),
-    );
+        );
+        return;
+      }
+
+      final textoExtraido = await ReadPdfText.getPDFtext(caminho);
+
+      if (!mounted) return;
+
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Prévia do PDF'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 420,
+            child: SingleChildScrollView(
+              child: SelectableText(
+                textoExtraido.trim().isEmpty
+                    ? 'Não foi possível encontrar texto nesse PDF.'
+                    : textoExtraido,
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Fechar'),
+            ),
+          ],
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível ler esse PDF.'),
+        ),
+      );
+        }
   },
 ),
   ],

@@ -4229,7 +4229,9 @@ FilledButton.icon(
 }
                 
 class TelaRelatorio extends StatelessWidget {
-  const TelaRelatorio({super.key});
+  final AppStore? store;
+
+  const TelaRelatorio({super.key, this.store});
 
   @override
   Widget build(BuildContext context) {

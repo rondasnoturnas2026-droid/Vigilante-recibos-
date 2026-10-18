@@ -3503,8 +3503,8 @@ String dataFiltro = 'Todas as datas';
     if (!mounted) return;
     setState(() {});
   }
-List<Map<String, dynamic>> _lerClientesDoPdf(String texto) {
-  final clientesLidos = <Map<String, dynamic>>[];
+List<Map<String, String>> _lerClientesDoPdf(String texto) {
+  final clientesLidos = <Map<String, String>>[];
 
   for (final linha in texto.split(RegExp(r'[\r\n]+'))) {
     final colunas = linha.trim().split(RegExp(r'\s{2,}'));

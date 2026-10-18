@@ -32,6 +32,27 @@ jobs:
           if [ ! -d "android" ]; then
             flutter create --platforms=android --project-name vigilante_recibos .
           fi
+          - name: Configurar regra R8 do leitor PDF
+  run: |
+    cat > android/app/proguard-rules.pro <<'EOF'
+    -dontwarn com.gemalto.jp2.**
+    -dontwarn com.tom_roush.pdfbox.filter.JPXFilter
+    EOF
+    python3 - <<'PY'
+    from pathlib import Path
+    arquivo = Path("android/app/build.gradle.kts")
+    texto = arquivo.read_text()
+    alvo = 'signingConfig = signingConfigs.getByName("debug")'
+    if "proguard-rules.pro" not in texto:
+        if alvo not in texto:
+            raise SystemExit("Não encontrei a configuração release esperada do Flutter.")
+        texto = texto.replace(
+            alvo,
+            alvo + '\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")',
+            1,
+        )
+        arquivo.write_text(texto)
+    PY
 
       - name: Limpar projeto
         run: flutter clean

@@ -2942,81 +2942,75 @@ ScaffoldMessenger.of(context).showSnackBar(
   }
 
   Future<void> _editarMensalidade(
-    Map<String, dynamic> mensalidade,
-  ) async {
-    final valorController = TextEditingController(
-      text: (mensalidade['valor'] ?? '0,00').toString(),
-    );
-    String formaPagamento =
-        (mensalidade['formaPagamento'] ?? 'Pix').toString();
+  Map<String, dynamic> mensalidade,
+) async {
+  String novoValor = (mensalidade['valor'] ?? '0,00').toString();
+  String formaPagamento =
+      (mensalidade['formaPagamento'] ?? 'Pix').toString();
 
-    final salvou = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Editar mensalidade'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: valorController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Valor',
-              ),
+  final salvou = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Editar mensalidade'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextFormField(
+            initialValue: novoValor,
+            onChanged: (valor) => novoValor = valor,
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal: true,
             ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: formaPagamento,
-              decoration: const InputDecoration(
-                labelText: 'Forma de pagamento',
-              ),
-              items: const [
-                DropdownMenuItem(value: 'Pix', child: Text('Pix')),
-                DropdownMenuItem(
-                  value: 'Dinheiro',
-                  child: Text('Dinheiro'),
-                ),
-                DropdownMenuItem(value: 'Cartão', child: Text('Cartão')),
-              ],
-              onChanged: (valor) {
-                if (valor != null) formaPagamento = valor;
-              },
+            decoration: const InputDecoration(
+              labelText: 'Valor',
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancelar'),
           ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Salvar'),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<String>(
+            value: formaPagamento,
+            decoration: const InputDecoration(
+              labelText: 'Forma de pagamento',
+            ),
+            items: const [
+              DropdownMenuItem(value: 'Pix', child: Text('Pix')),
+              DropdownMenuItem(
+                value: 'Dinheiro',
+                child: Text('Dinheiro'),
+              ),
+              DropdownMenuItem(value: 'Cartão', child: Text('Cartão')),
+            ],
+            onChanged: (valor) {
+              if (valor != null) formaPagamento = valor;
+            },
           ),
         ],
       ),
-    );
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: const Text('Salvar'),
+        ),
+      ],
+    ),
+  );
 
-    if (salvou != true) {
-      valorController.dispose();
-      return;
-    }
+  if (salvou != true) return;
 
-    final novoValor = valorController.text.trim();
-    valorController.dispose();
+  novoValor = novoValor.trim();
+  if (novoValor.isEmpty) return;
 
-    if (novoValor.isEmpty) return;
+  mensalidade['valor'] = novoValor;
+  mensalidade['formaPagamento'] = formaPagamento;
 
-    mensalidade['valor'] = novoValor;
-    mensalidade['formaPagamento'] = formaPagamento;
+  await widget.store.salvarMensalidades();
 
-    await widget.store.salvarMensalidades();
-
-    if (!mounted) return;
-    setState(() {});
-  }
+  if (!mounted) return;
+  setState(() {});
+}
 
     Future<void> _receberMesesAdiantados(
     Map<String, dynamic> mensalidade,

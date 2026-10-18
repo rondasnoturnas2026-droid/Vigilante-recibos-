@@ -717,6 +717,46 @@ adicionarCampoRecibo(
   'R\$ $valor',
   true,
 );
+      final valorDecimoTerceiro =
+    (mensalidade['valorDecimoTerceiro'] ?? '0,00').toString().trim();
+var valorDecimoNumeroTexto = valorDecimoTerceiro.replaceAll('R\$', '').trim();
+if (valorDecimoNumeroTexto.contains(',')) {
+  valorDecimoNumeroTexto = valorDecimoNumeroTexto
+      .replaceAll('.', '')
+      .replaceAll(',', '.');
+}
+final valorDecimoNumero =
+    double.tryParse(valorDecimoNumeroTexto) ?? 0.0;
+
+if (valorDecimoNumero > 0) {
+  final valorTotalSalvo =
+      (mensalidade['valorTotalRecebido'] ?? '').toString().trim();
+  var valorBaseNumeroTexto = valor.replaceAll('R\$', '').trim();
+  if (valorBaseNumeroTexto.contains(',')) {
+    valorBaseNumeroTexto = valorBaseNumeroTexto
+        .replaceAll('.', '')
+        .replaceAll(',', '.');
+  }
+  final valorBaseNumero = double.tryParse(valorBaseNumeroTexto) ?? 0.0;
+  final valorTotalFormatado = valorTotalSalvo.isNotEmpty
+      ? valorTotalSalvo
+      : (valorBaseNumero + valorDecimoNumero)
+          .toStringAsFixed(2)
+          .replaceAll('.', ',');
+
+  adicionarCampoRecibo(
+    'decimo_terceiro',
+    'Décimo terceiro',
+    'R\$ $valorDecimoTerceiro',
+    true,
+  );
+  adicionarCampoRecibo(
+    'valor_total_recebido',
+    'Total recebido',
+    'R\$ $valorTotalFormatado',
+    true,
+  );
+}
 adicionarCampoRecibo(
   'forma_pagamento',
   'Forma de pagamento',

@@ -3514,6 +3514,7 @@ List<Map<String, String>> _lerClientesDoPdf(String texto) {
         .replaceAll(RegExp(r'[íìîï]'), 'i')
         .replaceAll(RegExp(r'[óòôõö]'), 'o')
         .replaceAll(RegExp(r'[úùûü]'), 'u')
+        .replaceAll('ç', 'c')
         .replaceAll('ç', 'c');
   }
 

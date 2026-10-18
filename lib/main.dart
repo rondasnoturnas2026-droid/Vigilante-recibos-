@@ -4681,75 +4681,75 @@ class _TelaRelatorioState extends State<TelaRelatorio> {
     );
       }
       Widget _comparativoMensal(Iterable<dynamic> mensalidades, int ano) {
-    final totais = List<double>.filled(12, 0.0);
+  final totais = List<double>.filled(12, 0.0);
 
-    for (final item in mensalidades) {
-      final anoItem =
-          int.tryParse((item['ano'] ?? '').toString()) ?? 0;
-      final mes =
-          int.tryParse((item['mes'] ?? '').toString()) ?? 0;
-      final status =
-          (item['status'] ?? '').toString().toLowerCase();
+  for (final item in mensalidades) {
+    final anoItem =
+        int.tryParse((item['ano'] ?? '').toString()) ?? 0;
+    final mes =
+        int.tryParse((item['mes'] ?? '').toString()) ?? 0;
+    final status =
+        (item['status'] ?? '').toString().toLowerCase();
 
-      if (anoItem == ano &&
-          mes >= 1 &&
-          mes <= 12 &&
-          status.contains('recebid')) {
-        totais[mes - 1] += _valor(item['valor']);
-      }
+    if (anoItem == ano &&
+        mes >= 1 &&
+        mes <= 12 &&
+        status.contains('recebid')) {
+      totais[mes - 1] += _valor(item['valor']);
     }
+  }
 
-    final maior = totais.reduce((a, b) => a > b ? a : b);
+  final maior = totais.reduce((a, b) => a > b ? a : b);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Recebido por mês - $ano',
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-              ),
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Recebido por mês - $ano',
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 12),
-            ...List.generate(12, (i) {
-              final valor = totais[i];
+          ),
+          const SizedBox(height: 12),
+          ...List.generate(12, (i) {
+            final valor = totais[i];
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 36,
-                      child: Text(meses[i].substring(0, 3)),
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 36,
+                    child: Text(meses[i].substring(0, 3)),
+                  ),
+                  Expanded(
+                    child: LinearProgressIndicator(
+                      value: maior == 0 ? 0 : valor / maior,
+                      minHeight: 10,
                     ),
-                    Expanded(
-                      child: LinearProgressIndicator(
-                        value: maior == 0 ? 0 : valor / maior,
-                        minHeight: 10,
-                      ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 88,
+                    child: Text(
+                      _reais(valor),
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(fontSize: 12),
                     ),
-                    const SizedBox(width: 8),
-                    SizedBox(
-                      width: 88,
-                      child: Text(
-                        _reais(valor),
-                        textAlign: TextAlign.end,
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ],
-        ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
       ),
-    );
-      }
+    ),
+  );
+}
   @override
   Widget build(BuildContext context) {
     final mensalidades = widget.store?.mensalidades ?? [];

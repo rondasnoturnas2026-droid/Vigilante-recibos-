@@ -1553,23 +1553,33 @@ size: 18,
   ),
         Padding(
           
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: FilterChip(
-                    label: const Text('Pendentes'),
-                    selected: abaAtual == 0,
-                    onSelected: (_) {
-                      setState(() {
-                        abaAtual = 0;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FilterChip(
+            final totalMensalidades = mensalidadesFiltradas.fold<double>(
+  0.0,
+  (soma, mensalidade) {
+    double valorParaNumero(Object? bruto) {
+      if (bruto is num) return bruto.toDouble();
+
+      var texto = (bruto ?? '0')
+          .toString()
+          .replaceAll('R\$', '')
+          .trim();
+
+      if (texto.contains(',')) {
+        texto = texto.replaceAll('.', '').replaceAll(',', '.');
+      }
+
+      return double.tryParse(texto) ?? 0.0;
+    }
+
+    final valorBase = valorParaNumero(mensalidade['valor']);
+    final mes = int.tryParse((mensalidade['mes'] ?? '0').toString()) ?? 0;
+    final valorDecimoTerceiro = mes == 12
+        ? valorParaNumero(mensalidade['valorDecimoTerceiro'])
+        : 0.0;
+
+    return soma + valorBase + valorDecimoTerceiro;
+  },
+);
                     label: const Text('Recebidas'),
                     selected: abaAtual == 1,
                     onSelected: (_) {

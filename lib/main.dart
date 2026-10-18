@@ -3505,41 +3505,107 @@ String dataFiltro = 'Todas as datas';
   }
 List<Map<String, String>> _lerClientesDoPdf(String texto) {
   final clientesLidos = <Map<String, String>>[];
+  Map<String, int> indices = {};
+
+  String normalizarCabecalho(String valor) {
+    return valor.trim().toLowerCase()
+        .replaceAll(RegExp(r'[áàâãä]'), 'a')
+        .replaceAll(RegExp(r'[éèêë]'), 'e')
+        .replaceAll(RegExp(r'[íìîï]'), 'i')
+        .replaceAll(RegExp(r'[óòôõö]'), 'o')
+        .replaceAll(RegExp(r'[úùûü]'), 'u')
+        .replaceAll('ç', 'c');
+  }
 
   for (final linha in texto.split(RegExp(r'[\r\n]+'))) {
-    final colunas = linha.trim().split(RegExp(r'\s{2,}'));
+    final colunas = linha
+        .trim()
+        .split(RegExp(r'\s{2,}'))
+        .map((coluna) => coluna.trim())
+        .toList();
 
-    // O PDF completo tem: Bairro, Endereço, Dia, Valor, Nome e Contato.
-    if (colunas.length < 6 ||
-        colunas[0].trim().toLowerCase() == 'bairro') {
+    if (colunas.length < 2) continue;
+
+    final novosIndices = <String, int>{};
+
+    for (var i = 0; i < colunas.length; i++) {
+      final titulo = normalizarCabecalho(colunas[i]);
+
+      if (titulo.contains('bairro')) {
+        novosIndices['bairro'] = i;
+      } else if (titulo.contains('endereco') ||
+          titulo == 'rua' ||
+          titulo.contains('rua e numero')) {
+        novosIndices['endereco'] = i;
+      } else if (titulo == 'dia' || titulo.contains('vencimento')) {
+        novosIndices['dia'] = i;
+      } else if (titulo.contains('valor') ||
+          titulo.contains('mensalidade')) {
+        novosIndices['valor'] = i;
+      } else if (titulo.contains('nome') ||
+          titulo == 'cliente' ||
+          titulo.contains('nome do cliente')) {
+        novosIndices['nome'] = i;
+      } else if (titulo.contains('telefone') ||
+          titulo.contains('contato') ||
+          titulo.contains('whatsapp') ||
+          titulo.contains('celular')) {
+        novosIndices['telefone'] = i;
+      }
+    }
+
+    final encontrouCabecalho =
+        novosIndices.containsKey('bairro') &&
+        novosIndices.containsKey('endereco') &&
+        novosIndices.containsKey('dia') &&
+        novosIndices.containsKey('valor') &&
+        novosIndices.containsKey('nome');
+
+    if (encontrouCabecalho) {
+      indices = novosIndices;
       continue;
     }
 
-    final dia = int.tryParse(colunas[2].trim());
-    if (dia == null || dia < 1 || dia > 31) continue;
+    if (indices.isEmpty) continue;
 
-    final valor = colunas[3]
+    String campo(String nome) {
+      final indice = indices[nome];
+      if (indice == null || indice >= colunas.length) return '';
+      return colunas[indice].trim();
+    }
+
+    final nome = campo('nome');
+    final bairro = campo('bairro');
+    final endereco = campo('endereco');
+    final diaTexto = campo('dia');
+    final dia = int.tryParse(diaTexto.replaceAll(RegExp(r'\D'), ''));
+    final valor = campo('valor')
         .replaceAll('R\$', '')
         .replaceAll(' ', '')
         .trim();
+    final telefone = campo('telefone').replaceAll(RegExp(r'\D'), '');
 
-    final endereco = colunas[1].trim();
     final numeroMatch =
         RegExp(r'(?:,|\s)\s*(\d+)\s*$').firstMatch(endereco);
 
-    if (numeroMatch == null) continue;
-
-    final rua = endereco.substring(0, numeroMatch.start).trim();
-    final numero = numeroMatch.group(1) ?? '';
-    final telefone = colunas[5].replaceAll(RegExp(r'\D'), '');
-
-    if (colunas[4].trim().isEmpty || rua.isEmpty || numero.isEmpty) {
+    if (nome.isEmpty ||
+        bairro.isEmpty ||
+        dia == null ||
+        dia < 1 ||
+        dia > 31 ||
+        valor.isEmpty ||
+        numeroMatch == null) {
       continue;
     }
 
+    final rua = endereco.substring(0, numeroMatch.start).trim();
+    final numero = numeroMatch.group(1) ?? '';
+
+    if (rua.isEmpty || numero.isEmpty) continue;
+
     clientesLidos.add({
-      'nome': colunas[4].trim(),
-      'bairro': colunas[0].trim(),
+      'nome': nome,
+      'bairro': bairro,
       'rua': rua,
       'numero': numero,
       'complemento': '',

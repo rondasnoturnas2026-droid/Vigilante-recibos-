@@ -1899,7 +1899,9 @@ final valorNumero = double.tryParse(valorNumeroTexto) ?? 0.0;
 final mesCartao =
     int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
 
-final valor = mesCartao == 12 && _decimoTerceiroDobrado
+final valor = mesCartao == 12 &&
+        _decimoTerceiroDobrado &&
+        mensalidade['incluirDecimoTerceiro'] != false
     ? (valorNumero * 2).toStringAsFixed(2).replaceAll('.', ',')
     : valorOriginal;
                     final nome =

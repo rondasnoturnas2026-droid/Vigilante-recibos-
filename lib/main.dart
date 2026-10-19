@@ -3554,10 +3554,26 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
       final bairro = (campos['bairro'] ?? '').trim();
       var endereco = (campos['endereco'] ?? '').trim();
       var numero = (campos['numero'] ?? '').trim();
-            var diaTexto =
+                  var diaTexto =
           (campos['dia'] ?? '').replaceAll(RegExp(r'\D'), '');
-          
-      final dia = int.tryParse(diaTexto);
+
+      if (diaTexto.length > 2) {
+        final numeroEDia =
+            RegExp(r'^(\d+)(0?[1-9]|[12]\d|3[01])$')
+                .firstMatch(diaTexto);
+
+        if (numeroEDia != null) {
+          if (numero.isEmpty) {
+            numero = numeroEDia.group(1)!;
+          }
+          diaTexto = numeroEDia.group(2)!;
+        }
+      }
+
+      final diaLido = int.tryParse(diaTexto);
+      final dia = diaLido != null && diaLido >= 1 && diaLido <= 31
+          ? diaLido
+          : null;
       final valor = (campos['valor'] ?? '')
           .replaceAll('R\$', '')
           .replaceAll(' ', '')

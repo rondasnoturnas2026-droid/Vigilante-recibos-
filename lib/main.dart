@@ -3745,9 +3745,8 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
   ..sort((a, b) => a.value.compareTo(b.value));
 
 for (final fragmento in fragmentos) {
-  String? campoMaisProximo;
-  var maiorSobreposicao = -1.0;
-  var menorDistancia = double.infinity;
+  final xInicio = fragmento.bounds.left;
+  MapEntry<String, double>? colunaDoFragmento;
 
   for (var indice = 0;
       indice < colunasOrdenadasPorX.length;
@@ -3760,44 +3759,28 @@ for (final fragmento in fragmentos) {
                 coluna.value) /
             2;
 
-    final limiteDireito =
-        indice == colunasOrdenadasPorX.length - 1
-            ? double.infinity
-            : (coluna.value +
-                    colunasOrdenadasPorX[indice + 1].value) /
-                2;
+    final limiteDireito = indice == colunasOrdenadasPorX.length - 1
+        ? double.infinity
+        : (coluna.value +
+                colunasOrdenadasPorX[indice + 1].value) /
+            2;
 
-    final inicioSobreposicao =
-        fragmento.bounds.left > limiteEsquerdo
-            ? fragmento.bounds.left
-            : limiteEsquerdo;
-
-    final fimSobreposicao =
-        fragmento.bounds.right < limiteDireito
-            ? fragmento.bounds.right
-            : limiteDireito;
-
-    final sobreposicao = fimSobreposicao > inicioSobreposicao
-        ? fimSobreposicao - inicioSobreposicao
-        : 0.0;
-
-    final distanciaCentro =
-        (fragmento.bounds.center.x - coluna.value).abs();
-
-    if (sobreposicao > maiorSobreposicao ||
-        (sobreposicao == maiorSobreposicao &&
-            distanciaCentro < menorDistancia)) {
-      maiorSobreposicao = sobreposicao;
-      menorDistancia = distanciaCentro;
-      campoMaisProximo = coluna.key;
+    if (xInicio >= limiteEsquerdo && xInicio < limiteDireito) {
+      colunaDoFragmento = coluna;
+      break;
     }
   }
 
-  if (campoMaisProximo != null) {
-    camposDaLinha
-        .putIfAbsent(campoMaisProximo, () => <String>[])
-        .add(fragmento.text.trim());
-  }
+  colunaDoFragmento ??= colunasOrdenadasPorX.reduce(
+    (a, b) =>
+        (xInicio - a.value).abs() <= (xInicio - b.value).abs()
+            ? a
+            : b,
+  );
+
+  camposDaLinha
+      .putIfAbsent(colunaDoFragmento.key, () => <String>[])
+      .add(fragmento.text.trim());
 }
 
                                        final nomeNaLinha =

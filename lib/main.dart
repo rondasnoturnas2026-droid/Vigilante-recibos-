@@ -4080,15 +4080,7 @@ String normalizar(Object? valor) =>
     (valor ?? '').toString().trim().toLowerCase();
 
 for (final cliente in clientesEncontrados) {
-  final jaExiste = widget.store.clientes.any((existente) =>
-      normalizar(existente['nome']) == normalizar(cliente['nome']) &&
-      normalizar(existente['bairro']) == normalizar(cliente['bairro']) &&
-      normalizar(existente['rua']) == normalizar(cliente['rua']) &&
-      normalizar(existente['numero']) == normalizar(cliente['numero']));
-
-  if (jaExiste) {
-    duplicados++;
-    continue;
+  
   }
 
   Bairro? bairroCadastrado;

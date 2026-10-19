@@ -3609,6 +3609,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
     }
 
     try {
+              Map<String, double>? colunasAnteriores;
       for (final pagina in documento.pages) {
         final textoPagina = await pagina.loadStructuredText();
         final linhas = <Map<String, dynamic>>[];

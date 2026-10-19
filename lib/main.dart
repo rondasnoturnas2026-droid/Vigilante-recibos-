@@ -3638,16 +3638,27 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
           final y = fragmento.bounds.center.y;
           Map<String, dynamic>? linha;
 
-          var menorDiferencaY = double.infinity;
+          for (final candidata in linhas) {
+  final fragmentosDaLinha = candidata['fragmentos'] as List<dynamic>;
 
-for (final candidata in linhas) {
-  final diferencaY = ((candidata['y'] as double) - y).abs();
+  final mesmaLinha = fragmentosDaLinha.any((existente) {
+    final centroExistente = existente.bounds.center.y;
+    final metadeAlturaExistente = existente.bounds.height / 2;
+    final metadeAlturaNova = fragmento.bounds.height / 2;
 
-  if (diferencaY <= 2.0 && diferencaY < menorDiferencaY) {
-    menorDiferencaY = diferencaY;
+    final topoExistente = centroExistente - metadeAlturaExistente;
+    final baseExistente = centroExistente + metadeAlturaExistente;
+    final topoNovo = y - metadeAlturaNova;
+    final baseNovo = y + metadeAlturaNova;
+
+    return topoNovo < baseExistente && topoExistente < baseNovo;
+  });
+
+  if (mesmaLinha) {
     linha = candidata;
+    break;
   }
-}
+          }
 
           if (linha == null) {
             linha = <String, dynamic>{

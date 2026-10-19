@@ -3577,13 +3577,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
         }
       }
 
-      if (nome.isEmpty ||
-          bairro.isEmpty ||
-          endereco.isEmpty ||
-          numero.isEmpty) {
-        return null;
-      }
-      if (dia != null && (dia < 1 || dia > 31)) return null;
+            if (nome.isEmpty) return null;
 
       return <String, String>{
         'nome': nome,

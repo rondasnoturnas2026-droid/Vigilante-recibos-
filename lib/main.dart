@@ -3724,7 +3724,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
 
       if (clienteAtual.isNotEmpty) salvarClienteAtual();
     } finally {
-      documento.close();
+      await documento.dispose();
     }
 
     final unicos = <String, Map<String, String>>{};

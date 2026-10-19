@@ -3744,12 +3744,13 @@ final bairroNestaLinha = normalizarTexto(
   (camposDaLinha['bairro'] ?? const <String>[]).join(' '),
 );
 
-final clienteAtualTemSomenteBairro =
-    clienteAtual.isNotEmpty &&
-    clienteAtual.keys.every((campo) => campo == 'bairro');
+final linhaTemDiaEValor =
+    camposDaLinha.containsKey('dia') &&
+    camposDaLinha.containsKey('valor');
 
 final bairroContinuaNaLinha =
-    clienteAtualTemSomenteBairro &&
+    nomeNaLinha.isEmpty &&
+    !linhaTemDiaEValor &&
     bairroAtual.isNotEmpty &&
     bairroNestaLinha.isNotEmpty &&
     !bairroAtual.contains(bairroNestaLinha) &&

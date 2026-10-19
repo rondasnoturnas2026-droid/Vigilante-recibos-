@@ -4027,11 +4027,10 @@ salvarClienteVertical();
         return;
       }
 
-      final textoExtraido = await ReadPdfText.getPDFtext(caminho);
+      final clientesEncontrados =
+    await _lerClientesPdfComPosicoes(caminho);
 
-      if (!mounted) return;
-
-final clientesEncontrados = _lerClientesDoPdf(textoExtraido);
+if (!mounted) return;
 
 if (clientesEncontrados.isEmpty) {
   await showDialog<void>(

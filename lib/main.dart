@@ -3734,31 +3734,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
                     final nomeNaLinha =
     (camposDaLinha['nome'] ?? const <String>[]).join(' ').trim();
 
-final camposForaDoBairro =
-    camposDaLinha.keys.where((campo) => campo != 'bairro').length;
-
-final bairroAtual =
-    normalizarTexto(clienteAtual['bairro'] ?? '');
-
-final bairroNestaLinha = normalizarTexto(
-  (camposDaLinha['bairro'] ?? const <String>[]).join(' '),
-);
-
-final linhaTemDiaEValor =
-    camposDaLinha.containsKey('dia') &&
-    camposDaLinha.containsKey('valor');
-
-final bairroContinuaNaLinha =
-    nomeNaLinha.isEmpty &&
-    !linhaTemDiaEValor &&
-    bairroAtual.isNotEmpty &&
-    bairroNestaLinha.isNotEmpty &&
-    !bairroAtual.contains(bairroNestaLinha) &&
-    !bairroNestaLinha.contains(bairroAtual);
-
-final inicioNovoCliente =
-    !bairroContinuaNaLinha &&
-    (nomeNaLinha.isNotEmpty || camposForaDoBairro >= 2);
+final inicioNovoCliente = nomeNaLinha.isNotEmpty;
 
 if (inicioNovoCliente && clienteAtual.isNotEmpty) {
   salvarClienteAtual();

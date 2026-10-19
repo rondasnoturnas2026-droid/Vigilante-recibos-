@@ -3638,12 +3638,16 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
           final y = fragmento.bounds.center.y;
           Map<String, dynamic>? linha;
 
-          for (final candidata in linhas) {
-            if (((candidata['y'] as double) - y).abs() <= 15.0) {
-              linha = candidata;
-              break;
-            }
-          }
+          var menorDiferencaY = double.infinity;
+
+for (final candidata in linhas) {
+  final diferencaY = ((candidata['y'] as double) - y).abs();
+
+  if (diferencaY <= 5.0 && diferencaY < menorDiferencaY) {
+    menorDiferencaY = diferencaY;
+    linha = candidata;
+  }
+}
 
           if (linha == null) {
             linha = <String, dynamic>{

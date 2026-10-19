@@ -3795,52 +3795,18 @@ salvarClienteVertical();
 final clientesEncontrados = _lerClientesDoPdf(textoExtraido);
 
 if (clientesEncontrados.isEmpty) {
-  final linhasExtraidas = textoExtraido
-      .split(RegExp(r'[\r\n]+'))
-      .where((linha) => linha.trim().isNotEmpty)
-      .take(8)
-            .map((linha) {
-        final rotulos = RegExp(
-          r'\b(nome\s+do\s+cliente|forma\s+de\s+pagamento|nome|cliente|bairro|endere[cç]o|rua|numero|dia|vencimento|valor|mensalidade|telefone|contato|whatsapp|celular|pagamento)\b',
-          caseSensitive: false,
-        ).allMatches(linha).toList();
-
-        String ocultar(String trecho) =>
-            trecho.replaceAll(RegExp(r'[A-Za-zÀ-ÿ0-9]+'), 'X');
-
-        if (rotulos.length < 3) {
-          return ocultar(linha)
-              .replaceAll(' ', '·')
-              .replaceAll('\t', '→');
-        }
-
-        final linhaSegura = StringBuffer();
-        var inicio = 0;
-
-        for (final rotulo in rotulos) {
-          linhaSegura.write(ocultar(linha.substring(inicio, rotulo.start)));
-          linhaSegura.write('[${rotulo.group(0)}]');
-          inicio = rotulo.end;
-        }
-
-        linhaSegura.write(ocultar(linha.substring(inicio)));
-
-        return linhaSegura
-            .toString()
-            .replaceAll(' ', '·')
-            .replaceAll('\t', '→');
-      })
-      .join('\n');
-
   await showDialog<void>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Diagnóstico da leitura'),
-      content: SingleChildScrollView(
-        child: SelectableText(
-          linhasExtraidas.isEmpty
-              ? 'O PDF não retornou texto selecionável.'
-              : 'Formato extraído (dados ocultos):\n\n$linhasExtraidas',
+      title: const Text('Diagnóstico da importação'),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: SingleChildScrollView(
+          child: SelectableText(
+            textoExtraido.trim().isEmpty
+                ? 'O PDF não retornou texto selecionável.'
+                : textoExtraido,
+          ),
         ),
       ),
       actions: [
@@ -3851,6 +3817,7 @@ if (clientesEncontrados.isEmpty) {
       ],
     ),
   );
+
   return;
 }
 

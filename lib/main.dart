@@ -4184,6 +4184,7 @@ ScaffoldMessenger.of(context).showSnackBar(
       Expanded(
         child: DropdownButtonFormField<String>(
           value: bairroFiltro,
+            isExpanded: true,
           decoration: const InputDecoration(
             labelText: 'Bairro',
             border: OutlineInputBorder(),

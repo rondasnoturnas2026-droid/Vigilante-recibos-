@@ -14,7 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:read_pdf_text/read_pdf_text.dart';
 import 'package:pdfrx/pdfrx.dart' as pdfrx;
-import 'package:pdf/pdf.dart';
+
 
 import 'dart:convert';
 import 'dart:io';

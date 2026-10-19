@@ -3663,13 +3663,20 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
           }
         }
 
-        if (colunas == null ||
+                if (colunas == null ||
             !colunas.containsKey('bairro') ||
             !colunas.containsKey('endereco') ||
             !colunas.containsKey('nome') ||
             !colunas.containsKey('dia') ||
             !colunas.containsKey('valor')) {
-          continue;
+          if (colunas == null && colunasAnteriores != null) {
+            colunas = colunasAnteriores;
+            yCabecalho = double.infinity;
+          } else {
+            continue;
+          }
+        } else {
+          colunasAnteriores = colunas;
         }
 
         if (clienteAtual.isNotEmpty) salvarClienteAtual();

@@ -3672,6 +3672,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
               }
             }
           }
+            if (linha == null) {
             linha = <String, dynamic>{
               'y': y,
               'fragmentos': <dynamic>[],

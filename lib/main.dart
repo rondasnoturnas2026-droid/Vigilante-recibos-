@@ -4324,6 +4324,7 @@ final detalhes = <String>[
   if (endereco.isNotEmpty) endereco,
   if ((cliente['telefone']?.toString() ?? '').isNotEmpty)
     'Tel: ${cliente['telefone']}',
+      'Valor: R\$ ${cliente['valor'] ?? '0,00'}',
   'Dia: ${cliente['dia'] ?? '?'} | Pagamento: ${cliente['formaPagamento'] ?? '?'}',
 ].join('\n');
 

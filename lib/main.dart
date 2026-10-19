@@ -3705,9 +3705,12 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
           if (y >= yCabecalho - 2.0) continue;
 
           final fragmentos = linha['fragmentos'] as List<dynamic>
-            ..sort(
-              (a, b) => a.bounds.left.compareTo(b.bounds.left),
-            );
+                        ..sort((a, b) {
+              final diferencaY =
+                  b.bounds.center.y.compareTo(a.bounds.center.y);
+              if (diferencaY != 0) return diferencaY;
+              return a.bounds.left.compareTo(b.bounds.left);
+            });
 
           final camposDaLinha = <String, List<String>>{};
 

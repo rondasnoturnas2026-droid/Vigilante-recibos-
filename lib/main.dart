@@ -1,24 +1,21 @@
 
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
-import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
-import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
-import 'package:image/image.dart' as img;
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:file_picker/file_picker.dart';
-
-import 'package:pdfrx/pdfrx.dart' as pdfrx;
-
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
+
+import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:image/image.dart' as img;
+import 'package:image_picker/image_picker.dart';
+import 'package:pdfrx/pdfrx.dart' as pdfrx;
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 final ValueNotifier<ThemeMode> temaApp =
     ValueNotifier<ThemeMode>(ThemeMode.system);
 

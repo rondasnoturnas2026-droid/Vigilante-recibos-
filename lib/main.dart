@@ -3729,18 +3729,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
       await documento.dispose();
     }
 
-    final unicos = <String, Map<String, String>>{};
-    for (final cliente in clientes) {
-      final chave = [
-        cliente['nome'],
-        cliente['bairro'],
-        cliente['rua'],
-        cliente['numero'],
-      ].map((valor) => (valor ?? '').trim().toLowerCase()).join('|');
-      unicos.putIfAbsent(chave, () => cliente);
-    }
-
-    return unicos.values.toList();
+        return clientes;
       }
 List<Map<String, String>> _lerClientesDoPdf(String texto) {
   final clientesLidos = <Map<String, String>>[];

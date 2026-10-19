@@ -3575,7 +3575,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
         }
       }
 
-            if (nome.isEmpty) return null;
+            
 
       return <String, String>{
         'nome': nome,

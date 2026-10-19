@@ -4040,10 +4040,9 @@ if (clientesEncontrados.isEmpty) {
       content: SizedBox(
         width: double.maxFinite,
         child: SingleChildScrollView(
-          child: SelectableText(
-                        'Não encontrei clientes neste PDF. Confira se ele foi gerado pelo app.',
-                : textoExtraido,
-          ),
+          child: const SelectableText(
+  'Não encontrei clientes neste PDF. Confira se ele foi gerado pelo app.',
+),
         ),
       ),
       actions: [

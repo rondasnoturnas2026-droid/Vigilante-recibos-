@@ -3706,10 +3706,10 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
             }
           }
 
-          final bairroNaLinha =
-              (camposDaLinha['bairro'] ?? const <String>[]).join(' ').trim();
+                    final nomeNaLinha =
+              (camposDaLinha['nome'] ?? const <String>[]).join(' ').trim();
 
-          if (bairroNaLinha.isNotEmpty && clienteAtual.isNotEmpty) {
+          if (nomeNaLinha.isNotEmpty && clienteAtual.isNotEmpty) {
             salvarClienteAtual();
           }
 

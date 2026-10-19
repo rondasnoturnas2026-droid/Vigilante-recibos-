@@ -4221,6 +4221,7 @@ ScaffoldMessenger.of(context).showSnackBar(
                   ruasDisponiveis.contains(ruaFiltro)
               ? ruaFiltro
               : 'Todas as ruas',
+            isExpanded: true,
           decoration: const InputDecoration(
             labelText: 'Rua',
             border: OutlineInputBorder(),

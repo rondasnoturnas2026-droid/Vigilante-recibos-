@@ -4080,33 +4080,33 @@ String normalizar(Object? valor) =>
     (valor ?? '').toString().trim().toLowerCase();
 
 for (final cliente in clientesEncontrados) {
-  
-  }
+  final nomeBairro = (cliente['bairro'] ?? '').trim();
+  final nomeRua = (cliente['rua'] ?? '').trim();
 
-  Bairro? bairroCadastrado;
-  for (final bairro in widget.store.bairros) {
-    if (normalizar(bairro.nome) == normalizar(cliente['bairro'])) {
-      bairroCadastrado = bairro;
-      break;
-    }
-  }
-
-  if (bairroCadastrado == null) {
-    await widget.store.adicionarBairro(cliente['bairro'] ?? '');
+  if (nomeBairro.isNotEmpty) {
+    Bairro? bairroCadastrado;
 
     for (final bairro in widget.store.bairros) {
-      if (normalizar(bairro.nome) == normalizar(cliente['bairro'])) {
+      if (normalizar(bairro.nome) == normalizar(nomeBairro)) {
         bairroCadastrado = bairro;
         break;
       }
     }
-  }
 
-  if (bairroCadastrado != null) {
-    await widget.store.adicionarRua(
-      bairroCadastrado,
-      cliente['rua'] ?? '',
-    );
+    if (bairroCadastrado == null) {
+      await widget.store.adicionarBairro(nomeBairro);
+
+      for (final bairro in widget.store.bairros) {
+        if (normalizar(bairro.nome) == normalizar(nomeBairro)) {
+          bairroCadastrado = bairro;
+          break;
+        }
+      }
+    }
+
+    if (bairroCadastrado != null && nomeRua.isNotEmpty) {
+      await widget.store.adicionarRua(bairroCadastrado, nomeRua);
+    }
   }
 
   widget.store.clientes.add(cliente);

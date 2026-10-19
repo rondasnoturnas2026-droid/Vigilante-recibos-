@@ -3581,6 +3581,17 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
       final telefone =
           (campos['telefone'] ?? '').replaceAll(RegExp(r'\D'), '');
       final forma = (campos['formaPagamento'] ?? '').trim();
+              final textoImportado = normalizarTexto(campos.values.join(' '));
+      final linhaDoPdfNaoECliente =
+          textoImportado.contains('total de moradores') ||
+          RegExp(r'\bdata\s*:\s*\d{1,2}/\d{1,2}/\d{4}\b')
+              .hasMatch(textoImportado) ||
+          RegExp(r'\bhora\s*:\s*\d{1,2}:\d{2}\b')
+              .hasMatch(textoImportado) ||
+          RegExp(r'\bvalor\s*:\s*r?\$?\s*[\d.,]+')
+              .hasMatch(textoImportado);
+
+      if (linhaDoPdfNaoECliente) return null;
 
       if (numero.isEmpty) {
         final encontrado =

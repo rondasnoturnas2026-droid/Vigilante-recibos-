@@ -3638,29 +3638,40 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
           final y = fragmento.bounds.center.y;
           Map<String, dynamic>? linha;
 
+                    double menorDiferencaY = double.infinity;
+
           for (final candidata in linhas) {
-  final fragmentosDaLinha = candidata['fragmentos'] as List<dynamic>;
+            final fragmentosDaLinha =
+                candidata['fragmentos'] as List<dynamic>;
 
-  final mesmaLinha = fragmentosDaLinha.any((existente) {
-    final centroExistente = existente.bounds.center.y;
-    final metadeAlturaExistente = existente.bounds.height / 2;
-    final metadeAlturaNova = fragmento.bounds.height / 2;
+            final mesmaLinha = fragmentosDaLinha.any((existente) {
+              final centroExistente = existente.bounds.center.y;
+              final metadeAlturaExistente =
+                  existente.bounds.height / 2;
+              final metadeAlturaNova =
+                  fragmento.bounds.height / 2;
 
-    final topoExistente = centroExistente - metadeAlturaExistente;
-    final baseExistente = centroExistente + metadeAlturaExistente;
-    final topoNovo = y - metadeAlturaNova;
-    final baseNovo = y + metadeAlturaNova;
+              final topoExistente =
+                  centroExistente - metadeAlturaExistente;
+              final baseExistente =
+                  centroExistente + metadeAlturaExistente;
+              final topoNovo = y - metadeAlturaNova;
+              final baseNovo = y + metadeAlturaNova;
 
-    return topoNovo < baseExistente && topoExistente < baseNovo;
-  });
+              return topoNovo < baseExistente &&
+                  topoExistente < baseNovo;
+            });
 
-  if (mesmaLinha) {
-    linha = candidata;
-    break;
-  }
+            if (mesmaLinha) {
+              final diferencaY =
+                  (y - (candidata['y'] as double)).abs();
+
+              if (diferencaY < menorDiferencaY) {
+                menorDiferencaY = diferencaY;
+                linha = candidata;
+              }
+            }
           }
-
-          if (linha == null) {
             linha = <String, dynamic>{
               'y': y,
               'fragmentos': <dynamic>[],

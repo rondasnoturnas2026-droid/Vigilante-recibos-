@@ -3741,25 +3741,64 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
 
           final camposDaLinha = <String, List<String>>{};
 
-          for (final fragmento in fragmentos) {
-            String? campoMaisProximo;
-            var menorDistancia = double.infinity;
+          final colunasOrdenadasPorX = colunas.entries.toList()
+  ..sort((a, b) => a.value.compareTo(b.value));
 
-            for (final coluna in colunas.entries) {
-              final distancia =
-                  (fragmento.bounds.left - coluna.value).abs();
-              if (distancia < menorDistancia) {
-                menorDistancia = distancia;
-                campoMaisProximo = coluna.key;
-              }
-            }
+for (final fragmento in fragmentos) {
+  String? campoMaisProximo;
+  var maiorSobreposicao = -1.0;
+  var menorDistancia = double.infinity;
 
-            if (campoMaisProximo != null) {
-              camposDaLinha
-                  .putIfAbsent(campoMaisProximo, () => <String>[])
-                  .add(fragmento.text.trim());
-            }
-          }
+  for (var indice = 0;
+      indice < colunasOrdenadasPorX.length;
+      indice++) {
+    final coluna = colunasOrdenadasPorX[indice];
+
+    final limiteEsquerdo = indice == 0
+        ? double.negativeInfinity
+        : (colunasOrdenadasPorX[indice - 1].value +
+                coluna.value) /
+            2;
+
+    final limiteDireito =
+        indice == colunasOrdenadasPorX.length - 1
+            ? double.infinity
+            : (coluna.value +
+                    colunasOrdenadasPorX[indice + 1].value) /
+                2;
+
+    final inicioSobreposicao =
+        fragmento.bounds.left > limiteEsquerdo
+            ? fragmento.bounds.left
+            : limiteEsquerdo;
+
+    final fimSobreposicao =
+        fragmento.bounds.right < limiteDireito
+            ? fragmento.bounds.right
+            : limiteDireito;
+
+    final sobreposicao = fimSobreposicao > inicioSobreposicao
+        ? fimSobreposicao - inicioSobreposicao
+        : 0.0;
+
+    final distanciaCentro =
+        (fragmento.bounds.center.x - coluna.value).abs();
+
+    if (sobreposicao > maiorSobreposicao ||
+        (sobreposicao == maiorSobreposicao &&
+            distanciaCentro < menorDistancia)) {
+      maiorSobreposicao = sobreposicao;
+      menorDistancia = distanciaCentro;
+      campoMaisProximo = coluna.key;
+    }
+  }
+
+  if (campoMaisProximo != null) {
+    camposDaLinha
+        .putIfAbsent(campoMaisProximo, () => <String>[])
+        .add(fragmento.text.trim());
+  }
+}
 
                                        final nomeNaLinha =
               (camposDaLinha['nome'] ?? const <String>[])

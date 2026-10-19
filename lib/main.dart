@@ -3639,7 +3639,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
           Map<String, dynamic>? linha;
 
           for (final candidata in linhas) {
-            if (((candidata['y'] as double) - y).abs() <= 15.0 {
+            if (((candidata['y'] as double) - y).abs() <= 15.0) {
               linha = candidata;
               break;
             }

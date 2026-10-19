@@ -4041,8 +4041,7 @@ if (clientesEncontrados.isEmpty) {
         width: double.maxFinite,
         child: SingleChildScrollView(
           child: SelectableText(
-            textoExtraido.trim().isEmpty
-                ? 'O PDF não retornou texto selecionável.'
+                        'Não encontrei clientes neste PDF. Confira se ele foi gerado pelo app.',
                 : textoExtraido,
           ),
         ),

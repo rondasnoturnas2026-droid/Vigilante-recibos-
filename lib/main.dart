@@ -3504,6 +3504,242 @@ String dataFiltro = 'Todas as datas';
     if (!mounted) return;
     setState(() {});
   }
+      Future<List<Map<String, String>>> _lerClientesPdfComPosicoes(
+    String caminho,
+  ) async {
+    await pdfrxInitialize();
+    final documento = await PdfDocument.openFile(caminho);
+    final clientes = <Map<String, String>>[];
+    Map<String, String> clienteAtual = <String, String>{};
+
+    String normalizarTexto(String valor) => valor
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'[áàâãä]'), 'a')
+        .replaceAll(RegExp(r'[éèêë]'), 'e')
+        .replaceAll(RegExp(r'[íìîï]'), 'i')
+        .replaceAll(RegExp(r'[óòôõö]'), 'o')
+        .replaceAll(RegExp(r'[úùûü]'), 'u')
+        .replaceAll('ç', 'c');
+
+    String? campoDoCabecalho(String texto) {
+      final valor = normalizarTexto(texto);
+      if (valor.contains('bairro')) return 'bairro';
+      if (valor.contains('endereco') || valor.contains('rua')) {
+        return 'endereco';
+      }
+      if (valor.contains('numero') || valor == 'nº' || valor == 'n°') {
+        return 'numero';
+      }
+      if (valor == 'dia' || valor.contains('vencimento')) return 'dia';
+      if (valor.contains('valor') ||
+          valor.contains('mensalidade') ||
+          valor.contains(r'$')) {
+        return 'valor';
+      }
+      if (valor.contains('nome') || valor == 'cliente') return 'nome';
+      if (valor.contains('telefone') ||
+          valor.contains('contato') ||
+          valor.contains('whatsapp') ||
+          valor.contains('celular')) {
+        return 'telefone';
+      }
+      if (valor.contains('forma') || valor.contains('pagamento')) {
+        return 'formaPagamento';
+      }
+      return null;
+    }
+
+    Map<String, String>? montarClienteImportado(
+      Map<String, String> campos,
+    ) {
+      final nome = (campos['nome'] ?? '').trim();
+      final bairro = (campos['bairro'] ?? '').trim();
+      var endereco = (campos['endereco'] ?? '').trim();
+      var numero = (campos['numero'] ?? '').trim();
+      final diaTexto =
+          (campos['dia'] ?? '').replaceAll(RegExp(r'\D'), '');
+      final dia = int.tryParse(diaTexto);
+      final valor = (campos['valor'] ?? '')
+          .replaceAll('R\$', '')
+          .replaceAll(' ', '')
+          .trim();
+      final telefone =
+          (campos['telefone'] ?? '').replaceAll(RegExp(r'\D'), '');
+      final forma = (campos['formaPagamento'] ?? '').trim();
+
+      if (numero.isEmpty) {
+        final encontrado =
+            RegExp(r'(?:,|\s)\s*(\d+[A-Za-z]?)\s*$').firstMatch(endereco);
+        if (encontrado != null) {
+          numero = encontrado.group(1) ?? '';
+          endereco = endereco.substring(0, encontrado.start).trim();
+        }
+      }
+
+      if (nome.isEmpty ||
+          bairro.isEmpty ||
+          endereco.isEmpty ||
+          numero.isEmpty) {
+        return null;
+      }
+      if (dia != null && (dia < 1 || dia > 31)) return null;
+
+      return <String, String>{
+        'nome': nome,
+        'bairro': bairro,
+        'rua': endereco,
+        'numero': numero,
+        'complemento': '',
+        'dia': dia == null ? '' : dia.toString().padLeft(2, '0'),
+        'valor': valor.isEmpty ? '0,00' : valor,
+        'formaPagamento': forma.isEmpty ? 'Não informado' : forma,
+        'telefone': telefone.length >= 10 ? telefone : '',
+        'contato2Nome': '',
+        'contato2Telefone': '',
+        'contato2Relacao': '',
+        'ativo': 'true',
+      };
+    }
+
+    void salvarClienteAtual() {
+      final cliente = montarClienteImportado(clienteAtual);
+      if (cliente != null) clientes.add(cliente);
+      clienteAtual = <String, String>{};
+    }
+
+    try {
+      for (final pagina in documento.pages) {
+        final textoPagina = await pagina.loadStructuredText();
+        final linhas = <Map<String, dynamic>>[];
+
+        for (final fragmento in textoPagina.fragments) {
+          if (fragmento.text.trim().isEmpty) continue;
+          final y = fragmento.bounds.center.y;
+          Map<String, dynamic>? linha;
+
+          for (final candidata in linhas) {
+            if (((candidata['y'] as double) - y).abs() <= 3.0) {
+              linha = candidata;
+              break;
+            }
+          }
+
+          if (linha == null) {
+            linha = <String, dynamic>{
+              'y': y,
+              'fragmentos': <dynamic>[],
+            };
+            linhas.add(linha);
+          }
+
+          (linha['fragmentos'] as List<dynamic>).add(fragmento);
+        }
+
+        linhas.sort(
+          (a, b) => (b['y'] as double).compareTo(a['y'] as double),
+        );
+
+        Map<String, double>? colunas;
+        double yCabecalho = 0;
+
+        for (final linha in linhas) {
+          final achadas = <String, double>{};
+
+          for (final fragmento in linha['fragmentos'] as List<dynamic>) {
+            final campo = campoDoCabecalho(fragmento.text);
+            if (campo != null) {
+              achadas.putIfAbsent(
+                campo,
+                () => fragmento.bounds.center.x,
+              );
+            }
+          }
+
+          if (achadas.length > (colunas?.length ?? 0)) {
+            colunas = achadas;
+            yCabecalho = linha['y'] as double;
+          }
+        }
+
+        if (colunas == null ||
+            !colunas.containsKey('bairro') ||
+            !colunas.containsKey('endereco') ||
+            !colunas.containsKey('nome') ||
+            !colunas.containsKey('dia') ||
+            !colunas.containsKey('valor')) {
+          continue;
+        }
+
+        if (clienteAtual.isNotEmpty) salvarClienteAtual();
+
+        for (final linha in linhas) {
+          final y = linha['y'] as double;
+          if (y >= yCabecalho - 2.0) continue;
+
+          final fragmentos = linha['fragmentos'] as List<dynamic>
+            ..sort(
+              (a, b) => a.bounds.left.compareTo(b.bounds.left),
+            );
+
+          final camposDaLinha = <String, List<String>>{};
+
+          for (final fragmento in fragmentos) {
+            String? campoMaisProximo;
+            var menorDistancia = double.infinity;
+
+            for (final coluna in colunas.entries) {
+              final distancia =
+                  (fragmento.bounds.center.x - coluna.value).abs();
+              if (distancia < menorDistancia) {
+                menorDistancia = distancia;
+                campoMaisProximo = coluna.key;
+              }
+            }
+
+            if (campoMaisProximo != null) {
+              camposDaLinha
+                  .putIfAbsent(campoMaisProximo, () => <String>[])
+                  .add(fragmento.text.trim());
+            }
+          }
+
+          final bairroNaLinha =
+              (camposDaLinha['bairro'] ?? const <String>[]).join(' ').trim();
+
+          if (bairroNaLinha.isNotEmpty && clienteAtual.isNotEmpty) {
+            salvarClienteAtual();
+          }
+
+          for (final campo in camposDaLinha.entries) {
+            final texto = campo.value.join(' ').trim();
+            if (texto.isEmpty) continue;
+
+            final anterior = clienteAtual[campo.key] ?? '';
+            clienteAtual[campo.key] =
+                anterior.isEmpty ? texto : '$anterior $texto';
+          }
+        }
+      }
+
+      if (clienteAtual.isNotEmpty) salvarClienteAtual();
+    } finally {
+      documento.close();
+    }
+
+    final unicos = <String, Map<String, String>>{};
+    for (final cliente in clientes) {
+      final chave = [
+        cliente['nome'],
+        cliente['bairro'],
+        cliente['rua'],
+        cliente['numero'],
+      ].map((valor) => (valor ?? '').trim().toLowerCase()).join('|');
+      unicos.putIfAbsent(chave, () => cliente);
+    }
+
+    return unicos.values.toList();
+      }
 List<Map<String, String>> _lerClientesDoPdf(String texto) {
   final clientesLidos = <Map<String, String>>[];
   Map<String, int> indices = {};

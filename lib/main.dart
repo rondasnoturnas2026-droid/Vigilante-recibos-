@@ -3559,7 +3559,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
       var numero = (campos['numero'] ?? '').trim();
             var diaTexto =
           (campos['dia'] ?? '').replaceAll(RegExp(r'\D'), '');
-          (campos['dia'] ?? '').replaceAll(RegExp(r'\D'), '');
+          
       final dia = int.tryParse(diaTexto);
       final valor = (campos['valor'] ?? '')
           .replaceAll('R\$', '')

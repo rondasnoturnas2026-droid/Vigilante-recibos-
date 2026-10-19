@@ -3523,7 +3523,9 @@ List<Map<String, String>> _lerClientesDoPdf(String texto) {
     RegExp(r'^n[º°.]?$').hasMatch(t)) return 'numero';
     if (t.contains('endereco') || t.contains('rua')) return 'endereco';
     if (t == 'dia' || t.contains('vencimento')) return 'dia';
-    if (t.contains('valor') || t.contains('mensalidade')) return 'valor';
+    if (t.contains('valor') ||
+    t.contains('mensalidade') ||
+    t == 'r$') return 'valor';
     if (t.contains('telefone') ||
         t.contains('contato') ||
         t.contains('whatsapp') ||

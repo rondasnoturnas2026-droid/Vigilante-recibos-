@@ -3507,8 +3507,8 @@ String dataFiltro = 'Todas as datas';
       Future<List<Map<String, String>>> _lerClientesPdfComPosicoes(
     String caminho,
   ) async {
-    await pdfrxInitialize();
-    final documento = await PdfDocument.openFile(caminho);
+    await pdfrx.pdfrxFlutterInitialize();
+final documento = await pdfrx.PdfDocument.openFile(caminho);
     final clientes = <Map<String, String>>[];
     Map<String, String> clienteAtual = <String, String>{};
 

@@ -3557,7 +3557,8 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
       final bairro = (campos['bairro'] ?? '').trim();
       var endereco = (campos['endereco'] ?? '').trim();
       var numero = (campos['numero'] ?? '').trim();
-      final diaTexto =
+            var diaTexto =
+          (campos['dia'] ?? '').replaceAll(RegExp(r'\D'), '');
           (campos['dia'] ?? '').replaceAll(RegExp(r'\D'), '');
       final dia = int.tryParse(diaTexto);
       final valor = (campos['valor'] ?? '')

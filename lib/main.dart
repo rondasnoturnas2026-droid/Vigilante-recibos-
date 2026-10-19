@@ -4213,7 +4213,11 @@ ScaffoldMessenger.of(context).showSnackBar(
             ...ruasDisponiveis.map(
               (rua) => DropdownMenuItem(
                 value: rua,
-                child: Text(rua),
+                child: Text(
+  rua,
+  maxLines: 1,
+  overflow: TextOverflow.ellipsis,
+),
               ),
             ),
           ],

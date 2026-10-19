@@ -3747,7 +3747,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
 
             for (final coluna in colunas.entries) {
               final distancia =
-                  (fragmento.bounds.center.x - coluna.value).abs();
+                  (fragmento.bounds.left - coluna.value).abs();
               if (distancia < menorDistancia) {
                 menorDistancia = distancia;
                 campoMaisProximo = coluna.key;

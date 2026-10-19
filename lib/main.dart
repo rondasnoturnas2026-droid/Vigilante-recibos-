@@ -3525,7 +3525,7 @@ List<Map<String, String>> _lerClientesDoPdf(String texto) {
     if (t == 'dia' || t.contains('vencimento')) return 'dia';
     if (t.contains('valor') ||
     t.contains('mensalidade') ||
-    t == 'r$') return 'valor';
+    t == 'r\$') return 'valor';
     if (t.contains('telefone') ||
         t.contains('contato') ||
         t.contains('whatsapp') ||

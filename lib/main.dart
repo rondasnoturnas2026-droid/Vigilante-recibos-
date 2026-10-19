@@ -3799,10 +3799,37 @@ if (clientesEncontrados.isEmpty) {
       .split(RegExp(r'[\r\n]+'))
       .where((linha) => linha.trim().isNotEmpty)
       .take(8)
-      .map((linha) => linha
-          .replaceAll(RegExp(r'[A-Za-zÀ-ÿ0-9]+'), 'X')
-          .replaceAll(' ', '·')
-          .replaceAll('\t', '→'))
+            .map((linha) {
+        final rotulos = RegExp(
+          r'\b(nome\s+do\s+cliente|forma\s+de\s+pagamento|nome|cliente|bairro|endere[cç]o|rua|numero|dia|vencimento|valor|mensalidade|telefone|contato|whatsapp|celular|pagamento)\b',
+          caseSensitive: false,
+        ).allMatches(linha).toList();
+
+        String ocultar(String trecho) =>
+            trecho.replaceAll(RegExp(r'[A-Za-zÀ-ÿ0-9]+'), 'X');
+
+        if (rotulos.length < 3) {
+          return ocultar(linha)
+              .replaceAll(' ', '·')
+              .replaceAll('\t', '→');
+        }
+
+        final linhaSegura = StringBuffer();
+        var inicio = 0;
+
+        for (final rotulo in rotulos) {
+          linhaSegura.write(ocultar(linha.substring(inicio, rotulo.start)));
+          linhaSegura.write('[${rotulo.group(0)}]');
+          inicio = rotulo.end;
+        }
+
+        linhaSegura.write(ocultar(linha.substring(inicio)));
+
+        return linhaSegura
+            .toString()
+            .replaceAll(' ', '·')
+            .replaceAll('\t', '→');
+      })
       .join('\n');
 
   await showDialog<void>(

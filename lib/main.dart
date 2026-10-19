@@ -3643,7 +3643,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
 for (final candidata in linhas) {
   final diferencaY = ((candidata['y'] as double) - y).abs();
 
-  if (diferencaY <= 5.0 && diferencaY < menorDiferencaY) {
+  if (diferencaY <= 2.0 && diferencaY < menorDiferencaY) {
     menorDiferencaY = diferencaY;
     linha = candidata;
   }

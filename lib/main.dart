@@ -3706,26 +3706,13 @@ salvarClienteVertical();
 
     final campos = <String, String>{};
 
-    if (indices.isNotEmpty) {
+        if (indices.isNotEmpty) {
       for (final item in indices.entries) {
         if (item.value < colunas.length) {
           campos[item.key] = colunas[item.value];
         }
       }
-        } else if (colunas.length >= 6) {
-      const ordem = [
-        'bairro',
-        'endereco',
-        'numero',
-        'dia',
-        'valor',
-        'nome',
-        'telefone',
-      ];
-      for (var i = 0; i < ordem.length && i < colunas.length; i++) {
-        campos[ordem[i]] = colunas[i];
-      }
-    }
+        }
 
     final cliente = montarCliente(campos);
     if (cliente != null) clientesLidos.add(cliente);

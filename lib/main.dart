@@ -3712,10 +3712,11 @@ salvarClienteVertical();
           campos[item.key] = colunas[item.value];
         }
       }
-    } else if (colunas.length >= 5) {
+        } else if (colunas.length >= 6) {
       const ordem = [
         'bairro',
         'endereco',
+        'numero',
         'dia',
         'valor',
         'nome',

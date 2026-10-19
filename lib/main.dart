@@ -3734,8 +3734,11 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
                     final nomeNaLinha =
               (camposDaLinha['nome'] ?? const <String>[]).join(' ').trim();
 
-          final inicioNovoCliente =
-    nomeNaLinha.isNotEmpty || camposDaLinha.containsKey('bairro');
+          final camposForaDoBairro =
+    camposDaLinha.keys.where((campo) => campo != 'bairro').length;
+
+final inicioNovoCliente =
+    nomeNaLinha.isNotEmpty || camposForaDoBairro >= 2;
 
 if (inicioNovoCliente && clienteAtual.isNotEmpty) {
   salvarClienteAtual();

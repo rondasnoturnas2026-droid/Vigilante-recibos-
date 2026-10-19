@@ -3732,13 +3732,32 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
           }
 
                     final nomeNaLinha =
-              (camposDaLinha['nome'] ?? const <String>[]).join(' ').trim();
+    (camposDaLinha['nome'] ?? const <String>[]).join(' ').trim();
 
-          final camposForaDoBairro =
+final camposForaDoBairro =
     camposDaLinha.keys.where((campo) => campo != 'bairro').length;
 
+final bairroAtual =
+    normalizarTexto(clienteAtual['bairro'] ?? '');
+
+final bairroNestaLinha = normalizarTexto(
+  (camposDaLinha['bairro'] ?? const <String>[]).join(' '),
+);
+
+final clienteAtualTemSomenteBairro =
+    clienteAtual.isNotEmpty &&
+    clienteAtual.keys.every((campo) => campo == 'bairro');
+
+final bairroContinuaNaLinha =
+    clienteAtualTemSomenteBairro &&
+    bairroAtual.isNotEmpty &&
+    bairroNestaLinha.isNotEmpty &&
+    !bairroAtual.contains(bairroNestaLinha) &&
+    !bairroNestaLinha.contains(bairroAtual);
+
 final inicioNovoCliente =
-    nomeNaLinha.isNotEmpty || camposForaDoBairro >= 2;
+    !bairroContinuaNaLinha &&
+    (nomeNaLinha.isNotEmpty || camposForaDoBairro >= 2);
 
 if (inicioNovoCliente && clienteAtual.isNotEmpty) {
   salvarClienteAtual();

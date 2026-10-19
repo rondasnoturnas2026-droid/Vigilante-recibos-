@@ -3707,9 +3707,12 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
                     final nomeNaLinha =
               (camposDaLinha['nome'] ?? const <String>[]).join(' ').trim();
 
-          if (nomeNaLinha.isNotEmpty && clienteAtual.isNotEmpty) {
-            salvarClienteAtual();
-          }
+          final inicioNovoCliente =
+    nomeNaLinha.isNotEmpty || camposDaLinha.containsKey('bairro');
+
+if (inicioNovoCliente && clienteAtual.isNotEmpty) {
+  salvarClienteAtual();
+}
 
           for (final campo in camposDaLinha.entries) {
             final texto = campo.value.join(' ').trim();

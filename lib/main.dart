@@ -4177,7 +4177,11 @@ ScaffoldMessenger.of(context).showSnackBar(
             ...widget.store.bairros.map(
               (bairro) => DropdownMenuItem(
                 value: bairro.nome,
-                child: Text(bairro.nome),
+                child: Text(
+  bairro.nome,
+  maxLines: 1,
+  overflow: TextOverflow.ellipsis,
+),
               ),
             ),
           ],

@@ -3761,14 +3761,31 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
             }
           }
 
-                    final nomeNaLinha =
-    (camposDaLinha['nome'] ?? const <String>[]).join(' ').trim();
+                              final nomeNaLinha =
+              (camposDaLinha['nome'] ?? const <String>[]).join(' ').trim();
 
-final inicioNovoCliente = nomeNaLinha.isNotEmpty;
+          final diaTextoNaLinha =
+              (camposDaLinha['dia'] ?? const <String>[])
+                  .join('')
+                  .replaceAll(RegExp(r'\D'), '');
+          final diaLidoNaLinha = int.tryParse(diaTextoNaLinha);
 
-if (inicioNovoCliente && clienteAtual.isNotEmpty) {
-  salvarClienteAtual();
-}
+          final valorNaLinha =
+              (camposDaLinha['valor'] ?? const <String>[])
+                  .join('')
+                  .replaceAll(RegExp(r'\D'), '');
+
+          final inicioNovoCliente =
+              nomeNaLinha.isNotEmpty &&
+              diaLidoNaLinha != null &&
+              diaLidoNaLinha >= 1 &&
+              diaLidoNaLinha <= 31 &&
+              valorNaLinha.isNotEmpty;
+
+          if (inicioNovoCliente && clienteAtual.isNotEmpty) {
+            salvarClienteAtual();
+          }
+
 
           for (final campo in camposDaLinha.entries) {
             final texto = campo.value.join(' ').trim();

@@ -5790,6 +5790,162 @@ ListTile(
   },
 ),
 const Divider(),
+            ListTile(
+  leading: const Icon(Icons.backup_outlined),
+  title: const Text('Backup dos clientes'),
+  subtitle: const Text('Salvar ou restaurar os cadastros'),
+  trailing: const Icon(Icons.chevron_right),
+  onTap: () {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        Future<void> fazerBackup() async {
+          Navigator.pop(dialogContext);
+
+          try {
+            await widget.store.carregarClientes();
+
+            final agora = DateTime.now();
+            final data =
+                '${agora.year}${agora.month.toString().padLeft(2, '0')}'
+                '${agora.day.toString().padLeft(2, '0')}';
+            final nomeArquivo = 'backup_clientes_$data.json';
+
+            final pasta = await Directory.systemTemp.createTemp(
+              'vigilante_backup_clientes_',
+            );
+            final arquivo = File('${pasta.path}/$nomeArquivo');
+
+            await arquivo.writeAsString(
+              const JsonEncoder.withIndent('  ').convert({
+                'formato': 'vigilante_recibos_clientes_v1',
+                'versao': 1,
+                'dataBackup': agora.toIso8601String(),
+                'clientes': widget.store.clientes,
+              }),
+              encoding: utf8,
+              flush: true,
+            );
+
+            await SharePlus.instance.share(
+              ShareParams(
+                title: 'Backup dos clientes',
+                text: 'Backup dos clientes do Vigilante Recibos',
+                files: [XFile(arquivo.path, mimeType: 'application/json')],
+              ),
+            );
+          } catch (erro) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Não foi possível fazer o backup: $erro')),
+            );
+          }
+        }
+
+        Future<void> restaurarBackup() async {
+          Navigator.pop(dialogContext);
+
+          try {
+            final selecionado = await FilePicker.platform.pickFiles(
+              type: FileType.custom,
+              allowedExtensions: ['json'],
+              withData: true,
+            );
+
+            if (selecionado == null || selecionado.files.isEmpty) return;
+
+            final bytes = selecionado.files.single.bytes;
+            if (bytes == null) {
+              throw const FormatException('Não foi possível ler o arquivo.');
+            }
+
+            final conteudo = jsonDecode(utf8.decode(bytes));
+            if (conteudo is! Map ||
+                conteudo['formato'] != 'vigilante_recibos_clientes_v1' ||
+                conteudo['clientes'] is! List) {
+              throw const FormatException('Esse arquivo não é um backup válido.');
+            }
+
+            final clientesBackup = <Map<String, String>>[];
+            for (final item in conteudo['clientes'] as List) {
+              if (item is! Map) {
+                throw const FormatException('Há um cadastro inválido no arquivo.');
+              }
+              clientesBackup.add(
+                Map<String, String>.fromEntries(
+                  item.entries.map(
+                    (entrada) => MapEntry(
+                      entrada.key.toString(),
+                      entrada.value.toString(),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final confirmou = await showDialog<bool>(
+              context: context,
+              builder: (confirmContext) => AlertDialog(
+                title: const Text('Restaurar backup?'),
+                content: Text(
+                  'O backup tem ${clientesBackup.length} clientes. '
+                  'A restauração substituirá os cadastros atuais.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(confirmContext, false),
+                    child: const Text('Cancelar'),
+                  ),
+                  FilledButton(
+                    onPressed: () => Navigator.pop(confirmContext, true),
+                    child: const Text('Restaurar'),
+                  ),
+                ],
+              ),
+            );
+
+            if (confirmou != true) return;
+
+            widget.store.clientes
+              ..clear()
+              ..addAll(clientesBackup);
+            await widget.store.salvarClientes();
+
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Backup restaurado com sucesso.'),
+              ),
+            );
+          } catch (erro) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Não foi possível restaurar o backup: $erro'),
+              ),
+            );
+          }
+        }
+
+        return AlertDialog(
+          title: const Text('Backup dos clientes'),
+          content: const Text('Escolha uma opção.'),
+          actions: [
+            TextButton(
+              onPressed: fazerBackup,
+              child: const Text('Fazer backup'),
+            ),
+            FilledButton(
+              onPressed: restaurarBackup,
+              child: const Text('Restaurar backup'),
+            ),
+          ],
+        );
+      },
+    );
+  },
+),
+const Divider(),
           ListTile(
             leading: Icon(Icons.print_outlined),
             title: Text('Impressora térmica'),

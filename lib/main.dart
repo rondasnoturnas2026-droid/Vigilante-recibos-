@@ -6265,12 +6265,41 @@ Future<void> _excluirBairro(Bairro bairro) async {
 }
 
 Future<void> _editarRua(Bairro bairro, String rua) async {
-  final nome = await _pedirNome('Editar rua', rua);
-  if (nome == null) return;
+  var textoEditado = rua;
 
+  final nome = await showDialog<String>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Editar rua'),
+      content: TextFormField(
+        initialValue: rua,
+        autofocus: true,
+        decoration: const InputDecoration(labelText: 'Nome'),
+        onChanged: (valor) => textoEditado = valor.trim(),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () {
+            if (textoEditado.isNotEmpty) {
+              Navigator.of(dialogContext).pop(textoEditado);
+            }
+          },
+          child: const Text('Salvar'),
+        ),
+      ],
+    ),
+  );
+
+  if (nome == null || nome.trim().isEmpty) return;
+
+  final nomeFinal = nome.trim();
   final existe = bairro.ruas.any(
     (item) =>
-        item.trim().toLowerCase() == nome.trim().toLowerCase() &&
+        item.trim().toLowerCase() == nomeFinal.toLowerCase() &&
         item.trim().toLowerCase() != rua.trim().toLowerCase(),
   );
 
@@ -6282,7 +6311,7 @@ Future<void> _editarRua(Bairro bairro, String rua) async {
   final indice = bairro.ruas.indexOf(rua);
   if (indice == -1) return;
 
-  bairro.ruas[indice] = nome.trim();
+  bairro.ruas[indice] = nomeFinal;
   await widget.store.salvarBairrosERuas();
 
   if (!mounted) return;

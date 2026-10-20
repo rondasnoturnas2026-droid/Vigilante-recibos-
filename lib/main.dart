@@ -3724,6 +3724,76 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
         }
 
         if (clienteAtual.isNotEmpty) salvarClienteAtual();
+          final colunasParaBairro = colunas.entries.toList()
+  ..sort((a, b) => a.value.compareTo(b.value));
+
+String? colunaDoFragmento(dynamic fragmento) {
+  String? escolhida;
+  double menorDistancia = double.infinity;
+
+  for (final coluna in colunasParaBairro) {
+    final distancia = (fragmento.bounds.left - coluna.value).abs();
+    if (distancia < menorDistancia) {
+      menorDistancia = distancia;
+      escolhida = coluna.key;
+    }
+  }
+
+  return escolhida;
+}
+
+final yLinhasComCliente = <double>[];
+
+for (final linha in linhas) {
+  final y = linha['y'] as double;
+  if (y >= yCabecalho - 2.0) continue;
+
+  final fragmentos = linha['fragmentos'] as List<dynamic>;
+  final temNome = fragmentos.any(
+    (fragmento) =>
+        fragmento.text.trim().isNotEmpty &&
+        colunaDoFragmento(fragmento) == 'nome',
+  );
+
+  if (temNome) yLinhasComCliente.add(y);
+}
+
+final bairrosPorCliente = <double, List<String>>{};
+
+for (final linha in linhas) {
+  final y = linha['y'] as double;
+  if (y >= yCabecalho - 2.0 || yLinhasComCliente.isEmpty) continue;
+
+  final fragmentos = (linha['fragmentos'] as List<dynamic>).toList()
+    ..sort((a, b) {
+      final diferencaY = b.bounds.center.y.compareTo(a.bounds.center.y);
+      if (diferencaY != 0) return diferencaY;
+      return a.bounds.left.compareTo(b.bounds.left);
+    });
+
+  final textosBairro = fragmentos
+      .where((fragmento) => colunaDoFragmento(fragmento) == 'bairro')
+      .map((fragmento) => fragmento.text.trim())
+      .where((texto) => texto.isNotEmpty)
+      .toList();
+
+  if (textosBairro.isEmpty) continue;
+
+  var yClienteMaisProximo = yLinhasComCliente.first;
+  var menorDistancia = (y - yClienteMaisProximo).abs();
+
+  for (final yCliente in yLinhasComCliente.skip(1)) {
+    final distancia = (y - yCliente).abs();
+    if (distancia < menorDistancia) {
+      menorDistancia = distancia;
+      yClienteMaisProximo = yCliente;
+    }
+  }
+
+  bairrosPorCliente
+      .putIfAbsent(yClienteMaisProximo, () => <String>[])
+      .addAll(textosBairro);
+}
 
         for (final linha in linhas) {
           final y = linha['y'] as double;

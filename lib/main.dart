@@ -6162,6 +6162,136 @@ setState(() {});
 
 _aviso('Salvo com sucesso');
 }
+    Future<String?> _pedirNome(String titulo, String nomeAtual) async {
+  final controller = TextEditingController(text: nomeAtual);
+
+  final nome = await showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(titulo),
+      content: TextField(
+        controller: controller,
+        autofocus: true,
+        decoration: const InputDecoration(
+          labelText: 'Nome',
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () {
+            final texto = controller.text.trim();
+            if (texto.isNotEmpty) {
+              Navigator.pop(context, texto);
+            }
+          },
+          child: const Text('Salvar'),
+        ),
+      ],
+    ),
+  );
+
+  controller.dispose();
+  return nome;
+}
+
+Future<bool> _confirmarExclusao(String tipo, String nome) async {
+  final confirmou = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Excluir $tipo?'),
+      content: Text('Deseja excluir "$nome" da lista de Bairros e Ruas?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text('Excluir'),
+        ),
+      ],
+    ),
+  );
+
+  return confirmou == true;
+}
+
+Future<void> _editarBairro(Bairro bairro) async {
+  final nome = await _pedirNome('Editar bairro', bairro.nome);
+  if (nome == null) return;
+
+  final existe = widget.store.bairros.any(
+    (item) =>
+        item.id != bairro.id &&
+        item.nome.trim().toLowerCase() == nome.trim().toLowerCase(),
+  );
+
+  if (existe) {
+    _aviso('Esse bairro já está cadastrado');
+    return;
+  }
+
+  bairro.nome = nome.trim();
+  await widget.store.salvarBairrosERuas();
+
+  if (!mounted) return;
+  setState(() {});
+  _aviso('Bairro atualizado');
+}
+
+Future<void> _excluirBairro(Bairro bairro) async {
+  final confirmou = await _confirmarExclusao('bairro', bairro.nome);
+  if (!confirmou) return;
+
+  widget.store.bairros.remove(bairro);
+  await widget.store.salvarBairrosERuas();
+
+  if (!mounted) return;
+  setState(() {});
+  _aviso('Bairro excluído');
+}
+
+Future<void> _editarRua(Bairro bairro, String rua) async {
+  final nome = await _pedirNome('Editar rua', rua);
+  if (nome == null) return;
+
+  final existe = bairro.ruas.any(
+    (item) =>
+        item.trim().toLowerCase() == nome.trim().toLowerCase() &&
+        item.trim().toLowerCase() != rua.trim().toLowerCase(),
+  );
+
+  if (existe) {
+    _aviso('Essa rua já está cadastrada neste bairro');
+    return;
+  }
+
+  final indice = bairro.ruas.indexOf(rua);
+  if (indice == -1) return;
+
+  bairro.ruas[indice] = nome.trim();
+  await widget.store.salvarBairrosERuas();
+
+  if (!mounted) return;
+  setState(() {});
+  _aviso('Rua atualizada');
+}
+
+Future<void> _excluirRua(Bairro bairro, String rua) async {
+  final confirmou = await _confirmarExclusao('rua', rua);
+  if (!confirmou) return;
+
+  bairro.ruas.remove(rua);
+  await widget.store.salvarBairrosERuas();
+
+  if (!mounted) return;
+  setState(() {});
+  _aviso('Rua excluída');
+}
   void _aviso(String mensagem) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(mensagem)),

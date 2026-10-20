@@ -6243,7 +6243,27 @@ _aviso('Salvo com sucesso');
     _aviso('Bairro atualizado');
   }
 
-Future<void> _excluirBairro(Bairro bairro) async {
+Future<bool> _confirmarExclusao(String tipo, String nome) async {
+  final confirmou = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: Text('Excluir $tipo?'),
+      content: Text('Tem certeza que deseja excluir "$nome"?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: const Text('Excluir'),
+        ),
+      ],
+    ),
+  );
+
+  return confirmou ?? false;
+}
   final confirmou = await _confirmarExclusao('bairro', bairro.nome);
   if (!confirmou) return;
 

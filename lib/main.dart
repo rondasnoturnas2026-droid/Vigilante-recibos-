@@ -3731,18 +3731,47 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
   ..sort((a, b) => a.value.compareTo(b.value));
 
 for (final fragmento in fragmentos) {
-  final xInicioTexto = fragmento.bounds.left;
+  final esquerdaTexto = fragmento.bounds.left;
+  final direitaTexto = fragmento.bounds.right;
 
-  final colunaDoFragmento = colunasOrdenadasPorX.reduce(
-    (a, b) =>
-        (xInicioTexto - a.value).abs() <=
-                (xInicioTexto - b.value).abs()
-            ? a
-            : b,
-  );
+  String? colunaEscolhida;
+  double maiorSobreposicao = -1;
+
+  for (var i = 0; i < colunasOrdenadasPorX.length; i++) {
+    final inicioColuna = i == 0
+        ? esquerdaTexto
+        : (colunasOrdenadasPorX[i - 1].value +
+                colunasOrdenadasPorX[i].value) /
+            2;
+
+    final fimColuna = i == colunasOrdenadasPorX.length - 1
+        ? direitaTexto
+        : (colunasOrdenadasPorX[i].value +
+                colunasOrdenadasPorX[i + 1].value) /
+            2;
+
+    final inicioSobreposicao = esquerdaTexto > inicioColuna
+        ? esquerdaTexto
+        : inicioColuna;
+
+    final fimSobreposicao = direitaTexto < fimColuna
+        ? direitaTexto
+        : fimColuna;
+
+    final sobreposicao = fimSobreposicao > inicioSobreposicao
+        ? fimSobreposicao - inicioSobreposicao
+        : 0.0;
+
+    if (sobreposicao > maiorSobreposicao) {
+      maiorSobreposicao = sobreposicao;
+      colunaEscolhida = colunasOrdenadasPorX[i].key;
+    }
+  }
+
+  if (colunaEscolhida == null) continue;
 
   camposDaLinha
-      .putIfAbsent(colunaDoFragmento.key, () => <String>[])
+      .putIfAbsent(colunaEscolhida, () => <String>[])
       .add(fragmento.text.trim());
 }
 

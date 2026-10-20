@@ -6220,24 +6220,28 @@ _aviso('Salvo com sucesso');
   );
 }
 
-  final existe = widget.store.bairros.any(
-    (item) =>
-        item.id != bairro.id &&
-        item.nome.trim().toLowerCase() == nome.trim().toLowerCase(),
-  );
+    Future<void> _editarBairro(Bairro bairro) async {
+    final nome = await _pedirNome('Editar bairro', bairro.nome);
+    if (nome == null || nome.trim().isEmpty) return;
 
-  if (existe) {
-    _aviso('Esse bairro já está cadastrado');
-    return;
+    final existe = widget.store.bairros.any(
+      (item) =>
+          item.id != bairro.id &&
+          item.nome.trim().toLowerCase() == nome.trim().toLowerCase(),
+    );
+
+    if (existe) {
+      _aviso('Esse bairro já está cadastrado');
+      return;
+    }
+
+    bairro.nome = nome.trim();
+    await widget.store.salvarBairrosERuas();
+
+    if (!mounted) return;
+    setState(() {});
+    _aviso('Bairro atualizado');
   }
-
-  bairro.nome = nome.trim();
-  await widget.store.salvarBairrosERuas();
-
-  if (!mounted) return;
-  setState(() {});
-  _aviso('Bairro atualizado');
-}
 
 Future<void> _excluirBairro(Bairro bairro) async {
   final confirmou = await _confirmarExclusao('bairro', bairro.nome);

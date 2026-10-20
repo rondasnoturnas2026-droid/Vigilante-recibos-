@@ -3745,8 +3745,10 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
   ..sort((a, b) => a.value.compareTo(b.value));
 
 for (final fragmento in fragmentos) {
-  final xInicio = fragmento.bounds.left;
+  final esquerdaTexto = fragmento.bounds.left;
+  final direitaTexto = fragmento.bounds.right;
   MapEntry<String, double>? colunaDoFragmento;
+  var maiorSobreposicao = 0.0;
 
   for (var indice = 0;
       indice < colunasOrdenadasPorX.length;
@@ -3765,15 +3767,25 @@ for (final fragmento in fragmentos) {
                 colunasOrdenadasPorX[indice + 1].value) /
             2;
 
-    if (xInicio >= limiteEsquerdo && xInicio < limiteDireito) {
+    final inicioSobreposicao = esquerdaTexto > limiteEsquerdo
+        ? esquerdaTexto
+        : limiteEsquerdo;
+    final fimSobreposicao =
+        direitaTexto < limiteDireito ? direitaTexto : limiteDireito;
+    final sobreposicao = fimSobreposicao > inicioSobreposicao
+        ? fimSobreposicao - inicioSobreposicao
+        : 0.0;
+
+    if (sobreposicao > maiorSobreposicao) {
+      maiorSobreposicao = sobreposicao;
       colunaDoFragmento = coluna;
-      break;
     }
   }
 
   colunaDoFragmento ??= colunasOrdenadasPorX.reduce(
     (a, b) =>
-        (xInicio - a.value).abs() <= (xInicio - b.value).abs()
+        (fragmento.bounds.center.x - a.value).abs() <=
+                (fragmento.bounds.center.x - b.value).abs()
             ? a
             : b,
   );

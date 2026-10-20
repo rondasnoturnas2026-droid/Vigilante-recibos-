@@ -3742,50 +3742,31 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
           final colunasOrdenadasPorX = colunas.entries.toList()
   ..sort((a, b) => a.value.compareTo(b.value));
 
-for (final fragmento in fragmentos) {
-  final esquerdaTexto = fragmento.bounds.left;
-  final direitaTexto = fragmento.bounds.right;
+          final colunasOrdenadasPorX = colunas.entries.toList()
+            ..sort((a, b) => a.value.compareTo(b.value));
 
-  String? colunaEscolhida;
-  double maiorSobreposicao = -1;
+          for (final fragmento in fragmentos) {
+            // Classifica pela posição inicial do texto, sem deixar
+            // a largura de um bairro comprido puxá-lo para outra coluna.
+            final inicioTexto = fragmento.bounds.left;
+            String? colunaEscolhida;
+            double menorDistancia = double.infinity;
 
-  for (var i = 0; i < colunasOrdenadasPorX.length; i++) {
-    final inicioColuna = i == 0
-        ? esquerdaTexto
-        : (colunasOrdenadasPorX[i - 1].value +
-                colunasOrdenadasPorX[i].value) /
-            2;
+            for (final coluna in colunasOrdenadasPorX) {
+              final distancia = (inicioTexto - coluna.value).abs();
 
-    final fimColuna = i == colunasOrdenadasPorX.length - 1
-        ? direitaTexto
-        : (colunasOrdenadasPorX[i].value +
-                colunasOrdenadasPorX[i + 1].value) /
-            2;
+              if (distancia < menorDistancia) {
+                menorDistancia = distancia;
+                colunaEscolhida = coluna.key;
+              }
+            }
 
-    final inicioSobreposicao = esquerdaTexto > inicioColuna
-        ? esquerdaTexto
-        : inicioColuna;
+            if (colunaEscolhida == null) continue;
 
-    final fimSobreposicao = direitaTexto < fimColuna
-        ? direitaTexto
-        : fimColuna;
-
-    final sobreposicao = fimSobreposicao > inicioSobreposicao
-        ? fimSobreposicao - inicioSobreposicao
-        : 0.0;
-
-    if (sobreposicao > maiorSobreposicao) {
-      maiorSobreposicao = sobreposicao;
-      colunaEscolhida = colunasOrdenadasPorX[i].key;
-    }
-  }
-
-  if (colunaEscolhida == null) continue;
-
-  camposDaLinha
-      .putIfAbsent(colunaEscolhida, () => <String>[])
-      .add(fragmento.text.trim());
-}
+            camposDaLinha
+                .putIfAbsent(colunaEscolhida, () => <String>[])
+                .add(fragmento.text.trim());
+          }
 
                                        final nomeNaLinha =
               (camposDaLinha['nome'] ?? const <String>[])

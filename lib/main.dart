@@ -3739,7 +3739,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
 
           final camposDaLinha = <String, List<String>>{};
 
-          final colunasOrdenadasPorX = colunas.entries.toList()
+          final colunasOrdenadasPorX = colunas.entries.toList();
 
           final colunasOrdenadasPorX = colunas.entries.toList()
             ..sort((a, b) => a.value.compareTo(b.value));

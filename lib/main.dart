@@ -3788,32 +3788,13 @@ for (final fragmento in fragmentos) {
                   .join(' ')
                   .trim();
 
-          final diaTextoNaLinha =
-              (camposDaLinha['dia'] ?? const <String>[])
-                  .join('')
-                  .replaceAll(RegExp(r'\D'), '');
-          final diaLidoNaLinha = int.tryParse(diaTextoNaLinha);
-
-          final valorNaLinha =
-              (camposDaLinha['valor'] ?? const <String>[])
-                  .join('')
-                  .replaceAll(RegExp(r'\D'), '');
-          final valorLidoNaLinha = int.tryParse(valorNaLinha);
-
-          final temDiaValido =
-              diaLidoNaLinha != null &&
-              diaLidoNaLinha >= 1 &&
-              diaLidoNaLinha <= 31;
-
-          final temValorValido =
-              valorLidoNaLinha != null &&
-              valorLidoNaLinha > 0;
+                    final nomeAtual =
+              (clienteAtual['nome'] ?? '').trim();
 
           final inicioNovoCliente =
-              nomeNaLinha.isNotEmpty &&
-              (temDiaValido || temValorValido);
+              nomeNaLinha.isNotEmpty && nomeAtual.isNotEmpty;
 
-          if (inicioNovoCliente && clienteAtual.isNotEmpty) {
+          if (inicioNovoCliente) {
             salvarClienteAtual();
           }
 

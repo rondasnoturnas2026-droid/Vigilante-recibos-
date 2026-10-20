@@ -3792,7 +3792,7 @@ for (final linha in linhas) {
 
   bairrosPorCliente
       .putIfAbsent(yClienteMaisProximo, () => <String>[])
-      .addAll(textosBairro);
+      .addAll(textosBairro.map((texto) => texto.toString()));
 }
 
         for (final linha in linhas) {

@@ -6187,29 +6187,30 @@ setState(() {});
 _aviso('Salvo com sucesso');
 }
     Future<String?> _pedirNome(String titulo, String nomeAtual) async {
-  final controller = TextEditingController(text: nomeAtual);
+  var texto = nomeAtual;
 
-  final nome = await showDialog<String>(
+  return showDialog<String>(
     context: context,
-    builder: (context) => AlertDialog(
+    builder: (dialogContext) => AlertDialog(
       title: Text(titulo),
-      content: TextField(
-        controller: controller,
+      content: TextFormField(
+        initialValue: nomeAtual,
         autofocus: true,
         decoration: const InputDecoration(
           labelText: 'Nome',
         ),
+        onChanged: (valor) => texto = valor.trim(),
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.of(dialogContext).pop(),
           child: const Text('Cancelar'),
         ),
         FilledButton(
           onPressed: () {
-            final texto = controller.text.trim();
-            if (texto.isNotEmpty) {
-              Navigator.pop(context, texto);
+            final nome = texto.trim();
+            if (nome.isNotEmpty) {
+              Navigator.of(dialogContext).pop(nome);
             }
           },
           child: const Text('Salvar'),
@@ -6217,36 +6218,7 @@ _aviso('Salvo com sucesso');
       ],
     ),
   );
-
-  controller.dispose();
-  return nome;
 }
-
-Future<bool> _confirmarExclusao(String tipo, String nome) async {
-  final confirmou = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Excluir $tipo?'),
-      content: Text('Deseja excluir "$nome" da lista de Bairros e Ruas?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancelar'),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: const Text('Excluir'),
-        ),
-      ],
-    ),
-  );
-
-  return confirmou == true;
-}
-
-Future<void> _editarBairro(Bairro bairro) async {
-  final nome = await _pedirNome('Editar bairro', bairro.nome);
-  if (nome == null) return;
 
   final existe = widget.store.bairros.any(
     (item) =>

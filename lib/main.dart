@@ -2871,7 +2871,7 @@ setState(() {});
 ScaffoldMessenger.of(context).showSnackBar(
   SnackBar(
     content: Text(
-      '$criadas mensalidade(s) criada(s).',
+      '${selecionados.length} mensalidade(s) criada(s).'
     ),
   ),
 );

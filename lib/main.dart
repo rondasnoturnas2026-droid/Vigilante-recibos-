@@ -6264,6 +6264,7 @@ Future<bool> _confirmarExclusao(String tipo, String nome) async {
 
   return confirmou ?? false;
 }
+    Future<void> _excluirBairro(Bairro bairro) async {
   final confirmou = await _confirmarExclusao('bairro', bairro.nome);
   if (!confirmou) return;
 

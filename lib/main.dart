@@ -6038,7 +6038,22 @@ class _BairrosRuasPageState extends State<BairrosRuasPage> {
                 return Card(
                   child: ExpansionTile(
                     leading: const Icon(Icons.location_on_outlined),
-                    title: Text(bairro.nome),
+                    title: Row(
+  children: [
+    Expanded(child: Text(bairro.nome)),
+    PopupMenuButton<String>(
+      icon: const Icon(Icons.more_vert),
+      onSelected: (acao) {
+        if (acao == 'editar') _editarBairro(bairro);
+        if (acao == 'excluir') _excluirBairro(bairro);
+      },
+      itemBuilder: (context) => const [
+        PopupMenuItem(value: 'editar', child: Text('Editar')),
+        PopupMenuItem(value: 'excluir', child: Text('Excluir')),
+      ],
+    ),
+  ],
+),
                     subtitle: Text('${bairro.ruas.length} rua(s)'),
                     children: [
                       ...bairro.ruas.map((rua) => ListTile(

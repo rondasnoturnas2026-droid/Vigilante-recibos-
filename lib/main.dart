@@ -6041,12 +6041,21 @@ class _BairrosRuasPageState extends State<BairrosRuasPage> {
                     title: Text(bairro.nome),
                     subtitle: Text('${bairro.ruas.length} rua(s)'),
                     children: [
-                      ...bairro.ruas.map(
-                        (rua) => ListTile(
-                          leading: const Icon(Icons.signpost_outlined),
-                          title: Text(rua),
-                        ),
-                      ),
+                      ...bairro.ruas.map((rua) => ListTile(
+  leading: const Icon(Icons.signpost_outlined),
+  title: Text(rua),
+  trailing: PopupMenuButton<String>(
+    icon: const Icon(Icons.more_vert),
+    onSelected: (acao) {
+      if (acao == 'editar') _editarRua(bairro, rua);
+      if (acao == 'excluir') _excluirRua(bairro, rua);
+    },
+    itemBuilder: (context) => const [
+      PopupMenuItem(value: 'editar', child: Text('Editar')),
+      PopupMenuItem(value: 'excluir', child: Text('Excluir')),
+    ],
+  ),
+)),
                       ListTile(
                         leading: const Icon(Icons.add_road),
                         title: const Text('Adicionar rua'),

@@ -3853,11 +3853,14 @@ for (final linha in linhas) {
           }
 
 
-          for (final campo in camposDaLinha.entries) {
-                        final bairroDoCliente = bairrosPorCliente[y];
+                    final bairroDoCliente = bairrosPorCliente[y];
           if (bairroDoCliente != null && bairroDoCliente.isNotEmpty) {
             clienteAtual['bairro'] = bairroDoCliente.join(' ').trim();
           }
+
+          for (final campo in camposDaLinha.entries) {
+            if (campo.key == 'bairro') continue;
+
             final texto = campo.value.join(' ').trim();
             if (texto.isEmpty) continue;
 

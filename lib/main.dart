@@ -3822,9 +3822,7 @@ for (final linha in linhas) {
           final colunasOrdenadasPorX = colunas.entries.toList()
             ..sort((a, b) => a.value.compareTo(b.value));
 
-          for (final fragmento in fragmentos) {
-            // Classifica pela posição inicial do texto, sem deixar
-            // a largura de um bairro comprido puxá-lo para outra coluna.
+                    for (final fragmento in fragmentos) {
             final inicioTexto = fragmento.bounds.left;
             String? colunaEscolhida;
             double menorDistancia = double.infinity;
@@ -3840,9 +3838,41 @@ for (final linha in linhas) {
 
             if (colunaEscolhida == null) continue;
 
+            final textoFragmento = fragmento.text.trim();
+            final ehNumero = RegExp(r'^\d+$').hasMatch(textoFragmento);
+
+            final indiceEndereco = colunasOrdenadasPorX.indexWhere(
+              (coluna) => coluna.key == 'endereco',
+            );
+            final indiceDia = colunasOrdenadasPorX.indexWhere(
+              (coluna) => coluna.key == 'dia',
+            );
+
+            if (ehNumero &&
+                (colunaEscolhida == 'endereco' ||
+                    colunaEscolhida == 'dia') &&
+                indiceEndereco >= 0 &&
+                indiceDia == indiceEndereco + 1) {
+              final xEndereco =
+                  colunasOrdenadasPorX[indiceEndereco].value;
+              final xDia = colunasOrdenadasPorX[indiceDia].value;
+              final limiteEnderecoDia = (xEndereco + xDia) / 2;
+              final esquerda = fragmento.bounds.left;
+              final direita = fragmento.bounds.right;
+
+              if (esquerda < limiteEnderecoDia &&
+                  direita > limiteEnderecoDia) {
+                final larguraEndereco = limiteEnderecoDia - esquerda;
+                final larguraDia = direita - limiteEnderecoDia;
+
+                colunaEscolhida =
+                    larguraDia > larguraEndereco ? 'dia' : 'endereco';
+              }
+            }
+
             camposDaLinha
                 .putIfAbsent(colunaEscolhida, () => <String>[])
-                .add(fragmento.text.trim());
+                .add(textoFragmento);
           }
 
                                        final nomeNaLinha =

@@ -1125,11 +1125,26 @@ escrever(
         '${dia.toString().padLeft(2, '0')}/'
         '${mesDaMensalidade.toString().padLeft(2, '0')}/$ano';
 
-    pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
-      chavePix: chavePix,
-      nomeVigilante: widget.store.vigilanteNomeFantasia,
-      valor: valorParaMensagem,
-    );
+    final tipoChavePix = widget.store.vigilanteTipoChavePix;
+var chavePixParaCodigo = chavePix;
+
+if (tipoChavePix == 'Telefone') {
+  final numeros = chavePix.replaceAll(RegExp(r'\D'), '');
+
+  if ((numeros.length == 12 || numeros.length == 13) &&
+      numeros.startsWith('55')) {
+    chavePixParaCodigo = '+$numeros';
+  } else if (numeros.length == 10 || numeros.length == 11) {
+    chavePixParaCodigo = '+55$numeros';
+  }
+}
+
+pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
+  chavePix: chavePixParaCodigo,
+  tipoChavePix: tipoChavePix,
+  nomeVigilante: widget.store.vigilanteNomeFantasia,
+  valor: valorParaMensagem,
+);
 
     mensagem = modeloCobranca
         .replaceAll('{nome do cliente}', nome)

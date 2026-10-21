@@ -424,65 +424,81 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
 
   await showDialog<void>(
     context: context,
-    builder: (dialogContext) => AlertDialog(
-      scrollable: true,
-      title: const Text('Pagamento Pix'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Cliente: ${mensalidade['nome'] ?? 'Cliente'}'),
-          const SizedBox(height: 8),
-          const Text('QR Code Pix:'),
-          const SizedBox(height: 8),
-          QrImageView(
-            data: pixCopiaECola,
-            version: QrVersions.auto,
-            size: 200,
-            backgroundColor: Colors.white,
-          ),
-          const SizedBox(height: 8),
-          const Text('Chave Pix:'),
-          SelectableText(chavePix),
-          const SizedBox(height: 8),
-          Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
-        ],
-      ),
-      actionsOverflowDirection: VerticalDirection.down,
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: const Text('Fechar'),
-        ),
-        FilledButton.icon(
-          onPressed: () async {
-            await Clipboard.setData(ClipboardData(text: chavePix));
-            if (!dialogContext.mounted) return;
-            Navigator.pop(dialogContext);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Chave Pix copiada.')),
-            );
-          },
-          icon: const Icon(Icons.copy),
-          label: const Text('Copiar chave'),
-        ),
-        FilledButton.icon(
-          onPressed: () async {
-            await Clipboard.setData(
-              ClipboardData(text: pixCopiaECola),
-            );
-            if (!dialogContext.mounted) return;
-            Navigator.pop(dialogContext);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Pix copia e cola copiado.'),
+    builder: (dialogContext) => Dialog(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 360),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Pagamento Pix',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            );
-          },
-          icon: const Icon(Icons.copy),
-          label: const Text('Copiar código Pix'),
+              const SizedBox(height: 12),
+              Text('Cliente: ${mensalidade['nome'] ?? 'Cliente'}'),
+              const SizedBox(height: 12),
+              const Text('QR Code Pix:'),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: 220,
+                height: 220,
+                child: QrImageView(
+                  data: pixCopiaECola,
+                  version: QrVersions.auto,
+                  size: 220,
+                  backgroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text('Chave Pix:'),
+              SelectableText(chavePix),
+              const SizedBox(height: 8),
+              Text(
+                'Valor: R\$ ${mensalidade['valor'] ?? '0,00'}',
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext),
+                    child: const Text('Fechar'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: chavePix),
+                      );
+                      if (!dialogContext.mounted) return;
+                      Navigator.pop(dialogContext);
+                    },
+                    icon: const Icon(Icons.copy),
+                    label: const Text('Copiar chave'),
+                  ),
+                  FilledButton.icon(
+                    onPressed: () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: pixCopiaECola),
+                      );
+                      if (!dialogContext.mounted) return;
+                      Navigator.pop(dialogContext);
+                    },
+                    icon: const Icon(Icons.copy),
+                    label: const Text('Copiar código Pix'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ],
+      ),
     ),
   );
 }

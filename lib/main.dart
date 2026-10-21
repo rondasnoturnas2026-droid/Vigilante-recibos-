@@ -1910,13 +1910,26 @@ final valor = mesCartao == 12 &&
                     return Card(
                       child: ExpansionTile(
                         key: PageStorageKey<int>(index),
-                        title: Text(
-                          nome,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        title: Row(
+  children: [
+    Expanded(
+      child: Text(
+        nome,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+    Text(
+      'R\$ ' + valor,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  ],
+),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,

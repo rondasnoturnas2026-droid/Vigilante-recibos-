@@ -7686,6 +7686,7 @@ if (mostrarQrTermico &&
       styles: PosStyles(align: PosAlign.center, bold: true),
     ),
     ...geradorQr.qrcode(pixCopiaECola),
+          ...geradorQr.feed(4),
     
   ];
 

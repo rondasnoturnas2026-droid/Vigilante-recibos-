@@ -7629,15 +7629,12 @@ try {
 final recibo = linhasRecibo.join('\n');
           final perfilRecibo = await CapabilityProfile.load();
 final geradorRecibo = Generator(PaperSize.mm58, perfilRecibo);
-await PrintBluetoothThermal.writeBytes(
-  geradorRecibo.setGlobalCodeTable('CP1252'),
-);
-          final resultado = await PrintBluetoothThermal.writeString(
-  printText: PrintTextSize(
-    size: 1,
-    text: recibo,
-  ),
-);
+final bytesRecibo = <int>[
+  ...geradorRecibo.setGlobalCodeTable('CP1252'),
+  ...geradorRecibo.text(recibo),
+];
+final resultado =
+    await PrintBluetoothThermal.writeBytes(bytesRecibo);
 
 final chavePixOriginal =
     prefsRecibo.getString('vigilanteChavePix') ?? '';

@@ -1919,7 +1919,15 @@ final valor = mesCartao == 12 &&
 
                     return Card(
                       child: ExpansionTile(
-                        key: PageStorageKey<int>(index),
+                        key: ValueKey<String>(
+  '${identityHashCode(mensalidade)}-$cartaoExpandido',
+),
+initiallyExpanded: cartaoExpandido,
+onExpansionChanged: (expandido) {
+  setState(() {
+    _mensalidadeAberta = expandido ? mensalidade : null;
+  });
+},
                         title: Row(
   children: [
     Expanded(

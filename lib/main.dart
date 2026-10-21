@@ -7626,7 +7626,26 @@ try {
 } catch (_) {
   // Se o logo falhar, continua para imprimir o texto do recibo.
 }
-final recibo = linhasRecibo.join('\n');
+const Map<String, String> mapaAcentos = {
+  'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a',
+  'Á': 'A', 'À': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A',
+  'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
+  'É': 'E', 'È': 'E', 'Ê': 'E', 'Ë': 'E',
+  'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
+  'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ï': 'I',
+  'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
+  'Ó': 'O', 'Ò': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O',
+  'ú': 'u', 'ù': 'u', 'û': 'u', 'ü': 'u',
+  'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ü': 'U',
+  'ç': 'c', 'Ç': 'C',
+};
+
+final textoRecibo = linhasRecibo.join('\n');
+final recibo = textoRecibo
+    .split('')
+    .map((caractere) => mapaAcentos[caractere] ?? caractere)
+    .join()
+    .replaceAll(RegExp(r'[\u0300-\u036f]'), '');
           final perfilRecibo = await CapabilityProfile.load();
 final geradorRecibo = Generator(PaperSize.mm58, perfilRecibo);
 final bytesRecibo = <int>[

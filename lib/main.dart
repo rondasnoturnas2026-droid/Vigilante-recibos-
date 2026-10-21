@@ -1028,12 +1028,13 @@ escrever(
 
   if (!mounted || tipoAviso == null) return;
 
-  final telefone = (mensalidade['telefone'] ??
-          mensalidade['contato'] ??
-          cliente['telefone'] ??
-          '')
-      .toString()
-      .replaceAll(RegExp(r'\D'), '');
+    final telefone = [
+    mensalidade['telefone'],
+    mensalidade['contato'],
+    cliente['telefone'],
+  ]
+      .map((valor) => (valor ?? '').toString().replaceAll(RegExp(r'\D'), ''))
+      .firstWhere((valor) => valor.isNotEmpty, orElse: () => '');
 
   if (tipoAviso == 'texto' && telefone.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(

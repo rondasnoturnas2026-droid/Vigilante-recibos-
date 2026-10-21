@@ -1367,6 +1367,7 @@ const espacoAntesQr = 64.0;
         text: widget.store.vigilanteChavePix.trim(),
       ),
     );
+      } catch (e) {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1374,8 +1375,8 @@ const espacoAntesQr = 64.0;
         content: Text('Não foi possível preparar a cobrança com QR.'),
       ),
     );
- }
-}
+  }
+    }
  Future<void> _criarMensalidadesOutroMes() async {
   final clientes = widget.store.clientes.asMap().entries.where(
     (item) =>

@@ -1988,20 +1988,7 @@ const SizedBox(height: 2),
   ),
                           ],
                         ),
-                        trailing: Row(
-  mainAxisSize: MainAxisSize.min,
-  children: [
-    Text(
-      'R\$ ' + valor,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    const SizedBox(width: 8),
-    const Icon(Icons.expand_more),
-  ],
-),
+                                                trailing: const Icon(Icons.expand_more),
 children: [
   if (abaAtual == 2)
     Padding(

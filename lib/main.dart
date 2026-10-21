@@ -1361,6 +1361,12 @@ const espacoAntesQr = 64.0;
         ],
       ),
     );
+          await SharePlus.instance.share(
+      ShareParams(
+        title: 'Chave Pix',
+        text: widget.store.vigilanteChavePix.trim(),
+      ),
+    );
   } catch (_) {
     if (!mounted) return;
 

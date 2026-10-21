@@ -5680,14 +5680,14 @@ Future<void> _abrirTema() async {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Tema do aplicativo'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.brightness_auto),
-              title: const Text('Automático'),
-              subtitle: const Text('Usar o tema do celular'),
+        final bytesQr = <int>[
+  ...geradorQr.text(
+    'PAGUE COM PIX',
+    styles: PosStyles(align: PosAlign.center, bold: true),
+  ),
+  ...geradorQr.qrcode(pixCopiaECola),
+  ...geradorQr.feed(4),
+];
               trailing: temaAtual == ThemeMode.system
                   ? const Icon(Icons.check_circle)
                   : null,

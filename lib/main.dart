@@ -406,18 +406,24 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
 
   if (chavePix.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cadastre a chave Pix nas configurações.')),
+      const SnackBar(
+        content: Text('Cadastre a chave Pix nas configurações.'),
+      ),
     );
     return;
   }
-final pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
-  chavePix: chavePix,
-  nomeVigilante: widget.store.vigilanteNomeFantasia,
-  valor: (mensalidade['valor'] ?? '0,00').toString(),
-);
+
+  final pixCopiaECola =
+      ImpressoraBluetoothService._gerarPixCopiaECola(
+    chavePix: chavePix,
+    nomeVigilante: widget.store.vigilanteNomeFantasia,
+    valor: (mensalidade['valor'] ?? '0,00').toString(),
+  );
+
   await showDialog<void>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      scrollable: true,
       title: const Text('Pagamento Pix'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -426,20 +432,21 @@ final pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
           Text('Cliente: ${mensalidade['nome'] ?? 'Cliente'}'),
           const SizedBox(height: 8),
           const Text('QR Code Pix:'),
-const SizedBox(height: 8),
-QrImageView(
-  data: pixCopiaECola,
-  version: QrVersions.auto,
-  size: 220,
-  backgroundColor: Colors.white,
-),
-const SizedBox(height: 8),
-const Text('Chave Pix:'),
-SelectableText(chavePix),
-const SizedBox(height: 8),
-Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
+          const SizedBox(height: 8),
+          QrImageView(
+            data: pixCopiaECola,
+            version: QrVersions.auto,
+            size: 200,
+            backgroundColor: Colors.white,
+          ),
+          const SizedBox(height: 8),
+          const Text('Chave Pix:'),
+          SelectableText(chavePix),
+          const SizedBox(height: 8),
+          Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
         ],
       ),
+      actionsOverflowDirection: VerticalDirection.down,
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(dialogContext),
@@ -457,7 +464,7 @@ Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
           icon: const Icon(Icons.copy),
           label: const Text('Copiar chave'),
         ),
-                  FilledButton.icon(
+        FilledButton.icon(
           onPressed: () async {
             await Clipboard.setData(
               ClipboardData(text: pixCopiaECola),
@@ -476,7 +483,7 @@ Text('Valor: R\$ ${(mensalidade['valor'] ?? '0,00')}'),
       ],
     ),
   );
-    }
+}
     Future<void> _compartilharReciboWhatsApp(
   Map<String, dynamic> mensalidade,
 ) async {

@@ -3873,8 +3873,8 @@ for (final linha in linhas) {
             if (texto.isEmpty) continue;
 
             final anterior = clienteAtual[campo.key] ?? '';
-            clienteAtual[campo.key] =
-                anterior.isEmpty ? texto : '$anterior $texto';
+clienteAtual[campo.key] =
+    anterior.isEmpty ? texto : '$anterior $texto';
           }
         }
       }

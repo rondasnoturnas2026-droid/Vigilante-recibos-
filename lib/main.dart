@@ -1914,6 +1914,7 @@ final valor = mesCartao == 12 &&
     : valorOriginal;
                     final nome =
                         (mensalidade['nome'] ?? 'Cliente').toString();
+      final cartaoExpandido = identical(_mensalidadeAberta, mensalidade);
 
                     return Card(
                       child: ExpansionTile(

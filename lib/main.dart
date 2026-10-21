@@ -1351,17 +1351,22 @@ const espacoAntesQr = 64.0;
       flush: true,
     );
 
-        await SharePlus.instance.share(
+            await SharePlus.instance.share(
       ShareParams(
         title: 'Cobrança da mensalidade',
-        text: 'Chave Pix: ${widget.store.vigilanteChavePix.trim()}\n\n'
-            'Pix copia e cola:\n$pixCopiaECola',
+        text: pixCopiaECola,
         files: [
           XFile(arquivo.path, mimeType: 'image/png'),
         ],
       ),
     );
-  } catch (_) {
+
+    await SharePlus.instance.share(
+      ShareParams(
+        title: 'Chave Pix',
+        text: widget.store.vigilanteChavePix.trim(),
+      ),
+    );
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(

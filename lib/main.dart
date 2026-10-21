@@ -233,7 +233,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     bool _decimoTerceiroDobrado = false;
       Map<String, String> _dadosClienteParaRecibo(
     Map<String, dynamic> mensalidade,
-          final cartaoExpandido = identical(_mensalidadeAberta, mensalidade);
+          
   ) {
     String normalizar(Object? valor) =>
         (valor ?? '').toString().trim().toLowerCase();

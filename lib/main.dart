@@ -1965,7 +1965,9 @@ final valor = mesCartao == 12 &&
                         (mensalidade['nome'] ?? 'Cliente').toString();
       final cartaoExpandido = identical(_mensalidadeAberta, mensalidade);
 
-                    return Card(
+                    return GestureDetector(
+  onLongPress: () => _alternarSelecaoMensalidade(mensalidade),
+  child: Card(
   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(12),

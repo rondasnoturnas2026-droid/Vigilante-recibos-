@@ -181,10 +181,13 @@ class _TelaPrincipalState extends State<TelaPrincipal>
       bottomNavigationBar: NavigationBar(
         selectedIndex: paginaAtual,
         onDestinationSelected: (index) {
-          setState(() {
-            paginaAtual = index;
-          });
-        },
+  setState(() {
+    paginaAtual = index;
+  });
+  SharedPreferences.getInstance().then((prefs) {
+    prefs.setInt('abaSelecionada', index);
+  });
+},
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),

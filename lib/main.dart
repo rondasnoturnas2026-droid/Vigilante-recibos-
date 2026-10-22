@@ -243,7 +243,7 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
       _mensalidadesSelecionadas.add(mensalidade);
     }
   });
-          }
+}
           
   ) {
     String normalizar(Object? valor) =>

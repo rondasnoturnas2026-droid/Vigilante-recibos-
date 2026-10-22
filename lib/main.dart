@@ -2027,31 +2027,44 @@ final valor = mesCartao == 12 &&
           style: const TextStyle(fontSize: 12),
         ),
         Row(
-          children: [
-            Expanded(
-              child: Text(
-                'Pagamento: '
-                '${(mensalidade['formaPagamento'] ?? '').toString()}',
-                style: const TextStyle(fontSize: 12),
-              ),
-            ),
-            if (abaAtual == 0)
-              IconButton(
-                tooltip: 'Avisar',
-                onPressed: () => _avisarCliente(mensalidade),
-                icon: const Icon(
-                  Icons.notifications_active_outlined,
-                  size: 18,
-                ),
-                padding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-                constraints: const BoxConstraints.tightFor(
-                  width: 30,
-                  height: 28,
-                ),
-              ),
-          ],
+  children: [
+    Tooltip(
+      message: (mensalidade['formaPagamento'] ?? '').toString(),
+      child: Icon(
+        (mensalidade['formaPagamento'] ?? '')
+                .toString()
+                .toLowerCase()
+                .contains('pix')
+            ? Icons.pix
+            : (mensalidade['formaPagamento'] ?? '')
+                    .toString()
+                    .toLowerCase()
+                    .contains('dinheir')
+                ? Icons.money
+                : Icons.credit_card,
+        color: const Color(0xFFD6AE32),
+        size: 18,
+      ),
+    ),
+    const SizedBox(width: 8),
+    if (abaAtual == 0)
+      IconButton(
+        tooltip: 'Avisar',
+        onPressed: () => _avisarCliente(mensalidade),
+        icon: const Icon(
+          Icons.notifications_active_outlined,
+          size: 18,
+          color: Color(0xFF242424),
         ),
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
+        constraints: const BoxConstraints.tightFor(
+          width: 30,
+          height: 28,
+        ),
+      ),
+  ],
+),
         if ((mensalidade['retorno'] ?? '').toString().isNotEmpty)
           Text(
             'Retorno: ${mensalidade['retorno']}',

@@ -184,9 +184,6 @@ class _TelaPrincipalState extends State<TelaPrincipal>
   setState(() {
     paginaAtual = index;
   });
-  SharedPreferences.getInstance().then((prefs) {
-    prefs.setInt('abaSelecionada', index);
-  });
 },
         destinations: const [
           NavigationDestination(

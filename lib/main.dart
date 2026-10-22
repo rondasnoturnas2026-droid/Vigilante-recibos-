@@ -1983,10 +1983,15 @@ final valor = mesCartao == 12 &&
     initiallyExpanded: cartaoExpandido,
     tilePadding: const EdgeInsets.symmetric(horizontal: 10),
     onExpansionChanged: (expandido) {
-      setState(() {
-        _mensalidadeAberta = expandido ? mensalidade : null;
-      });
-    },
+  if (_mensalidadesSelecionadas.isNotEmpty) {
+    _alternarSelecaoMensalidade(mensalidade);
+    return;
+  }
+
+  setState(() {
+    _mensalidadeAberta = expandido ? mensalidade : null;
+  });
+},
     leading: Container(
       width: 36,
       height: 36,

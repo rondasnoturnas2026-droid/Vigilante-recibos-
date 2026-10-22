@@ -224,6 +224,7 @@ class TelaMensalidades extends StatefulWidget {
 class _TelaMensalidadesState extends State<TelaMensalidades> {
     int abaAtual = 0;
     Map<String, dynamic>? _mensalidadeAberta;
+    final Set<Map<String, dynamic>> _mensalidadesSelecionadas = {};
   String bairroFiltro = 'Todos os bairros';
   String ruaFiltro = 'Todas as ruas';
   String diaFiltro = 'Todos os dias';

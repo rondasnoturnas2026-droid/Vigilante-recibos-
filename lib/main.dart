@@ -261,6 +261,15 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
       'documento': (cliente['cpf'] ?? '').toString(),
     };
       }
+    void _alternarSelecaoMensalidade(Map<String, dynamic> mensalidade) {
+  setState(() {
+    if (_mensalidadesSelecionadas.contains(mensalidade)) {
+      _mensalidadesSelecionadas.remove(mensalidade);
+    } else {
+      _mensalidadesSelecionadas.add(mensalidade);
+    }
+  });
+    }
 
   List<String> _valoresUnicos(String chave) {
     final valores = widget.store.mensalidades

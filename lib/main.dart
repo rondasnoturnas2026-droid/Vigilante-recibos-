@@ -1542,7 +1542,11 @@ const espacoAntesQr = 64.0;
     return Scaffold(
       
               appBar: AppBar(
-        title: const Text('Mensalidades'),
+        title: Text(
+  _mensalidadesSelecionadas.isNotEmpty
+      ? '${_mensalidadesSelecionadas.length} selecionada(s)'
+      : 'Mensalidades',
+),
         
         actions: [
                       FutureBuilder<bool>(

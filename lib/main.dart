@@ -2031,30 +2031,30 @@ final valor = mesCartao == 12 &&
     Tooltip(
       message: (mensalidade['formaPagamento'] ?? '').toString(),
       child: Icon(
-        (mensalidade['formaPagamento'] ?? '')
-                .toString()
-                .toLowerCase()
-                .contains('pix')
-            ? Icons.pix
-            : (mensalidade['formaPagamento'] ?? '')
-                    .toString()
-                    .toLowerCase()
-                    .contains('dinheir')
-                ? Icons.money
-                : Icons.credit_card,
-        color: (mensalidade['formaPagamento'] ?? '')
-        .toString()
-        .toLowerCase()
-        .contains('pix')
-    ? const Color(0xFF008F5A)
-    : (mensalidade['formaPagamento'] ?? '')
-            .toString()
-            .toLowerCase()
-            .contains('dinheir')
-        ? const Color(0xFFD6AE32)
-        : const Color(0xFF263238),
-        size: 18,
-      ),
+  (mensalidade['formaPagamento'] ?? '')
+          .toString()
+          .toLowerCase()
+          .contains('pix')
+      ? Icons.pix
+      : (mensalidade['formaPagamento'] ?? '')
+              .toString()
+              .toLowerCase()
+              .contains('dinheir')
+          ? Icons.money
+          : Icons.credit_card,
+  color: (mensalidade['formaPagamento'] ?? '')
+          .toString()
+          .toLowerCase()
+          .contains('pix')
+      ? const Color(0xFF008F5A)
+      : (mensalidade['formaPagamento'] ?? '')
+              .toString()
+              .toLowerCase()
+              .contains('dinheir')
+          ? const Color(0xFFD6AE32)
+          : Theme.of(context).colorScheme.onSurface,
+  size: 22,
+),
     ),
     const SizedBox(width: 8),
     if (abaAtual == 0)

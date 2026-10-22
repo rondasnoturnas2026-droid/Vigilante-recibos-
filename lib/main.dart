@@ -2061,11 +2061,11 @@ final valor = mesCartao == 12 &&
       IconButton(
         tooltip: 'Avisar',
         onPressed: () => _avisarCliente(mensalidade),
-        icon: const Icon(
-          Icons.notifications_active_outlined,
-          size: 18,
-          color: Color(0xFF242424),
-        ),
+        icon: Icon(
+  Icons.notifications_active_outlined,
+  size: 18,
+  color: Theme.of(context).colorScheme.onSurface,
+),
         padding: EdgeInsets.zero,
         visualDensity: VisualDensity.compact,
         constraints: const BoxConstraints.tightFor(

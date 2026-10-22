@@ -2025,6 +2025,13 @@ final valor = mesCartao == 12 &&
         ),
       ),
       child: Text(
+        child: _mensalidadesSelecionadas.contains(mensalidade)
+    ? const Icon(
+        Icons.check,
+        size: 20,
+        color: Color(0xFF242424),
+      )
+    : Text(
         (mensalidade['dia'] ?? '').toString().padLeft(2, '0'),
         style: const TextStyle(
           fontSize: 16,
@@ -2032,9 +2039,6 @@ final valor = mesCartao == 12 &&
           color: Color(0xFF242424),
         ),
       ),
-    ),
-    title: Row(
-      children: [
         Expanded(
           child: Text(
             nome,

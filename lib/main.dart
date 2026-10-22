@@ -1956,96 +1956,111 @@ final valor = mesCartao == 12 &&
       final cartaoExpandido = identical(_mensalidadeAberta, mensalidade);
 
                     return Card(
-                      child: ExpansionTile(
-                        key: ValueKey<String>(
-  '${identityHashCode(mensalidade)}-$cartaoExpandido',
-),
-initiallyExpanded: cartaoExpandido,
-onExpansionChanged: (expandido) {
-  setState(() {
-    _mensalidadeAberta = expandido ? mensalidade : null;
-  });
-},
-                        title: Row(
-  children: [
-    Expanded(
+  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12),
+    side: const BorderSide(
+      color: Color(0xFFD6AE32),
+      width: 0.7,
+    ),
+  ),
+  child: ExpansionTile(
+    key: ValueKey<String>(
+      '${identityHashCode(mensalidade)}-$cartaoExpandido',
+    ),
+    initiallyExpanded: cartaoExpandido,
+    tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+    onExpansionChanged: (expandido) {
+      setState(() {
+        _mensalidadeAberta = expandido ? mensalidade : null;
+      });
+    },
+    leading: Container(
+      width: 36,
+      height: 36,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF4D6),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: const Color(0xFFD6AE32),
+        ),
+      ),
       child: Text(
-        nome,
+        (mensalidade['dia'] ?? '').toString().padLeft(2, '0'),
         style: const TextStyle(
-          fontSize: 20,
+          fontSize: 16,
           fontWeight: FontWeight.bold,
+          color: Color(0xFF242424),
         ),
       ),
     ),
-    Text(
-      'R\$ ' + valor,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
+    title: Row(
+      children: [
+        Expanded(
+          child: Text(
+            nome,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Text(
+          'R\$ $valor',
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     ),
-  ],
-),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                              Text(
-  'Mês/Ano: ${(mensalidade['mes'] ?? '').toString().padLeft(2, '0')}/${mensalidade['ano'] ?? ''}',
-  style: const TextStyle(
-    fontSize: 13,
-    fontWeight: FontWeight.bold,
-  ),
-),
-const SizedBox(height: 2),
-                            Text(
-                              'Rua: ' +
-                                  (mensalidade['rua'] ?? '').toString() +
-                                  ', Nº ' +
-                                  (mensalidade['numero'] ?? '').toString(),
-                              style: const TextStyle(fontSize: 17),
-                            ),
-                            const SizedBox(height: 2),
-                            Row(
-                              children: [
-                                Text(
-                                  (mensalidade['dia'] ?? '')
-                                      .toString()
-                                      .padLeft(2, '0'),
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Pagamento: ' +
-                                        (mensalidade['formaPagamento'] ?? '')
-                                            .toString(),
-                                    style: const TextStyle(fontSize: 17),
-                                  ),
-                                ),
-                              ],
-                            ),
-                              if ((mensalidade['retorno'] ?? '').toString().isNotEmpty)
-  Text(
-    'Retorno: ${mensalidade['retorno']}',
-    style: const TextStyle(fontSize: 15),
-  ),
-                              if (abaAtual == 0)
-  Align(
-    alignment: Alignment.centerLeft,
-    child: TextButton.icon(
-      onPressed: () => _avisarCliente(mensalidade),
-      icon: const Icon(Icons.notifications_active_outlined),
-      label: const Text('Avisar'),
+    subtitle: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Rua: ${(mensalidade['rua'] ?? '').toString()}, Nº '
+          '${(mensalidade['numero'] ?? '').toString()}',
+          style: const TextStyle(fontSize: 12),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Pagamento: '
+                '${(mensalidade['formaPagamento'] ?? '').toString()}',
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+            if (abaAtual == 0)
+              IconButton(
+                tooltip: 'Avisar',
+                onPressed: () => _avisarCliente(mensalidade),
+                icon: const Icon(
+                  Icons.notifications_active_outlined,
+                  size: 18,
+                ),
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+                constraints: const BoxConstraints.tightFor(
+                  width: 30,
+                  height: 28,
+                ),
+              ),
+          ],
+        ),
+        if ((mensalidade['retorno'] ?? '').toString().isNotEmpty)
+          Text(
+            'Retorno: ${mensalidade['retorno']}',
+            style: const TextStyle(fontSize: 11),
+          ),
+      ],
     ),
-  ),
-                          ],
-                        ),
-                                                trailing: const Icon(Icons.expand_more),
-children: [
+    trailing: const Icon(Icons.expand_more),
+    children: [
   if (abaAtual == 2)
     Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

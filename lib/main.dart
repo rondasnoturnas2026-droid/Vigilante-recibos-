@@ -1549,46 +1549,63 @@ const espacoAntesQr = 64.0;
 ),
         
         actions: [
-                      FutureBuilder<bool>(
-            future: ImpressoraBluetoothService.estaConectada(),
-            builder: (context, snapshot) {
-              final conectada = snapshot.data ?? false;
-              return Tooltip(
-                message: conectada
-                    ? 'Impressora pronta'
-                    : 'Impressora desconectada',
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Icon(
-                    Icons.print_rounded,
-size: 18,
-                    color: conectada ? Colors.green : Colors.red,
-                  ),
-                ),
-              );
-            },
-          ),
-            IconButton(
-  tooltip: 'Criar em outro mês',
-  icon: const Icon(Icons.calendar_month),
-  onPressed: _criarMensalidadesOutroMes,
-),
-          IconButton(
-            style: IconButton.styleFrom(
-              shape: const CircleBorder(),
-              backgroundColor: Colors.blue.shade100,
-              minimumSize: const Size(44, 44),
+  if (_mensalidadesSelecionadas.isNotEmpty) ...[
+    IconButton(
+      tooltip: 'Cancelar seleção',
+      icon: const Icon(Icons.close),
+      onPressed: () {
+        setState(() {
+          _mensalidadesSelecionadas.clear();
+        });
+      },
+    ),
+    IconButton(
+      tooltip: 'Excluir selecionadas',
+      icon: const Icon(Icons.delete_outline),
+      onPressed: _excluirMensalidadesSelecionadas,
+    ),
+  ] else ...[
+    FutureBuilder<bool>(
+      future: ImpressoraBluetoothService.estaConectada(),
+      builder: (context, snapshot) {
+        final conectada = snapshot.data ?? false;
+        return Tooltip(
+          message: conectada
+              ? 'Impressora pronta'
+              : 'Impressora desconectada',
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Icon(
+              Icons.print_rounded,
+              size: 18,
+              color: conectada ? Colors.green : Colors.red,
             ),
-            icon: Icon(buscaAberta ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() {
-                buscaAberta = !buscaAberta;
-                if (!buscaAberta) buscaMensalidade = '';
-              });
-            },
           ),
-          const SizedBox(width: 8),
-        ],
+        );
+      },
+    ),
+    IconButton(
+      tooltip: 'Criar em outro mês',
+      icon: const Icon(Icons.calendar_month),
+      onPressed: _criarMensalidadesOutroMes,
+    ),
+    IconButton(
+      style: IconButton.styleFrom(
+        shape: const CircleBorder(),
+        backgroundColor: Colors.blue.shade100,
+        minimumSize: const Size(44, 44),
+      ),
+      icon: Icon(buscaAberta ? Icons.close : Icons.search),
+      onPressed: () {
+        setState(() {
+          buscaAberta = !buscaAberta;
+          if (!buscaAberta) buscaMensalidade = '';
+        });
+      },
+    ),
+    const SizedBox(width: 8),
+  ],
+],
       ),
               body: Column(
                   children: [

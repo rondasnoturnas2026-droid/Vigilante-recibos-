@@ -3030,6 +3030,50 @@ ScaffoldMessenger.of(context).showSnackBar(
       ),
     );
       }
+                Future<void> _excluirMensalidadesSelecionadas() async {
+  final quantidade = _mensalidadesSelecionadas.length;
+  if (quantidade == 0) return;
+
+  final confirmado = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Excluir mensalidades?'),
+      content: Text(
+        'Deseja excluir as $quantidade mensalidades selecionadas?',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: const Text('Excluir'),
+        ),
+      ],
+    ),
+  );
+
+  if (confirmado != true) return;
+
+  widget.store.mensalidades.removeWhere(
+    (mensalidade) => _mensalidadesSelecionadas.contains(mensalidade),
+  );
+
+  await widget.store.salvarMensalidades();
+
+  if (!mounted) return;
+
+  setState(() {
+    _mensalidadesSelecionadas.clear();
+  });
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('$quantidade mensalidades excluídas.'),
+    ),
+  );
+                }
       Future<void> _marcarRetorno(
     Map<String, dynamic> mensalidade,
   ) async {

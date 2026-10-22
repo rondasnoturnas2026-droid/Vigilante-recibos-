@@ -235,6 +235,15 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
     bool _decimoTerceiroDobrado = false;
       Map<String, String> _dadosClienteParaRecibo(
     Map<String, dynamic> mensalidade,
+          void _alternarSelecaoMensalidade(Map<String, dynamic> mensalidade) {
+  setState(() {
+    if (_mensalidadesSelecionadas.contains(mensalidade)) {
+      _mensalidadesSelecionadas.remove(mensalidade);
+    } else {
+      _mensalidadesSelecionadas.add(mensalidade);
+    }
+  });
+          }
           
   ) {
     String normalizar(Object? valor) =>

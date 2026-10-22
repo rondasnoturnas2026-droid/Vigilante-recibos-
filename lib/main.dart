@@ -2043,16 +2043,16 @@ final valor = mesCartao == 12 &&
           ? Icons.money
           : Icons.credit_card,
   color: (mensalidade['formaPagamento'] ?? '')
-          .toString()
-          .toLowerCase()
-          .contains('pix')
-      ? const Color(0xFF008F5A)
-      : (mensalidade['formaPagamento'] ?? '')
-              .toString()
-              .toLowerCase()
-              .contains('dinheir')
-          ? const Color(0xFFD6AE32)
-          : Theme.of(context).colorScheme.onSurface,
+        .toString()
+        .toLowerCase()
+        .contains('pix')
+    ? const Color(0xFF2196F3)
+    : (mensalidade['formaPagamento'] ?? '')
+            .toString()
+            .toLowerCase()
+            .contains('dinheir')
+        ? const Color(0xFF4CAF50)
+        : const Color(0xFFFF9800),
   size: 22,
 ),
     ),

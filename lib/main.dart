@@ -2042,7 +2042,17 @@ final valor = mesCartao == 12 &&
                     .contains('dinheir')
                 ? Icons.money
                 : Icons.credit_card,
-        color: const Color(0xFFD6AE32),
+        color: (mensalidade['formaPagamento'] ?? '')
+        .toString()
+        .toLowerCase()
+        .contains('pix')
+    ? const Color(0xFF008F5A)
+    : (mensalidade['formaPagamento'] ?? '')
+            .toString()
+            .toLowerCase()
+            .contains('dinheir')
+        ? const Color(0xFFD6AE32)
+        : const Color(0xFF263238),
         size: 18,
       ),
     ),

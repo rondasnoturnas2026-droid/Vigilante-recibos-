@@ -45,7 +45,7 @@ jobs:
           if quantidade == 0:
               raise SystemExit("Não encontrei a configuração do Kotlin")
           arquivo.write_text(texto)
-          PY       
+           PY       
         
           cat > android/app/proguard-rules.pro <<'EOF'
           -dontwarn com.gemalto.jp2.**

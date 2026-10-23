@@ -27,12 +27,12 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Criar estrutura Android se não existir
+            - name: Criar estrutura Android se não existir
         run: |
           if [ ! -d "android" ]; then
             flutter create --platforms=android --org br.com.vigilanterecibos --project-name vigilante_recibos .
           fi
-      - name: Configurar regra R8 do leitor PDF
+          sed -i 's/version "2.1.0" apply false/version "2.3.0" apply false/' android/settings.gradle*
         run: |
           cat > android/app/proguard-rules.pro <<'EOF'
           -dontwarn com.gemalto.jp2.**

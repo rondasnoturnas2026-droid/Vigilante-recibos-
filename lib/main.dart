@@ -1177,8 +1177,40 @@ pixCopiaECola = ImpressoraBluetoothService._gerarPixCopiaECola(
           '\nTotal para pagamento: R\$ ${formatarValor(valorTotalCobranca)}';
     }
   } else {
+        const mesesAviso = [
+      '',
+      'janeiro',
+      'fevereiro',
+      'março',
+      'abril',
+      'maio',
+      'junho',
+      'julho',
+      'agosto',
+      'setembro',
+      'outubro',
+      'novembro',
+      'dezembro',
+    ];
+
+    final mesTextoAviso =
+        mesDaMensalidade >= 1 && mesDaMensalidade <= 12
+            ? '${mesesAviso[mesDaMensalidade]} de $ano'
+            : '$mesDaMensalidade/$ano';
+
+    final vencimentoAviso =
+        '${dia.toString().padLeft(2, '0')}/'
+        '${mesDaMensalidade.toString().padLeft(2, '0')}/$ano';
+
     mensagem = modeloTexto
         .replaceAll('{nome do cliente}', nome)
+        .replaceAll('{mês}', mesTextoAviso)
+        .replaceAll('{valor}', 'R\$ $valorParaMensagem')
+        .replaceAll('{data}', vencimentoAviso)
+        .replaceAll(
+          '{chave Pix}',
+          widget.store.vigilanteChavePix.trim(),
+        )
         .replaceAll('{escreva aqui o aviso}', '');
   }
 

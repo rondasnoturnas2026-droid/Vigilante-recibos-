@@ -39,7 +39,7 @@ jobs:
           texto = arquivo.read_text()
           texto, quantidade = re.subn(
               r'(id\s*\(?\s*["\']org\.jetbrains\.kotlin\.android["\']\s*\)?\s+version\s+["\'])[^"\']+(["\'])',
-              r'\g<1>2.0.0\2',
+              r'\g<1>2.2.0\2',
               texto
           )
           if quantidade == 0:

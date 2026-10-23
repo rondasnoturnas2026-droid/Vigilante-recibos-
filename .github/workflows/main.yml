@@ -32,7 +32,20 @@ jobs:
           if [ ! -d "android" ]; then
             flutter create --platforms=android --org br.com.vigilanterecibos --project-name vigilante_recibos .
           fi
-          
+            python3 - <<'PY'
+          from pathlib import Path
+          import re
+          arquivo = Path("android/settings.gradle")
+          texto = arquivo.read_text()
+          texto, quantidade = re.subn(
+              r'(id\s*\(?\s*["\']org\.jetbrains\.kotlin\.android["\']\s*\)?\s+version\s+["\'])[^"\']+(["\'])',
+              r'\g<1>2.0.0\2',
+              texto
+          )
+          if quantidade == 0:
+              raise SystemExit("Não encontrei a configuração do Kotlin")
+          arquivo.write_text(texto)
+          PY        
         
           cat > android/app/proguard-rules.pro <<'EOF'
           -dontwarn com.gemalto.jp2.**

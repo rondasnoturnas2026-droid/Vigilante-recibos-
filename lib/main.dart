@@ -1063,9 +1063,13 @@ escrever(
           'Pix copia e cola: {código Pix}\n'
           'O QR Code Pix acompanha o aviso.';
 
-  final modeloTexto = prefs.getString('aviso_texto_mensagem') ??
-      'Olá, {nome do cliente}. Este é um aviso importante: '
-          '{escreva aqui o aviso}.';
+    final modeloTexto = prefs.getString('aviso_texto_mensagem') ??
+      'Olá, {nome do cliente}! Tudo bem?\n\n'
+      'Passando para lembrar da mensalidade de {mês}, no valor de {valor}, '
+      'com vencimento em {data}.\n\n'
+      'Para facilitar o pagamento, segue a chave Pix:\n'
+      '{chave Pix}\n\n'
+      'Se tiver alguma dúvida, estou à disposição. Obrigado!';
 
     double valorComoNumero(Object? valorOriginal) {
     var texto = (valorOriginal ?? '0').toString().replaceAll('R\$', '').trim();

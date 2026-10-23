@@ -32,7 +32,7 @@ jobs:
           if [ ! -d "android" ]; then
             flutter create --platforms=android --org br.com.vigilanterecibos --project-name vigilante_recibos .
           fi
-            python3 - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           import re
           arquivo = Path("android/settings.gradle")

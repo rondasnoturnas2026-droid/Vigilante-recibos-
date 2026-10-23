@@ -23,6 +23,15 @@ final ValueNotifier<ThemeMode> temaApp =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: 'AIzaSyBrYerqTWP8wWX8AxMgSn_Zj0n_F8XRl9Y',
+      appId: '1:353606198189:android:8f0cd92253fc1273c5b724',
+      messagingSenderId: '353606198189',
+      projectId: 'vigilante-recibos',
+      storageBucket: 'vigilante-recibos.firebasestorage.app',
+    ),
+  );
     await SystemChrome.setEnabledSystemUIMode(
   SystemUiMode.immersiveSticky,
 );

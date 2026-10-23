@@ -2632,7 +2632,8 @@ final sucesso = await ImpressoraBluetoothService.imprimirRecibo(
   ),
                         ],
                       ),
-                    );
+                      ),
+);
                   },
                 );
               },

@@ -32,7 +32,7 @@ jobs:
           if [ ! -d "android" ]; then
             flutter create --platforms=android --org br.com.vigilanterecibos --project-name vigilante_recibos .
           fi
-          sed -i 's/version "2.1.0" apply false/version "2.3.0" apply false/' android/settings.gradle*
+          
         
           cat > android/app/proguard-rules.pro <<'EOF'
           -dontwarn com.gemalto.jp2.**

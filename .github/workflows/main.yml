@@ -35,7 +35,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import re
-          arquivo = Path("android/settings.gradle")
+          arquivo = Path("android/settings.gradle.kts")
           texto = arquivo.read_text()
           texto, quantidade = re.subn(
               r'(id\s*\(?\s*["\']org\.jetbrains\.kotlin\.android["\']\s*\)?\s+version\s+["\'])[^"\']+(["\'])',

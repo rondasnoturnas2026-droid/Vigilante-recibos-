@@ -27,7 +27,7 @@ jobs:
           channel: 'stable'
           cache: true
 
-            - name: Criar estrutura Android se não existir
+      - name: Criar estrutura Android se não existir
         run: |
           if [ ! -d "android" ]; then
             flutter create --platforms=android --org br.com.vigilanterecibos --project-name vigilante_recibos .

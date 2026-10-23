@@ -8828,9 +8828,21 @@ class _CobrancaPersonalizacaoTabState
       _cobrancaController.text = cobrancaSalva;
     }
 
-    if (avisoTextoSalvo != null && avisoTextoSalvo.isNotEmpty) {
-      _avisoTextoController.text = avisoTextoSalvo;
-    }
+        if (avisoTextoSalvo != null && avisoTextoSalvo.isNotEmpty) {
+      const avisoTextoPadraoAntigo =
+          'Olá, {nome do cliente}. Este é um aviso importante: '
+          '{escreva aqui o aviso}.';
+
+      if (avisoTextoSalvo == avisoTextoPadraoAntigo) {
+        _avisoTextoController.text = _mensagemTextoPadrao;
+        await prefs.setString(
+          'aviso_texto_mensagem',
+          _mensagemTextoPadrao,
+        );
+      } else {
+        _avisoTextoController.text = avisoTextoSalvo;
+      }
+        }
 
     setState(() => _carregando = false);
   }

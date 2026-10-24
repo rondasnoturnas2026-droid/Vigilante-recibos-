@@ -8612,6 +8612,7 @@ Future<void> carregarMensalidades() async {
   }).toList();
 
   await prefs.setString('bairros_ruas', jsonEncode(dados));
+        await _sincronizarNuvemSemFalharLocalmente();
   }
 
 Future<void> carregarBairrosERuas() async {

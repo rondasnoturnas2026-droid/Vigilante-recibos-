@@ -8549,6 +8549,7 @@ Future<void> carregarClientes() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('mensalidades', jsonEncode(mensalidades));
 }
+      await _sincronizarNuvemSemFalharLocalmente();
 
 Future<void> carregarMensalidades() async {
   final prefs = await SharedPreferences.getInstance();

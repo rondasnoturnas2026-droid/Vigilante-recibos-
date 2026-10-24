@@ -142,6 +142,48 @@ class AutenticacaoGate extends StatelessWidget {
     );
   }
 }
+class GateSessaoConta extends StatelessWidget {
+  const GateSessaoConta({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          if (FirebaseAuth.instance.currentUser == null &&
+              !exigirLoginDaConta.value) {
+            return const TelaPrincipal();
+          }
+
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError && exigirLoginDaConta.value) {
+          return const Scaffold(
+            body: Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'Não foi possível verificar a conta. Confira a conexão e tente novamente.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (snapshot.data != null || !exigirLoginDaConta.value) {
+          return const TelaPrincipal();
+        }
+
+        return const TelaAcesso();
+      },
+    );
+  }
+}
 
 class TelaAcesso extends StatefulWidget {
   const TelaAcesso({super.key});

@@ -8786,30 +8786,79 @@ class SincronizacaoFirestoreService {
   }
 
   static Future<void> aplicarDadosDaNuvem(
-    Map<String, dynamic> dados,
-  ) async {
-    final prefs = await SharedPreferences.getInstance();
+  Map<String, dynamic> dados,
+) async {
+  final prefs = await SharedPreferences.getInstance();
+  const chavesDeCadastro = [
+    'clientes',
+    'mensalidades',
+    'bairros_ruas',
+  ];
 
-    for (final entrada in dados.entries) {
-      if (!_sincronizarChave(entrada.key)) continue;
+  bool temRegistros(String chave, String? texto) {
+    if (texto == null || texto.trim().isEmpty) return false;
 
-      final valor = entrada.value;
-      if (valor is String) {
-        await prefs.setString(entrada.key, valor);
-      } else if (valor is bool) {
-        await prefs.setBool(entrada.key, valor);
-      } else if (valor is int) {
-        await prefs.setInt(entrada.key, valor);
-      } else if (valor is double) {
-        await prefs.setDouble(entrada.key, valor);
-      } else if (valor is List) {
-        await prefs.setStringList(
-          entrada.key,
-          List<String>.from(valor),
-        );
-      }
+    try {
+      final valor = jsonDecode(texto);
+      if (valor is List) return valor.isNotEmpty;
+      if (valor is Map) return valor.isNotEmpty;
+      return true;
+    } catch (_) {
+      return true;
     }
   }
+
+  for (final chave in chavesDeCadastro) {
+    if (temRegistros(chave, prefs.getString(chave))) {
+      throw StateError(
+        'Este aparelho já tem cadastros. Para proteger seus dados, '
+        'a restauração foi cancelada.',
+      );
+    }
+  }
+
+  bool jaTemValorLocal(String chave, Object? valor) {
+    if (valor == null) return false;
+
+    if (valor is String) {
+      if (chavesDeCadastro.contains(chave)) {
+        return temRegistros(chave, valor);
+      }
+      return valor.trim().isNotEmpty;
+    }
+
+    if (valor is List) return valor.isNotEmpty;
+
+    // Mantém configurações que já existam neste aparelho.
+    return true;
+  }
+
+  for (final entrada in dados.entries) {
+    final chave = entrada.key;
+    if (!_sincronizarChave(chave)) continue;
+
+    final valor = entrada.value;
+    final valorLocal = prefs.get(chave);
+
+    // Só preenche campos vazios; não substitui valores locais existentes.
+    if (jaTemValorLocal(chave, valorLocal)) continue;
+
+    if (valor is String) {
+      await prefs.setString(chave, valor);
+    } else if (valor is bool) {
+      await prefs.setBool(chave, valor);
+    } else if (valor is int) {
+      await prefs.setInt(chave, valor);
+    } else if (valor is double) {
+      await prefs.setDouble(chave, valor);
+    } else if (valor is List) {
+      await prefs.setStringList(
+        chave,
+        List<String>.from(valor),
+      );
+    }
+  }
+}
 }
 class PersonalizarReciboTermicoPage extends StatefulWidget {
   const PersonalizarReciboTermicoPage({super.key});

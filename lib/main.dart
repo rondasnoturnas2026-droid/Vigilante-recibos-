@@ -8627,6 +8627,34 @@ Future<void> adicionarRua(Bairro bairro, String nome) async {
     await salvarBairrosERuas();
   }
 }
+    Future<void> testarConexaoFirestore() async {
+  final usuario = FirebaseAuth.instance.currentUser;
+
+  if (usuario == null) {
+    throw StateError('Entre na sua conta antes de testar o Firestore.');
+  }
+
+  final documento = FirebaseFirestore.instance
+      .collection('usuarios')
+      .doc(usuario.uid)
+      .collection('dados')
+      .doc('_testeConexao');
+
+  final identificador =
+      DateTime.now().microsecondsSinceEpoch.toString();
+
+  await documento.set({'identificador': identificador});
+
+  try {
+    final resultado = await documento.get();
+
+    if (resultado.data()?['identificador'] != identificador) {
+      throw StateError('O Firestore não retornou o registro de teste.');
+    }
+  } finally {
+    await documento.delete();
+  }
+}
 
 }
 class PersonalizarReciboTermicoPage extends StatefulWidget {

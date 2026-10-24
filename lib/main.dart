@@ -282,6 +282,9 @@ class _TelaAcessoState extends State<TelaAcesso> {
     final titulo = _criandoConta ? 'Criar conta' : 'Entrar';
 
     return Scaffold(
+              appBar: AppBar(
+        title: const Text('Minha conta'),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

@@ -95,6 +95,318 @@ localizationsDelegates: const [
     );
   }
 }
+class AutenticacaoGate extends StatelessWidget {
+  const AutenticacaoGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return const Scaffold(
+            body: Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'Não foi possível verificar a conta. Confira a conexão e tente abrir o app novamente.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (snapshot.data != null) {
+          return const TelaPrincipal();
+        }
+
+        return const TelaAcesso();
+      },
+    );
+  }
+}
+
+class TelaAcesso extends StatefulWidget {
+  const TelaAcesso({super.key});
+
+  @override
+  State<TelaAcesso> createState() => _TelaAcessoState();
+}
+
+class _TelaAcessoState extends State<TelaAcesso> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _senhaController = TextEditingController();
+
+  bool _criandoConta = false;
+  bool _carregando = false;
+  bool _mostrarSenha = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
+  }
+
+  String? _validarEmail(String? valor) {
+    final email = (valor ?? '').trim();
+
+    if (email.isEmpty) return 'Informe seu e-mail.';
+
+    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
+      return 'Digite um e-mail válido.';
+    }
+
+    return null;
+  }
+
+  String? _validarSenha(String? valor) {
+    final senha = valor ?? '';
+
+    if (senha.isEmpty) return 'Informe sua senha.';
+
+    if (_criandoConta && senha.length < 6) {
+      return 'A senha precisa ter pelo menos 6 caracteres.';
+    }
+
+    return null;
+  }
+
+  String _mensagemErro(FirebaseAuthException erro) {
+    switch (erro.code) {
+      case 'email-already-in-use':
+        return 'Este e-mail já tem uma conta. Toque em Entrar.';
+      case 'invalid-email':
+        return 'O e-mail informado é inválido.';
+      case 'weak-password':
+        return 'Escolha uma senha com pelo menos 6 caracteres.';
+      case 'user-not-found':
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'E-mail ou senha não conferem.';
+      case 'too-many-requests':
+        return 'Muitas tentativas. Aguarde um pouco e tente novamente.';
+      case 'network-request-failed':
+        return 'Confira sua conexão com a internet e tente novamente.';
+      case 'operation-not-allowed':
+        return 'O acesso por e-mail e senha não está ativado no Firebase.';
+      default:
+        return 'Não foi possível concluir. Confira os dados e tente novamente.';
+    }
+  }
+
+  void _mostrarMensagem(String texto) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(texto)));
+  }
+
+  Future<void> _enviarFormulario() async {
+    FocusScope.of(context).unfocus();
+
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _carregando = true);
+
+    try {
+      final email = _emailController.text.trim();
+      final senha = _senhaController.text;
+
+      if (_criandoConta) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: senha,
+        );
+      } else {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: senha,
+        );
+      }
+    } on FirebaseAuthException catch (erro) {
+      _mostrarMensagem(_mensagemErro(erro));
+    } catch (_) {
+      _mostrarMensagem(
+        'Ocorreu um erro. Confira sua conexão e tente novamente.',
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  Future<void> _recuperarSenha() async {
+    FocusScope.of(context).unfocus();
+
+    if (_validarEmail(_emailController.text) != null) {
+      _mostrarMensagem('Informe um e-mail válido para recuperar a senha.');
+      return;
+    }
+
+    setState(() => _carregando = true);
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: _emailController.text.trim(),
+      );
+
+      _mostrarMensagem(
+        'Se houver uma conta com esse e-mail, enviaremos as instruções de recuperação.',
+      );
+    } on FirebaseAuthException catch (erro) {
+      _mostrarMensagem(_mensagemErro(erro));
+    } catch (_) {
+      _mostrarMensagem(
+        'Não foi possível enviar o e-mail. Confira sua conexão e tente novamente.',
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final titulo = _criandoConta ? 'Criar conta' : 'Entrar';
+
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Icon(
+                      Icons.shield_outlined,
+                      size: 64,
+                      color: Colors.blue,
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Vigilante Recibos',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      titulo,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      decoration: const InputDecoration(
+                        labelText: 'E-mail',
+                        prefixIcon: Icon(Icons.email_outlined),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: _validarEmail,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _senhaController,
+                      obscureText: !_mostrarSenha,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _enviarFormulario(),
+                      decoration: InputDecoration(
+                        labelText: 'Senha',
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() => _mostrarSenha = !_mostrarSenha);
+                          },
+                          icon: Icon(
+                            _mostrarSenha
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                        ),
+                      ),
+                      validator: _validarSenha,
+                    ),
+                    if (!_criandoConta)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _carregando ? null : _recuperarSenha,
+                          child: const Text('Esqueci a senha'),
+                        ),
+                      )
+                    else
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Use uma senha com pelo menos 6 caracteres.',
+                        ),
+                      ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 50,
+                      child: FilledButton(
+                        onPressed: _carregando ? null : _enviarFormulario,
+                        child: _carregando
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(titulo),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: _carregando
+                          ? null
+                          : () {
+                              setState(
+                                () => _criandoConta = !_criandoConta,
+                              );
+                            },
+                      child: Text(
+                        _criandoConta
+                            ? 'Já tenho uma conta — Entrar'
+                            : 'Ainda não tenho conta — Criar conta',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'A conta ainda não sincroniza os dados do app entre celulares.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class TelaPrincipal extends StatefulWidget {
   const TelaPrincipal({super.key});

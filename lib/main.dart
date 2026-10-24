@@ -243,6 +243,10 @@ class _TelaAcessoState extends State<TelaAcesso> {
           password: senha,
         );
       }
+              final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('contaComLogin', true);
+      exigirLoginDaConta.value = true;
+      await ControleSessaoDispositivo.assumirNoLogin();
 
       if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);

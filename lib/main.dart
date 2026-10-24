@@ -40,6 +40,13 @@ void main() async {
 );
 
   final prefs = await SharedPreferences.getInstance();
+      if (FirebaseAuth.instance.currentUser != null) {
+    exigirLoginDaConta.value = true;
+    await prefs.setBool('contaComLogin', true);
+  } else {
+    exigirLoginDaConta.value =
+        prefs.getBool('contaComLogin') ?? false;
+      }
   final temaSalvo = prefs.getString('temaApp') ?? 'automatico';
 
     if (temaSalvo == 'escuro') {

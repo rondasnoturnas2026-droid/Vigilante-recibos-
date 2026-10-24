@@ -6414,6 +6414,54 @@ Future<void> _abrirTema() async {
     }
   },
 ),
+            ListTile(
+  leading: const Icon(Icons.cloud_upload_outlined),
+  title: const Text('Enviar cópia para a nuvem'),
+  subtitle: const Text('Guardar os dados na sua conta'),
+  onTap: () async {
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Enviar dados para a nuvem?'),
+        content: const Text(
+          'Uma cópia dos dados deste celular será guardada na sua conta. '
+          'Os dados locais serão mantidos. A cópia anterior na nuvem '
+          'será atualizada.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Enviar cópia'),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted || confirmou != true) return;
+
+    try {
+      await SincronizacaoFirestoreService.enviarDadosLocais();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cópia enviada para a nuvem.'),
+        ),
+      );
+    } catch (erro) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Não foi possível enviar a cópia: $erro'),
+        ),
+      );
+    }
+  },
+),
           const Divider(),
 ListTile(
   leading: const Icon(Icons.location_on_outlined),

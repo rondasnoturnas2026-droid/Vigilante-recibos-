@@ -8687,6 +8687,7 @@ await prefs.setBool('vigilanteDomingo', vigilanteDomingo);
 await prefs.setString(
   'vigilanteLogoPretoBranco',
   vigilanteLogoPretoBranco,
+    await _sincronizarNuvemSemFalharLocalmente();
 );
 }
 

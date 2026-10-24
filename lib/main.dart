@@ -8684,11 +8684,11 @@ await prefs.setBool('vigilanteSexta', vigilanteSexta);
 await prefs.setBool('vigilanteSabado', vigilanteSabado);
 await prefs.setBool('vigilanteDomingo', vigilanteDomingo);
 
-await prefs.setString(
-  'vigilanteLogoPretoBranco',
-  vigilanteLogoPretoBranco,
-    await _sincronizarNuvemSemFalharLocalmente();
-);
+  await prefs.setString(
+    'vigilanteLogoPretoBranco',
+    vigilanteLogoPretoBranco,
+  );
+  await _sincronizarNuvemSemFalharLocalmente();
 }
 
 Future<void> carregarDadosVigilante() async {

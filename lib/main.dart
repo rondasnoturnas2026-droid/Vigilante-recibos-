@@ -8529,6 +8529,7 @@ int? diaVencimentoGeracaoAutomatica;
 Future<void> salvarClientes() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('clientes', jsonEncode(clientes));
+      await _sincronizarNuvemSemFalharLocalmente();
 }
 
 Future<void> carregarClientes() async {

@@ -8683,6 +8683,134 @@ Future<void> adicionarRua(Bairro bairro, String nome) async {
 }
 
 }
+class SincronizacaoFirestoreService {
+  static const _formato = 'vigilante_recibos_sync_v1';
+
+  static bool _sincronizarChave(String chave) {
+    if (chave == 'clientes' ||
+        chave == 'mensalidades' ||
+        chave == 'bairros_ruas' ||
+        chave == 'cobranca_mensagem' ||
+        chave == 'aviso_texto_mensagem' ||
+        chave == 'modoGeracaoMensalidade' ||
+        chave == 'diasAntecedenciaMensalidade') {
+      return true;
+    }
+
+    if (chave.startsWith('recibo_')) return true;
+
+    return chave.startsWith('vigilante') &&
+        chave != 'vigilanteLogo' &&
+        chave != 'vigilanteLogoPretoBranco';
+  }
+
+  static Future<CollectionReference<Map<String, dynamic>>> _colecao() async {
+    final usuario = FirebaseAuth.instance.currentUser;
+    if (usuario == null) {
+      throw StateError('Entre na sua conta antes de sincronizar.');
+    }
+
+    return FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(usuario.uid)
+        .collection('dados');
+  }
+
+  static Future<void> enviarDadosLocais() async {
+    final prefs = await SharedPreferences.getInstance();
+    final dadosLocais = <String, dynamic>{};
+
+    for (final chave in prefs.getKeys()) {
+      if (!_sincronizarChave(chave)) continue;
+      final valor = prefs.get(chave);
+      if (valor != null) dadosLocais[chave] = valor;
+    }
+
+    final bytes = utf8.encode(jsonEncode({
+      'formato': _formato,
+      'dados': dadosLocais,
+    }));
+
+    const tamanhoBloco = 300000;
+    final prefixo = '_sync_${DateTime.now().microsecondsSinceEpoch}';
+    final quantidadeBlocos = (bytes.length / tamanhoBloco).ceil();
+    final colecao = await _colecao();
+
+    for (var i = 0; i < quantidadeBlocos; i++) {
+      final inicio = i * tamanhoBloco;
+      final fim = (inicio + tamanhoBloco).clamp(0, bytes.length);
+
+      await colecao.doc('${prefixo}_$i').set({
+        'conteudo': base64Encode(bytes.sublist(inicio, fim)),
+      });
+    }
+
+    await colecao.doc('_sync_meta').set({
+      'formato': _formato,
+      'prefixo': prefixo,
+      'quantidadeBlocos': quantidadeBlocos,
+      'atualizadoEm': FieldValue.serverTimestamp(),
+    });
+  }
+
+  static Future<Map<String, dynamic>> lerDadosDaNuvem() async {
+    final colecao = await _colecao();
+    final meta = await colecao.doc('_sync_meta').get();
+    final metadados = meta.data();
+
+    if (metadados == null || metadados['formato'] != _formato) {
+      throw StateError('Ainda não há dados sincronizados nessa conta.');
+    }
+
+    final prefixo = metadados['prefixo'] as String;
+    final quantidadeBlocos = metadados['quantidadeBlocos'] as int;
+    final bytes = <int>[];
+
+    for (var i = 0; i < quantidadeBlocos; i++) {
+      final bloco = await colecao.doc('${prefixo}_$i').get();
+      final conteudo = bloco.data()?['conteudo'] as String?;
+
+      if (conteudo == null) {
+        throw StateError('Não foi possível ler todos os dados da nuvem.');
+      }
+
+      bytes.addAll(base64Decode(conteudo));
+    }
+
+    final backup = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+    if (backup['formato'] != _formato || backup['dados'] is! Map) {
+      throw const FormatException('Os dados da nuvem não são válidos.');
+    }
+
+    return Map<String, dynamic>.from(backup['dados'] as Map);
+  }
+
+  static Future<void> aplicarDadosDaNuvem(
+    Map<String, dynamic> dados,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    for (final entrada in dados.entries) {
+      if (!_sincronizarChave(entrada.key)) continue;
+
+      final valor = entrada.value;
+      if (valor is String) {
+        await prefs.setString(entrada.key, valor);
+      } else if (valor is bool) {
+        await prefs.setBool(entrada.key, valor);
+      } else if (valor is int) {
+        await prefs.setInt(entrada.key, valor);
+      } else if (valor is double) {
+        await prefs.setDouble(entrada.key, valor);
+      } else if (valor is List) {
+        await prefs.setStringList(
+          entrada.key,
+          List<String>.from(valor),
+        );
+      }
+    }
+  }
+}
 class PersonalizarReciboTermicoPage extends StatefulWidget {
   const PersonalizarReciboTermicoPage({super.key});
 

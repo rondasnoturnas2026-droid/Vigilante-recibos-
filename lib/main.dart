@@ -227,14 +227,15 @@ class _TelaAcessoState extends State<TelaAcesso> {
           email: email,
           password: senha,
         );
-      } else {
+             } else {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: senha,
         );
-                if (mounted && Navigator.canPop(context)) {
+      }
+
+      if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
-                }
       }
     } on FirebaseAuthException catch (erro) {
       _mostrarMensagem(_mensagemErro(erro));

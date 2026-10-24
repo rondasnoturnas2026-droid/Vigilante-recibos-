@@ -8834,7 +8834,7 @@ class SincronizacaoFirestoreService {
 
     for (var i = 0; i < quantidadeBlocos; i++) {
       final inicio = i * tamanhoBloco;
-      final fim = (inicio + tamanhoBloco).clamp(0, bytes.length);
+      final fim = (inicio + tamanhoBloco).clamp(0, bytes.length).toInt();
 
       await colecao.doc('${prefixo}_$i').set({
         'conteudo': base64Encode(bytes.sublist(inicio, fim)),

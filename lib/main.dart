@@ -8517,6 +8517,14 @@ String vigilanteLogoPretoBranco = '';
     bool geracaoAutomaticaAtiva = false;
 int diasAntecedenciaGeracao = 0;
 int? diaVencimentoGeracaoAutomatica;
+    Future<void> _sincronizarNuvemSemFalharLocalmente() async {
+  try {
+    if (FirebaseAuth.instance.currentUser == null) return;
+    await SincronizacaoFirestoreService.enviarDadosLocais();
+  } catch (_) {
+    // Se a nuvem falhar, o salvamento local continua funcionando.
+  }
+    }
 
 Future<void> salvarClientes() async {
   final prefs = await SharedPreferences.getInstance();

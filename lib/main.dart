@@ -8823,6 +8823,49 @@ class SincronizacaoFirestoreService {
         .doc(usuario.uid)
         .collection('dados');
   }
+      static Future<bool> sincronizarAoEntrar() async {
+    final prefs = await SharedPreferences.getInstance();
+    var temCadastrosLocais = false;
+
+    for (final chave in const [
+      'clientes',
+      'mensalidades',
+      'bairros_ruas',
+    ]) {
+      final texto = prefs.getString(chave);
+      if (texto == null || texto.trim().isEmpty) continue;
+
+      try {
+        final valor = jsonDecode(texto);
+        if ((valor is List && valor.isNotEmpty) ||
+            (valor is Map && valor.isNotEmpty)) {
+          temCadastrosLocais = true;
+          break;
+        }
+      } catch (_) {
+        temCadastrosLocais = true;
+        break;
+      }
+    }
+
+    try {
+      final dados = await lerDadosDaNuvem();
+
+      if (temCadastrosLocais) return false;
+
+      await aplicarDadosDaNuvem(dados);
+      return true;
+    } on StateError catch (erro) {
+      if (erro.message == 'Ainda não há dados sincronizados nessa conta.') {
+        await enviarDadosLocais();
+        return false;
+      }
+
+      if (temCadastrosLocais) return false;
+
+      rethrow;
+    }
+  }
 
   static Future<void> enviarDadosLocais() async {
     final prefs = await SharedPreferences.getInstance();

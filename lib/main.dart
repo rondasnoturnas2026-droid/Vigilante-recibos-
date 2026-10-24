@@ -6377,8 +6377,16 @@ Future<void> _abrirTema() async {
 
               final emailAtual =
                   FirebaseAuth.instance.currentUser?.email;
+      if (emailAtual != null && emailAtual != emailAntes) {
+          final restaurou =
+    await SincronizacaoFirestoreService.sincronizarAoEntrar();
 
-              if (emailAtual != null && emailAtual != emailAntes) {
+if (restaurou) {
+  await widget.store.carregarClientes();
+  await widget.store.carregarMensalidades();
+  await widget.store.carregarBairrosERuas();
+  await widget.store.carregarDadosVigilante();
+}
                 setState(() {});
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

@@ -6353,18 +6353,38 @@ Future<void> _abrirTema() async {
   );
 },
 ),
-                      ListTile(
+                                ListTile(
             leading: const Icon(Icons.account_circle_outlined),
             title: const Text('Minha conta'),
-            subtitle: const Text('Criar conta ou entrar'),
+            subtitle: Text(
+              FirebaseAuth.instance.currentUser?.email ??
+                  'Criar conta ou entrar',
+            ),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final emailAntes =
+                  FirebaseAuth.instance.currentUser?.email;
+
+              await Navigator.push<void>(
                 context,
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (_) => const TelaAcesso(),
                 ),
               );
+
+              if (!mounted) return;
+
+              final emailAtual =
+                  FirebaseAuth.instance.currentUser?.email;
+
+              if (emailAtual != null && emailAtual != emailAntes) {
+                setState(() {});
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Conta conectada: $emailAtual'),
+                  ),
+                );
+              }
             },
           ),
           const Divider(),

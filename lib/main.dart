@@ -6350,6 +6350,20 @@ Future<void> _abrirTema() async {
   );
 },
 ),
+                      ListTile(
+            leading: const Icon(Icons.account_circle_outlined),
+            title: const Text('Minha conta'),
+            subtitle: const Text('Criar conta ou entrar'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const TelaAcesso(),
+                ),
+              );
+            },
+          ),
           const Divider(),
 ListTile(
   leading: const Icon(Icons.location_on_outlined),

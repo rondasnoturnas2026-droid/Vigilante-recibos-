@@ -451,6 +451,7 @@ class _TelaPrincipalState extends State<TelaPrincipal>
 
     store.carregarDadosVigilante();
     store.carregarBairrosERuas();
+          ControleSessaoDispositivo.verificarAoAbrir().catchError((_) {});
 
     paginas = [
       TelaMensalidades(store: store),

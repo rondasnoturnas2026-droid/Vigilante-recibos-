@@ -6414,6 +6414,101 @@ Future<void> _abrirTema() async {
     }
   },
 ),
+            ListTile(
+  leading: const Icon(Icons.sync),
+  title: const Text('Sincronizar entre celulares'),
+  subtitle: const Text('Enviar ou restaurar dados pela sua conta'),
+  onTap: () async {
+    final acao = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Sincronizar dados'),
+        content: const Text(
+          'Enviar guarda uma cópia dos dados deste celular na nuvem. '
+          'Restaurar funciona em um aparelho sem cadastros.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, 'enviar'),
+            child: const Text('Enviar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, 'restaurar'),
+            child: const Text('Restaurar'),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted || acao == null) return;
+
+    try {
+      if (acao == 'enviar') {
+        await SincronizacaoFirestoreService.enviarDadosLocais();
+
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cópia enviada para a nuvem.'),
+          ),
+        );
+        return;
+      }
+
+      final dados =
+          await SincronizacaoFirestoreService.lerDadosDaNuvem();
+
+      if (!mounted) return;
+
+      final confirmou = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Restaurar dados?'),
+          content: const Text(
+            'Os dados da nuvem serão gravados neste aparelho. '
+            'Se ele já tiver cadastros, a restauração será cancelada.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Restaurar'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmou != true) return;
+
+      await SincronizacaoFirestoreService.aplicarDadosDaNuvem(dados);
+      await widget.store.carregarClientes();
+      await widget.store.carregarMensalidades();
+      await widget.store.carregarBairrosERuas();
+      await widget.store.carregarDadosVigilante();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Dados restaurados neste aparelho.'),
+        ),
+      );
+    } catch (erro) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Não foi possível sincronizar: $erro'),
+        ),
+      );
+    }
+  },
+),
             
           const Divider(),
 ListTile(

@@ -8808,6 +8808,97 @@ Future<void> adicionarRua(Bairro bairro, String nome) async {
 }
 
 }
+class ControleSessaoDispositivo {
+  static dynamic _assinatura;
+  static const String _chaveIdLocal = 'idDispositivoInstalacaoVR';
+
+  static Future<String> _obterIdLocal(String uid) async {
+    final prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString(_chaveIdLocal);
+
+    if (id == null || id.isEmpty) {
+      id = FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(uid)
+          .collection('dados')
+          .doc()
+          .id;
+      await prefs.setString(_chaveIdLocal, id);
+    }
+
+    return id;
+  }
+
+  static DocumentReference<Map<String, dynamic>> _documento(String uid) {
+    return FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(uid)
+        .collection('dados')
+        .doc('_dispositivoAtivo');
+  }
+
+  static Future<void> assumirNoLogin() async {
+    final usuario = FirebaseAuth.instance.currentUser;
+    if (usuario == null) return;
+
+    final idLocal = await _obterIdLocal(usuario.uid);
+    final documento = _documento(usuario.uid);
+
+    await documento.set({
+      'idDispositivo': idLocal,
+      'atualizadoEm': FieldValue.serverTimestamp(),
+    });
+
+    await _observar(documento, usuario.uid, idLocal);
+  }
+
+  static Future<void> verificarAoAbrir() async {
+    final usuario = FirebaseAuth.instance.currentUser;
+
+    if (usuario == null) {
+      await _assinatura?.cancel();
+      _assinatura = null;
+      return;
+    }
+
+    final idLocal = await _obterIdLocal(usuario.uid);
+    final documento = _documento(usuario.uid);
+    final snapshot = await documento.get();
+    final idAtivo = snapshot.data()?['idDispositivo'] as String?;
+
+    if (idAtivo == null) {
+      await documento.set({
+        'idDispositivo': idLocal,
+        'atualizadoEm': FieldValue.serverTimestamp(),
+      });
+    } else if (idAtivo != idLocal) {
+      await FirebaseAuth.instance.signOut();
+      return;
+    }
+
+    await _observar(documento, usuario.uid, idLocal);
+  }
+
+  static Future<void> _observar(
+    DocumentReference<Map<String, dynamic>> documento,
+    String uid,
+    String idLocal,
+  ) async {
+    await _assinatura?.cancel();
+
+    _assinatura = documento.snapshots().listen(
+      (snapshot) async {
+        if (FirebaseAuth.instance.currentUser?.uid != uid) return;
+
+        final idAtivo = snapshot.data()?['idDispositivo'] as String?;
+        if (idAtivo != null && idAtivo != idLocal) {
+          await FirebaseAuth.instance.signOut();
+        }
+      },
+      onError: (_) {},
+    );
+  }
+}
 class SincronizacaoFirestoreService {
   static const _formato = 'vigilante_recibos_sync_v1';
 

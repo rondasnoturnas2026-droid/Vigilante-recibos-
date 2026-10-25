@@ -6584,6 +6584,52 @@ Future<void> _abrirTema() async {
     ),
   );
 }
+    Future<void> _abrirBloqueioTela() async {
+  final prefs = await SharedPreferences.getInstance();
+  final modoAtual = prefs.getString('bloqueioAppModo') ?? '1hora';
+
+  final novoModo = await showDialog<String>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Bloqueio de tela'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.lock_clock),
+            title: const Text('Imediatamente'),
+            subtitle: const Text('Pedir autenticação ao voltar ao app'),
+            trailing: modoAtual == 'imediato'
+                ? const Icon(Icons.check_circle)
+                : null,
+            onTap: () => Navigator.pop(dialogContext, 'imediato'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.schedule),
+            title: const Text('Após 1 hora'),
+            subtitle: const Text('Pedir autenticação após 1 hora fora do app'),
+            trailing: modoAtual == '1hora'
+                ? const Icon(Icons.check_circle)
+                : null,
+            onTap: () => Navigator.pop(dialogContext, '1hora'),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  if (novoModo == null || novoModo == modoAtual) return;
+
+  await prefs.setString('bloqueioAppModo', novoModo);
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Preferência de bloqueio salva.'),
+    ),
+  );
+    }
 
   @override
   Widget build(BuildContext context) {

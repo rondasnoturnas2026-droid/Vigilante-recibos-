@@ -8946,6 +8946,158 @@ class ControleSessaoDispositivo {
     );
   }
 }
+class TelaDispositivosConectados extends StatelessWidget {
+  const TelaDispositivosConectados({super.key});
+
+  Future<void> _desconectar(
+    BuildContext context,
+    String uid,
+    String idLocal,
+  ) async {
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Desconectar este celular?'),
+        content: const Text(
+          'Será necessário entrar novamente nesta conta para usar o aplicativo.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Desconectar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmou != true) return;
+
+    try {
+      final documento = FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(uid)
+          .collection('dados')
+          .doc('_dispositivoAtivo');
+
+      final atual = await documento.get();
+
+      if (atual.data()?['idDispositivo'] == idLocal) {
+        await documento.delete();
+      }
+
+      await FirebaseAuth.instance.signOut();
+    } catch (_) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível desconectar este celular.'),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final usuario = FirebaseAuth.instance.currentUser;
+
+    if (usuario == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Dispositivos conectados')),
+        body: const Center(
+          child: Text('Entre na sua conta para ver o dispositivo conectado.'),
+        ),
+      );
+    }
+
+    final documento = FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(usuario.uid)
+        .collection('dados')
+        .doc('_dispositivoAtivo');
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Dispositivos conectados')),
+      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: documento.snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Não foi possível carregar o dispositivo conectado.'),
+            );
+          }
+
+          final dados = snapshot.data?.data();
+          final idAtivo = dados?['idDispositivo'] as String?;
+          final atualizadoEm = dados?['atualizadoEm'];
+          final dataHora = atualizadoEm is Timestamp
+              ? atualizadoEm.toDate()
+              : null;
+
+          return FutureBuilder<String>(
+            future: ControleSessaoDispositivo._obterIdLocal(usuario.uid),
+            builder: (context, idSnapshot) {
+              final idLocal = idSnapshot.data;
+              final esteCelularAtivo =
+                  idAtivo != null && idAtivo == idLocal;
+
+              final status = idAtivo == null
+                  ? 'Nenhum celular conectado'
+                  : esteCelularAtivo
+                      ? 'Este celular está conectado'
+                      : 'Outro celular está usando esta conta';
+
+              return ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.phone_android),
+                      title: Text(status),
+                      subtitle: Text(
+                        dataHora == null
+                            ? 'A conta pode ser usada em um celular por vez.'
+                            : 'Última atualização: '
+                                '${dataHora.day.toString().padLeft(2, '0')}/'
+                                '${dataHora.month.toString().padLeft(2, '0')}/'
+                                '${dataHora.year} '
+                                '${dataHora.hour.toString().padLeft(2, '0')}:'
+                                '${dataHora.minute.toString().padLeft(2, '0')}',
+                      ),
+                    ),
+                  ),
+                  if (esteCelularAtivo)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: FilledButton.icon(
+                        onPressed: idLocal == null
+                            ? null
+                            : () => _desconectar(
+                                  context,
+                                  usuario.uid,
+                                  idLocal,
+                                ),
+                        icon: const Icon(Icons.logout),
+                        label: const Text('Desconectar este celular'),
+                      ),
+                    ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
 class SincronizacaoFirestoreService {
   static const _formato = 'vigilante_recibos_sync_v1';
 

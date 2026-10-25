@@ -32,6 +32,24 @@ jobs:
           if [ ! -d "android" ]; then
             flutter create --platforms=android --org br.com.vigilanterecibos --project-name vigilante_recibos .
           fi
+                    python3 - <<'PY'
+          from pathlib import Path
+
+          arquivos = list(Path("android/app/src/main").rglob("MainActivity.kt"))
+          if len(arquivos) != 1:
+              raise SystemExit(
+                  f"Esperava encontrar exatamente um MainActivity.kt; encontrei {len(arquivos)}"
+              )
+
+          arquivo = arquivos[0]
+          texto = arquivo.read_text(encoding="utf-8")
+
+          if "FlutterFragmentActivity" not in texto:
+              if "FlutterActivity" not in texto:
+                  raise SystemExit("Não encontrei a classe FlutterActivity esperada.")
+              texto = texto.replace("FlutterActivity", "FlutterFragmentActivity")
+              arquivo.write_text(texto, encoding="utf-8")
+          PY
           python3 - <<'PY'
           from pathlib import Path
           import re

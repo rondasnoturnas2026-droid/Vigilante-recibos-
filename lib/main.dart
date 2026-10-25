@@ -99,7 +99,7 @@ localizationsDelegates: const [
 
           themeMode: modoTema,
 
-          home: const TelaPrincipal(),
+          home: const GateSessaoConta(),
         );
       },
     );

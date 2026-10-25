@@ -8942,15 +8942,23 @@ class ControleSessaoDispositivo {
     final snapshot = await documento.get();
     final idAtivo = snapshot.data()?['idDispositivo'] as String?;
 
-    if (idAtivo == null) {
+        if (idAtivo == null) {
+      final modelo = await _obterModeloCelular();
       await documento.set({
         'idDispositivo': idLocal,
+        'modeloDispositivo': modelo,
         'atualizadoEm': FieldValue.serverTimestamp(),
       });
     } else if (idAtivo != idLocal) {
       await FirebaseAuth.instance.signOut();
       return;
-    }
+    } else if (snapshot.data()?['modeloDispositivo'] == null) {
+      final modelo = await _obterModeloCelular();
+      await documento.set(
+        {'modeloDispositivo': modelo},
+        SetOptions(merge: true),
+      );
+        }
 
     await _observar(documento, usuario.uid, idLocal);
   }

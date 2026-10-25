@@ -8915,11 +8915,13 @@ class ControleSessaoDispositivo {
     final usuario = FirebaseAuth.instance.currentUser;
     if (usuario == null) return;
 
-    final idLocal = await _obterIdLocal(usuario.uid);
+        final idLocal = await _obterIdLocal(usuario.uid);
+    final modelo = await _obterModeloCelular();
     final documento = _documento(usuario.uid);
 
     await documento.set({
       'idDispositivo': idLocal,
+      'modeloDispositivo': modelo,
       'atualizadoEm': FieldValue.serverTimestamp(),
     });
 

@@ -8901,6 +8901,15 @@ class ControleSessaoDispositivo {
         .collection('dados')
         .doc('_dispositivoAtivo');
   }
+      static Future<String> _obterModeloCelular() async {
+    try {
+      final informacoes = await DeviceInfoPlugin().androidInfo;
+      final modelo = informacoes.model.trim();
+      if (modelo.isNotEmpty) return modelo;
+    } catch (_) {}
+
+    return 'Celular Android';
+      }
 
   static Future<void> assumirNoLogin() async {
     final usuario = FirebaseAuth.instance.currentUser;

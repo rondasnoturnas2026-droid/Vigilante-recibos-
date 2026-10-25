@@ -9075,6 +9075,8 @@ class TelaDispositivosConectados extends StatelessWidget {
           final dados = snapshot.data?.data();
           final idAtivo = dados?['idDispositivo'] as String?;
           final atualizadoEm = dados?['atualizadoEm'];
+                      final modeloDispositivo =
+              dados?['modeloDispositivo'] as String?;
           final dataHora = atualizadoEm is Timestamp
               ? atualizadoEm.toDate()
               : null;

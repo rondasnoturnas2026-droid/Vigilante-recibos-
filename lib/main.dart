@@ -6495,6 +6495,7 @@ if (restaurou) {
                 }
               },
             ),
+                        ListTile(
   leading: const Icon(Icons.sync),
   title: const Text('Sincronizar entre celulares'),
   subtitle: const Text('Enviar ou restaurar dados pela sua conta'),

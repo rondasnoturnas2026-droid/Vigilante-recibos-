@@ -9101,15 +9101,20 @@ class TelaDispositivosConectados extends StatelessWidget {
                     child: ListTile(
                       leading: const Icon(Icons.phone_android),
                       title: Text(status),
-                      subtitle: Text(
-                        dataHora == null
-                            ? 'A conta pode ser usada em um celular por vez.'
-                            : 'Última atualização: '
-                                '${dataHora.day.toString().padLeft(2, '0')}/'
-                                '${dataHora.month.toString().padLeft(2, '0')}/'
-                                '${dataHora.year} '
-                                '${dataHora.hour.toString().padLeft(2, '0')}:'
-                                '${dataHora.minute.toString().padLeft(2, '0')}',
+                                            subtitle: Text(
+                        [
+                          if (modeloDispositivo != null &&
+                              modeloDispositivo.trim().isNotEmpty)
+                            modeloDispositivo.trim(),
+                          dataHora == null
+                              ? 'A conta pode ser usada em um celular por vez.'
+                              : 'Última atualização: '
+                                  '${dataHora.day.toString().padLeft(2, '0')}/'
+                                  '${dataHora.month.toString().padLeft(2, '0')}/'
+                                  '${dataHora.year} '
+                                  '${dataHora.hour.toString().padLeft(2, '0')}:'
+                                  '${dataHora.minute.toString().padLeft(2, '0')}',
+                        ].join('\n'),
                       ),
                     ),
                   ),

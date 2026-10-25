@@ -180,7 +180,7 @@ class _ProtecaoLocalAppState extends State<ProtecaoLocalApp>
     final tempoFora = DateTime.now().difference(ultimaSaida);
 
     final precisaBloquear =
-        modo == 'imediato' || tempoFora >= const Duration(hours: 1);
+        modo == '1hora' && tempoFora >= const Duration(hours: 1);
 
     if (!precisaBloquear) {
       await prefs.remove(_chaveUltimaSaida);

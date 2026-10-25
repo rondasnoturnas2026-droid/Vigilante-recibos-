@@ -502,6 +502,20 @@ class _TelaPrincipalState extends State<TelaPrincipal>
       TelaRelatorio(store: store),
       TelaConfiguracoes(store: store),
     ];
+          if (FirebaseAuth.instance.currentUser != null) {
+      SincronizacaoFirestoreService.sincronizarAoEntrar().then(
+        (restaurou) async {
+          if (!restaurou) return;
+
+          await store.carregarClientes();
+          await store.carregarMensalidades();
+          await store.carregarBairrosERuas();
+          await store.carregarDadosVigilante();
+
+          if (mounted) setState(() {});
+        },
+      ).catchError((_) {});
+          }
 
     _reconectarImpressora();
   }

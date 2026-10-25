@@ -6454,6 +6454,23 @@ if (restaurou) {
           ),
             ListTile(
   leading: const Icon(Icons.cloud_outlined),
+                if (FirebaseAuth.instance.currentUser != null) ...[
+  const Divider(),
+  ListTile(
+    leading: const Icon(Icons.devices),
+    title: const Text('Dispositivos conectados'),
+    subtitle: const Text('Ver o celular conectado à conta'),
+    trailing: const Icon(Icons.chevron_right),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const TelaDispositivosConectados(),
+        ),
+      );
+    },
+  ),
+],
   title: const Text('Testar conexão com Firestore'),
   subtitle: const Text('Teste temporário de leitura e gravação'),
   onTap: () async {

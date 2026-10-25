@@ -107,6 +107,190 @@ localizationsDelegates: const [
     );
   }
 }
+class ProtecaoLocalApp extends StatefulWidget {
+  const ProtecaoLocalApp({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  State<ProtecaoLocalApp> createState() => _ProtecaoLocalAppState();
+}
+
+class _ProtecaoLocalAppState extends State<ProtecaoLocalApp>
+    with WidgetsBindingObserver {
+  static const String _chaveUltimaSaida = 'bloqueioAppUltimaSaidaMs';
+  static const String _chaveModoBloqueio = 'bloqueioAppModo';
+
+  final LocalAuthentication _autenticacao = LocalAuthentication();
+
+  bool _inicializado = false;
+  bool _bloqueado = false;
+  bool _autenticando = false;
+  String? _erro;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _verificarBloqueio(inicial: true);
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_autenticando) return;
+
+    if (state == AppLifecycleState.paused) {
+      _registrarSaida();
+    } else if (state == AppLifecycleState.resumed) {
+      _verificarBloqueio(inicial: false);
+    }
+  }
+
+  Future<void> _registrarSaida() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(
+      _chaveUltimaSaida,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+
+  Future<void> _verificarBloqueio({required bool inicial}) async {
+    if (_autenticando) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final ultimaSaidaMs = prefs.getInt(_chaveUltimaSaida);
+
+    if (ultimaSaidaMs == null) {
+      if (inicial && mounted) {
+        setState(() => _inicializado = true);
+      }
+      return;
+    }
+
+    final modo = prefs.getString(_chaveModoBloqueio) ?? '1hora';
+    final ultimaSaida = DateTime.fromMillisecondsSinceEpoch(ultimaSaidaMs);
+    final tempoFora = DateTime.now().difference(ultimaSaida);
+
+    final precisaBloquear =
+        modo == 'imediato' || tempoFora >= const Duration(hours: 1);
+
+    if (!precisaBloquear) {
+      await prefs.remove(_chaveUltimaSaida);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _inicializado = true;
+      _bloqueado = precisaBloquear;
+    });
+
+    if (precisaBloquear) {
+      await _autenticar();
+    }
+  }
+
+  Future<void> _autenticar() async {
+    if (_autenticando) return;
+
+    setState(() {
+      _bloqueado = true;
+      _autenticando = true;
+      _erro = null;
+    });
+
+    var autenticado = false;
+
+    try {
+      autenticado = await _autenticacao.authenticate(
+        localizedReason: 'Confirme o bloqueio do celular para voltar ao app.',
+        biometricOnly: false,
+        persistAcrossBackgrounding: true,
+      );
+    } catch (_) {
+      autenticado = false;
+    }
+
+    if (autenticado) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_chaveUltimaSaida);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _autenticando = false;
+      _bloqueado = !autenticado;
+      _erro = autenticado
+          ? null
+          : 'Não foi possível desbloquear. Tente novamente.';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        widget.child,
+        if (!_inicializado || _bloqueado)
+          Positioned.fill(
+            child: Material(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.lock_outline, size: 48),
+                      const SizedBox(height: 16),
+                      Text(
+                        _inicializado
+                            ? 'Aplicativo bloqueado'
+                            : 'Carregando...',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      if (_inicializado) ...[
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Use o bloqueio do celular para continuar.',
+                          textAlign: TextAlign.center,
+                        ),
+                        if (_erro != null) ...[
+                          const SizedBox(height: 12),
+                          Text(_erro!, textAlign: TextAlign.center),
+                        ],
+                        const SizedBox(height: 20),
+                        FilledButton(
+                          onPressed: _autenticando ? null : _autenticar,
+                          child: _autenticando
+                              ? const CircularProgressIndicator()
+                              : const Text('Desbloquear'),
+                        ),
+                      ] else
+                        const Padding(
+                          padding: EdgeInsets.only(top: 20),
+                          child: CircularProgressIndicator(),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
 class AutenticacaoGate extends StatelessWidget {
   const AutenticacaoGate({super.key});
 

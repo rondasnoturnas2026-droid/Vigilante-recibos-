@@ -6698,6 +6698,12 @@ if (restaurou) {
               }
             },
           ),
+            ListTile(
+  leading: const Icon(Icons.fingerprint),
+  title: const Text('Bloqueio de tela'),
+  subtitle: const Text('Configurar digital ou PIN do celular'),
+  onTap: _abrirBloqueioTela,
+),
                         if (FirebaseAuth.instance.currentUser != null) ...[
               const Divider(),
               ListTile(

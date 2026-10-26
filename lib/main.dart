@@ -397,6 +397,7 @@ class _TelaAcessoState extends State<TelaAcesso> {
   void dispose() {
     _emailController.dispose();
     _senhaController.dispose();
+      _confirmarSenhaController.dispose();
     super.dispose();
   }
 

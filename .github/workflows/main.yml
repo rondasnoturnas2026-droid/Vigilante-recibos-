@@ -90,7 +90,8 @@ jobs:
 
       - name: Instalar dependências
         run: flutter pub get
-
+      - name: Gerar ícone do aplicativo
+        run: dart run flutter_launcher_icons
       - name: Manter assinatura debug entre builds de teste
         uses: actions/cache@v4
         with:

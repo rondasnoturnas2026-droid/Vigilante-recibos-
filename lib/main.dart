@@ -5273,7 +5273,7 @@ ScaffoldMessenger.of(context).showSnackBar(
                           const SizedBox(height: 4),
                           Text(
                             totalVisivel
-                                ? 'R\$ ${totalMensal.toStringAsFixed(2).replaceAll('.', ',')}'
+                             ? 'R\$ ${totalMensal.toStringAsFixed(2).replaceFirst('.', ',').replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+,)'), (m) => '${m[1]}.')}'
                                 : '••••••',
                             style: const TextStyle(
                               fontSize: 20,

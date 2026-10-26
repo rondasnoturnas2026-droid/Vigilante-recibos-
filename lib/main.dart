@@ -456,6 +456,53 @@ class _TelaAcessoState extends State<TelaAcesso> {
     });
   });
     }
+    Future<void> _mostrarBoasVindasSeNecessario() async {
+  final usuario = FirebaseAuth.instance.currentUser;
+  if (usuario == null) return;
+
+  final referencia = FirebaseFirestore.instance
+      .collection('usuarios')
+      .doc(usuario.uid)
+      .collection('dados')
+      .doc('_periodo_gratis');
+
+  final documento = await referencia.get();
+  final dados = documento.data();
+
+  if (dados == null || dados['boasVindasExibida'] == true) return;
+
+  final valorTermino = dados['termino'];
+  if (valorTermino is! Timestamp) return;
+
+  final termino = valorTermino.toDate();
+  final dataFormatada =
+      '${termino.day.toString().padLeft(2, '0')}/'
+      '${termino.month.toString().padLeft(2, '0')}/'
+      '${termino.year}';
+
+  if (!mounted) return;
+
+  await showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Bem-vindo ao Vigilante Recibos!'),
+      content: Text(
+        'Seu período grátis de 30 dias está ativo e termina em '
+        '$dataFormatada. Depois, escolha um plano para continuar usando '
+        'o app. Se não contratar, o acesso será suspenso, mas seus dados '
+        'continuarão guardados.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Começar a usar'),
+        ),
+      ],
+    ),
+  );
+
+  await referencia.update({'boasVindasExibida': true});
+    }
 
   String _mensagemErro(FirebaseAuthException erro) {
     switch (erro.code) {

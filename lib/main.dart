@@ -6502,6 +6502,11 @@ double naoInformado = 0;
         if (forma.contains('cartão') || forma.contains('cartao')) {
           cartao += valor;
         }
+                  if (forma.trim().isEmpty ||
+            forma.contains('não informado') ||
+            forma.contains('nao informado')) {
+          naoInformado += valor;
+                  }
       } else if (status.contains('pendente')) {
         pendente += valor;
       }

@@ -7003,7 +7003,9 @@ Future<void> _abrirTema() async {
               await Navigator.push<void>(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (_) => const TelaAcesso(),
+                  builder: (_) => FirebaseAuth.instance.currentUser != null
+    ? const TelaMinhaConta()
+    : const TelaAcesso(),
                 ),
               );
 

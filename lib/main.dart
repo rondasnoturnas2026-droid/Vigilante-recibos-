@@ -10513,7 +10513,7 @@ class _GraficoPizzaRecebidos extends StatelessWidget {
                   CustomPaint(
                     size: const Size(150, 150),
                     painter: _PizzaRecebidosPainter(
-                      valores: [pix, dinheiro, cartao naoInformado],
+                      valores: [pix, dinheiro, cartao, naoInformado],
                       cores: cores,
                     ),
                     child: SizedBox(

@@ -991,6 +991,11 @@ class _TelaPrincipalState extends State<TelaPrincipal>
             icon: Icon(Icons.people_outline),
             selectedIcon: Icon(Icons.people),
             label: 'Clientes',
+              NavigationDestination(
+  icon: Icon(Icons.route_outlined),
+  selectedIcon: Icon(Icons.route),
+  label: 'Rondas',
+),
           ),
           NavigationDestination(
             icon: Icon(Icons.bar_chart_outlined),

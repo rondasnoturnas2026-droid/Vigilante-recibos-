@@ -424,6 +424,12 @@ class _TelaAcessoState extends State<TelaAcesso> {
 
     return null;
   }
+    String? _validarConfirmacaoSenha(String? valor) {
+  if (!_criandoConta) return null;
+  if ((valor ?? '').isEmpty) return 'Digite novamente sua senha.';
+  if (valor != _senhaController.text) return 'As senhas não conferem.';
+  return null;
+    }
 
   String _mensagemErro(FirebaseAuthException erro) {
     switch (erro.code) {

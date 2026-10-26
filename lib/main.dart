@@ -10438,6 +10438,7 @@ class _GraficoPizzaRecebidos extends StatelessWidget {
     required this.pix,
     required this.dinheiro,
     required this.cartao,
+      required this.naoInformado,
   });
 
   final double pix;

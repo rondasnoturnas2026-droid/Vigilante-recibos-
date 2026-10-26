@@ -10541,6 +10541,7 @@ class _GraficoPizzaRecebidos extends StatelessWidget {
                         _legenda('Pix', pix, cores[0], total),
                         _legenda('Dinheiro', dinheiro, cores[1], total),
                         _legenda('Cartão', cartao, cores[2], total),
+                          _legenda('Não informado', naoInformado, cores[3], total),
                       ],
                     ),
                   ),

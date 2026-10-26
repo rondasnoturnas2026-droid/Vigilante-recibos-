@@ -10487,7 +10487,7 @@ class _GraficoPizzaRecebidos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final total = pix + dinheiro + cartao + naoInformado;
-    const cores = [Colors.blue, Colors.green, Colors.orange const cores = [Colors.blue, Colors.green, Colors.orange, Colors.grey];;
+    const cores = [Colors.blue, Colors.green, Colors.orange, Colors.grey];
 
     return Card(
       child: Padding(

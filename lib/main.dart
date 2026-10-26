@@ -10444,6 +10444,7 @@ class _GraficoPizzaRecebidos extends StatelessWidget {
   final double pix;
   final double dinheiro;
   final double cartao;
+      final double naoInformado;
 
   String _reais(double valor) =>
       'R\$ ${valor.toStringAsFixed(2).replaceAll('.', ',')}';

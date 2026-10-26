@@ -6391,7 +6391,7 @@ class _TelaRelatorioState extends State<TelaRelatorio> {
 
       documento.addPage(
         pw.MultiPage(
-          pageFormat: pw.PdfPageFormat.a4,
+          pageFormat: PdfPageFormat.a4,
           build: (context) => [
             pw.Text(
               'Vigilante Recibos',

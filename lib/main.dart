@@ -2543,14 +2543,20 @@ for (final mensalidade in mensalidadesFiltradas) {
 return ListView.builder(
   itemCount: listaAgrupada.length + 1,
   itemBuilder: (context, index) {
-    if (index == 0) {
+        if (index == 0) {
+      final partesTotal = totalMensalidades.toStringAsFixed(2).split('.');
+      final inteiroTotalFormatado = partesTotal[0].replaceAllMapped(
+        RegExp(r'\B(?=(\d{3})+(?!\d))'),
+        (match) => '.',
+      );
+      final totalFormatado = '$inteiroTotalFormatado,${partesTotal[1]}';
+
       return Card(
         child: ListTile(
           title: const Text('Total das mensalidades'),
           subtitle: Text(
-            totalVisivel
-                ? 'R\$ ${totalMensalidades.toStringAsFixed(2).replaceAll('.', ',')}'
-                : 'R\$ •••••',
+            totalVisivel ? 'R\$ $totalFormatado' : 'R\$ •••••',
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           trailing: IconButton(
             icon: Icon(

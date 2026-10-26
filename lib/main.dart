@@ -6487,7 +6487,7 @@ class _TelaRelatorioState extends State<TelaRelatorio> {
     double pix = 0;
     double dinheiro = 0;
     double cartao = 0;
-
+double naoInformado = 0;
     for (final item in doMes) {
       final valor = _valor(item['valor']);
       final status = (item['status'] ?? '').toString().toLowerCase();

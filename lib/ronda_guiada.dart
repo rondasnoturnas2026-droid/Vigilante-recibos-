@@ -1,1 +1,581 @@
+import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'rondas/models/roteiro_ronda.dart';
+
+const String _chaveRoteiros = 'roteirosRondaGuiadaV1';
+
+class RondaGuiadaPage extends StatefulWidget {
+  const RondaGuiadaPage({super.key});
+
+  @override
+  State<RondaGuiadaPage> createState() => _RondaGuiadaPageState();
+}
+
+class _RondaGuiadaPageState extends State<RondaGuiadaPage> {
+  List<RoteiroRonda> _roteiros = [];
+  bool _carregando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarRoteiros();
+  }
+
+  Future<void> _carregarRoteiros() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final salvo = prefs.getString(_chaveRoteiros);
+
+      if (salvo != null) {
+        final dados = jsonDecode(salvo);
+        if (dados is List) {
+          _roteiros = dados
+              .whereType<Map>()
+              .map(
+                (item) => RoteiroRonda.fromMap(
+                  Map<String, dynamic>.from(item),
+                ),
+              )
+              .toList();
+        }
+      }
+    } catch (_) {
+      _roteiros = [];
+    }
+
+    if (mounted) setState(() => _carregando = false);
+  }
+
+  Future<void> _novaRonda() async {
+    final nome = TextEditingController(text: 'Ronda');
+    final area = TextEditingController();
+
+    final dados = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Nova ronda'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nome,
+              decoration: const InputDecoration(
+                labelText: 'Nome do roteiro',
+              ),
+            ),
+            TextField(
+              controller: area,
+              decoration: const InputDecoration(
+                labelText: 'Área da ronda',
+                hintText: 'Ex.: Setor 1 ou Rua A',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (nome.text.trim().isEmpty || area.text.trim().isEmpty) {
+                return;
+              }
+              Navigator.pop(context, {
+                'nome': nome.text.trim(),
+                'area': area.text.trim(),
+              });
+            },
+            child: const Text('Começar'),
+          ),
+        ],
+      ),
+    );
+
+    nome.dispose();
+    area.dispose();
+
+    if (dados == null || !mounted) return;
+
+    final roteiro = await Navigator.of(context).push<RoteiroRonda>(
+      MaterialPageRoute(
+        builder: (_) => RondaEmAndamentoPage(
+          nome: dados['nome']!,
+          area: dados['area']!,
+        ),
+      ),
+    );
+
+    if (roteiro == null || !mounted) return;
+
+    final atualizados = [roteiro, ..._roteiros];
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(
+      _chaveRoteiros,
+      jsonEncode(atualizados.map((item) => item.toMap()).toList()),
+    );
+
+    if (!mounted) return;
+    setState(() => _roteiros = atualizados);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Roteiro salvo neste aparelho.')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Rondas')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const Text(
+            'Grave o percurso e marque cada casa durante a ronda.',
+            style: TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.route_outlined),
+              title: const Text('Sua ronda'),
+              subtitle: const Text('Gravar roteiro casa por casa'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _novaRonda,
+            ),
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.history),
+              title: const Text('Rondas feitas'),
+              subtitle: Text(
+                _carregando
+                    ? 'Carregando...'
+                    : '${_roteiros.length} roteiro(s) salvo(s)',
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _carregando
+                  ? null
+                  : () => Navigator.of(context).push<void>(
+                        MaterialPageRoute(
+                          builder: (_) => RondasRegistradasPage(
+                            roteiros: _roteiros,
+                          ),
+                        ),
+                      ),
+            ),
+          ),
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'Cada roteiro fica identificado por nome e área, '
+                'para organizar percursos diferentes.',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RondaEmAndamentoPage extends StatefulWidget {
+  const RondaEmAndamentoPage({
+    super.key,
+    required this.nome,
+    required this.area,
+  });
+
+  final String nome;
+  final String area;
+
+  @override
+  State<RondaEmAndamentoPage> createState() =>
+      _RondaEmAndamentoPageState();
+}
+
+class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
+  final List<PontoRonda> _pontos = [];
+  StreamSubscription<Position>? _assinatura;
+  Position? _ultimaPosicao;
+  double _distanciaMetros = 0;
+  bool _carregando = true;
+  bool _gravando = false;
+  bool _podeSair = false;
+  String? _erro;
+
+  @override
+  void initState() {
+    super.initState();
+    _iniciarGps();
+  }
+
+  Future<void> _iniciarGps() async {
+    setState(() {
+      _carregando = true;
+      _erro = null;
+    });
+
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        throw Exception('Ative a localização do celular para começar.');
+      }
+
+      var permissao = await Geolocator.checkPermission();
+      if (permissao == LocationPermission.denied) {
+        permissao = await Geolocator.requestPermission();
+      }
+
+      if (permissao == LocationPermission.denied ||
+          permissao == LocationPermission.deniedForever) {
+        throw Exception('Libere a permissão de localização para o app.');
+      }
+
+      const configuracao = LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 5,
+      );
+
+      final primeiraPosicao = await Geolocator.getCurrentPosition(
+        locationSettings: configuracao,
+      );
+
+      _registrarPosicao(primeiraPosicao, forcar: true);
+
+      _assinatura = Geolocator.getPositionStream(
+        locationSettings: configuracao,
+      ).listen(
+        _registrarPosicao,
+        onError: (Object erro) {
+          if (mounted) {
+            setState(() => _erro = 'O GPS parou de atualizar.');
+          }
+        },
+      );
+
+      if (mounted) {
+        setState(() {
+          _carregando = false;
+          _gravando = true;
+        });
+      }
+    } catch (erro) {
+      if (!mounted) return;
+      setState(() {
+        _carregando = false;
+        _gravando = false;
+        _erro = erro.toString().replaceFirst('Exception: ', '');
+      });
+    }
+  }
+
+  void _registrarPosicao(Position posicao, {bool forcar = false}) {
+    final anterior = _pontos.isEmpty ? null : _pontos.last;
+    var trechoMetros = 0.0;
+
+    if (anterior != null) {
+      trechoMetros = Geolocator.distanceBetween(
+        anterior.latitude,
+        anterior.longitude,
+        posicao.latitude,
+        posicao.longitude,
+      );
+
+      if (!forcar && trechoMetros < 5) {
+        if (mounted) setState(() => _ultimaPosicao = posicao);
+        return;
+      }
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _ultimaPosicao = posicao;
+      _distanciaMetros += trechoMetros;
+      _pontos.add(
+        PontoRonda(
+          latitude: posicao.latitude,
+          longitude: posicao.longitude,
+          dataHora: posicao.timestamp,
+          tipo: TipoPontoRonda.percurso,
+        ),
+      );
+    });
+  }
+
+  Future<void> _marcarCasa() async {
+    final posicao = _ultimaPosicao;
+    if (posicao == null) return;
+
+    final identificacao = TextEditingController();
+    final nomeCasa = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Marcar casa'),
+        content: TextField(
+          controller: identificacao,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Identificação da casa',
+            hintText: 'Ex.: Casa 25',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final valor = identificacao.text.trim();
+              if (valor.isNotEmpty) Navigator.pop(context, valor);
+            },
+            child: const Text('Marcar'),
+          ),
+        ],
+      ),
+    );
+
+    identificacao.dispose();
+    if (nomeCasa == null || !mounted) return;
+
+    setState(() {
+      _pontos.add(
+        PontoRonda(
+          latitude: posicao.latitude,
+          longitude: posicao.longitude,
+          dataHora: DateTime.now(),
+          tipo: TipoPontoRonda.casa,
+          identificacao: nomeCasa,
+        ),
+      );
+    });
+  }
+
+  Future<void> _sairSemSalvar() async {
+    final descartar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sair da gravação?'),
+        content: const Text('A ronda atual será descartada.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Continuar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Descartar'),
+          ),
+        ],
+      ),
+    );
+
+    if (descartar == true && mounted) {
+      await _assinatura?.cancel();
+      setState(() => _podeSair = true);
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> _finalizar() async {
+    await _assinatura?.cancel();
+
+    final agora = DateTime.now();
+    final roteiro = RoteiroRonda(
+      id: agora.microsecondsSinceEpoch.toString(),
+      nome: widget.nome,
+      area: widget.area,
+      criadoEm: agora,
+      inicioGravacao: _pontos.isEmpty ? agora : _pontos.first.dataHora,
+      fimGravacao: agora,
+      distanciaMetros: _distanciaMetros,
+      pontos: List<PontoRonda>.unmodifiable(_pontos),
+    );
+
+    if (!mounted) return;
+    setState(() => _podeSair = true);
+    Navigator.pop(context, roteiro);
+  }
+
+  @override
+  void dispose() {
+    _assinatura?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final casas = _pontos
+        .where((ponto) => ponto.tipo == TipoPontoRonda.casa)
+        .toList();
+
+    return PopScope<RoteiroRonda>(
+      canPop: _podeSair,
+      onPopInvokedWithResult: (didPop, resultado) {
+        if (!didPop) _sairSemSalvar();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Gravando ronda'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: _sairSemSalvar,
+          ),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.location_on_outlined),
+                title: Text(widget.nome),
+                subtitle: Text('Área: ${widget.area}'),
+              ),
+            ),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _carregando
+                          ? 'Obtendo GPS...'
+                          : _gravando
+                              ? 'Gravação em andamento'
+                              : 'Gravação pausada',
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Distância: ${_formatarDistancia(_distanciaMetros)}',
+                    ),
+                    Text('Casas marcadas: ${casas.length}'),
+                    if (_ultimaPosicao != null)
+                      Text(
+                        'GPS: '
+                        '${_ultimaPosicao!.latitude.toStringAsFixed(5)}, '
+                        '${_ultimaPosicao!.longitude.toStringAsFixed(5)}',
+                      ),
+                    if (_erro != null)
+                      Text(
+                        _erro!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            if (_erro != null && !_gravando)
+              FilledButton(
+                onPressed: _carregando ? null : _iniciarGps,
+                child: const Text('Tentar novamente'),
+              ),
+            FilledButton.icon(
+              onPressed: !_gravando ? null : _marcarCasa,
+              icon: const Icon(Icons.home_outlined),
+              label: const Text('Marcar casa neste ponto'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: !_gravando ? null : _finalizar,
+              icon: const Icon(Icons.stop_circle_outlined),
+              label: const Text('Finalizar e salvar'),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Casas marcadas',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            ...casas.map(
+              (casa) => ListTile(
+                leading: const Icon(Icons.home_outlined),
+                title: Text(casa.identificacao),
+                subtitle: Text(_formatarHorario(casa.dataHora)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class RondasRegistradasPage extends StatelessWidget {
+  const RondasRegistradasPage({super.key, required this.roteiros});
+
+  final List<RoteiroRonda> roteiros;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Rondas feitas')),
+      body: roteiros.isEmpty
+          ? const Center(child: Text('Ainda não há rondas salvas.'))
+          : ListView.builder(
+              itemCount: roteiros.length,
+              itemBuilder: (context, index) {
+                final roteiro = roteiros[index];
+                final casas = roteiro.pontos
+                    .where((ponto) => ponto.tipo == TipoPontoRonda.casa)
+                    .length;
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  child: ExpansionTile(
+                    leading: const Icon(Icons.route_outlined),
+                    title: Text(roteiro.nome),
+                    subtitle: Text(
+                      'Área: ${roteiro.area} • $casas casa(s) • '
+                      '${_formatarDistancia(roteiro.distanciaMetros)}',
+                    ),
+                    children: roteiro.pontos.map((ponto) {
+                      final ehCasa = ponto.tipo == TipoPontoRonda.casa;
+
+                      return ListTile(
+                        leading: Icon(
+                          ehCasa ? Icons.home_outlined : Icons.route,
+                        ),
+                        title: Text(
+                          ehCasa
+                              ? ponto.identificacao
+                              : 'Ponto do percurso',
+                        ),
+                        subtitle: Text(
+                          '${_formatarHorario(ponto.dataHora)} • '
+                          '${ponto.latitude.toStringAsFixed(5)}, '
+                          '${ponto.longitude.toStringAsFixed(5)}',
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
+
+String _formatarDistancia(double metros) {
+  if (metros < 1000) return '${metros.round()} m';
+  return '${(metros / 1000).toStringAsFixed(2)} km';
+}
+
+String _formatarHorario(DateTime dataHora) {
+  final hora = dataHora.hour.toString().padLeft(2, '0');
+  final minuto = dataHora.minute.toString().padLeft(2, '0');
+  return '$hora:$minuto';
+}

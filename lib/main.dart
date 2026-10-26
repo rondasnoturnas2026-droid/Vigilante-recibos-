@@ -101,7 +101,9 @@ localizationsDelegates: const [
 
           themeMode: modoTema,
 
-          home: const GateSessaoConta(),
+          home: const ProtecaoLocalApp(
+  child: GateSessaoConta(),
+),
         );
       },
     );

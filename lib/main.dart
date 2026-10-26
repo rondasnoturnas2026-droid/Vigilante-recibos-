@@ -889,12 +889,11 @@ class _TelaPrincipalState extends State<TelaPrincipal>
     store.carregarBairrosERuas();
           ControleSessaoDispositivo.verificarAoAbrir().catchError((_) {});
 
-    paginas = [
-      TelaMensalidades(store: store),
-      TelaClientes(store: store),
-      TelaRelatorio(store: store),
-      TelaConfiguracoes(store: store),
-    ];
+    NavigationDestination(
+  icon: Icon(Icons.route_outlined),
+  selectedIcon: Icon(Icons.route),
+  label: 'Rondas',
+),
           if (FirebaseAuth.instance.currentUser != null) {
       SincronizacaoFirestoreService.sincronizarAoEntrar().then(
         (restaurou) async {

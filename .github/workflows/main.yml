@@ -84,7 +84,43 @@ jobs:
               )
               arquivo.write_text(texto)
           PY
+      - name: Adicionar permissões de localização
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
 
+          manifesto = Path("android/app/src/main/AndroidManifest.xml")
+          texto = manifesto.read_text(encoding="utf-8")
+
+          permissoes = [
+              "android.permission.ACCESS_COARSE_LOCATION",
+              "android.permission.ACCESS_FINE_LOCATION",
+          ]
+          faltantes = [
+              nome for nome in permissoes
+              if f'android:name="{nome}"' not in texto
+          ]
+
+          if faltantes:
+              aplicacao = re.search(r"(?m)^([ \t]*)<application\b", texto)
+              if aplicacao is None:
+                  raise SystemExit(
+                      "Não encontrei <application> no AndroidManifest.xml."
+                  )
+              recuo = aplicacao.group(1)
+              bloco = "\n".join(
+                  f'{recuo}<uses-permission android:name="{nome}" />'
+                  for nome in faltantes
+              )
+              texto = (
+                  texto[:aplicacao.start()]
+                  + bloco
+                  + "\n"
+                  + texto[aplicacao.start():]
+              )
+              manifesto.write_text(texto, encoding="utf-8")
+          PY
       - name: Limpar projeto
         run: flutter clean
 

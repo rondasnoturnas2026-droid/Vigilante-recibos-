@@ -606,6 +606,21 @@ class _TelaAcessoState extends State<TelaAcesso> {
                       ),
                       validator: _validarSenha,
                     ),
+                      if (_criandoConta) ...[
+  const SizedBox(height: 16),
+  TextFormField(
+    controller: _confirmarSenhaController,
+    obscureText: !_mostrarSenha,
+    textInputAction: TextInputAction.done,
+    onFieldSubmitted: (_) => _enviarFormulario(),
+    decoration: const InputDecoration(
+      labelText: 'Confirmar senha',
+      prefixIcon: Icon(Icons.lock_outline),
+      border: OutlineInputBorder(),
+    ),
+    validator: _validarConfirmacaoSenha,
+  ),
+],
                     if (!_criandoConta)
                       Align(
                         alignment: Alignment.centerRight,

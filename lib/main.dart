@@ -4379,7 +4379,7 @@ final documento = await pdfrx.PdfDocument.openFile(caminho);
 
       if (diaTexto.length > 2) {
         final numeroEDia =
-            RegExp(r'^(\d+)(0?[1-9]|[12]\d|3[01])$')
+            RegExp(r'^(\d+?)([12]\d|3[01]|0?[1-9])$')
                 .firstMatch(diaTexto);
 
         if (numeroEDia != null) {

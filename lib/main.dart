@@ -6367,6 +6367,100 @@ class _TelaRelatorioState extends State<TelaRelatorio> {
     ),
   );
 }
+      Future<void> _exportarPdf({
+    required List<dynamic> mensalidades,
+    required int mes,
+    required int ano,
+    required double recebido,
+    required double pendente,
+    required double pix,
+    required double dinheiro,
+    required double cartao,
+  }) async {
+    try {
+      final documento = pw.Document();
+      final itens = List<dynamic>.from(mensalidades)
+        ..sort((a, b) {
+          final diaA = int.tryParse((a['dia'] ?? '').toString()) ?? 0;
+          final diaB = int.tryParse((b['dia'] ?? '').toString()) ?? 0;
+          return diaA.compareTo(diaB);
+        });
+
+      final nomeMes = meses[mes - 1];
+
+      documento.addPage(
+        pw.MultiPage(
+          pageFormat: pw.PdfPageFormat.a4,
+          build: (context) => [
+            pw.Text(
+              'Vigilante Recibos',
+              style: pw.TextStyle(
+                fontSize: 20,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+            pw.SizedBox(height: 6),
+            pw.Text('Relatório de $nomeMes de $ano'),
+            pw.SizedBox(height: 16),
+            pw.Text(
+              'Resumo do período',
+              style: pw.TextStyle(
+                fontSize: 14,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+            pw.Text('Recebido: ${_reais(recebido)}'),
+            pw.Text('Pendente: ${_reais(pendente)}'),
+            pw.Text('Pix recebido: ${_reais(pix)}'),
+            pw.Text('Dinheiro recebido: ${_reais(dinheiro)}'),
+            pw.Text('Cartão recebido: ${_reais(cartao)}'),
+            pw.SizedBox(height: 16),
+            pw.Text(
+              'Mensalidades do período',
+              style: pw.TextStyle(
+                fontSize: 14,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+            pw.SizedBox(height: 6),
+            pw.TableHelper.fromTextArray(
+              headers: ['Cliente', 'Dia', 'Valor', 'Pagamento', 'Situação'],
+              data: itens.isEmpty
+                  ? [
+                      ['Nenhuma mensalidade neste período', '', '', '', '']
+                    ]
+                  : itens.map((item) {
+                      return [
+                        (item['nome'] ?? 'Cliente').toString(),
+                        (item['dia'] ?? '').toString(),
+                        _reais(_valor(item['valor'])),
+                        (item['formaPagamento'] ?? '').toString(),
+                        (item['status'] ?? '').toString(),
+                      ];
+                    }).toList(),
+              headerStyle: pw.TextStyle(
+                fontSize: 8,
+                fontWeight: pw.FontWeight.bold,
+              ),
+              cellStyle: const pw.TextStyle(fontSize: 7),
+            ),
+          ],
+        ),
+      );
+
+      await Printing.sharePdf(
+        bytes: await documento.save(),
+        filename: 'relatorio_${ano}_${mes.toString().padLeft(2, '0')}.pdf',
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível gerar o relatório PDF.'),
+        ),
+      );
+    }
+      }
   @override
   Widget build(BuildContext context) {
     final mensalidades = widget.store?.mensalidades ?? [];

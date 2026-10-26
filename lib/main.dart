@@ -387,6 +387,7 @@ class _TelaAcessoState extends State<TelaAcesso> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
+    final _confirmarSenhaController = TextEditingController();
 
   bool _criandoConta = false;
   bool _carregando = false;

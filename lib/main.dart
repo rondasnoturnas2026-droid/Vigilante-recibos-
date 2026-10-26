@@ -1089,8 +1089,9 @@ class TelaRondas extends StatelessWidget {
             titulo: 'Compartilhar roteiro',
             resumo: 'Envie o percurso para outro vigilante.',
             explicacao:
-                'O vigilante principal compartilha um link para o novato '
-                'abrir no navegador e seguir o roteiro.',
+                                'Quando essa função estiver disponível, o link pedirá a instalação '
+                'do app. Depois, o novato terá acesso apenas à ronda compartilhada, '
+                'sem entrar em mensalidades, clientes, relatórios ou configurações.',
           ),
           _botaoFuncao(
             context,

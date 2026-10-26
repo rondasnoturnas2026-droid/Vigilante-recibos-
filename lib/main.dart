@@ -889,7 +889,13 @@ class _TelaPrincipalState extends State<TelaPrincipal>
     store.carregarBairrosERuas();
           ControleSessaoDispositivo.verificarAoAbrir().catchError((_) {});
 
-    
+    paginas = [
+  TelaMensalidades(store: store),
+  TelaClientes(store: store),
+  const TelaRondas(),
+  TelaRelatorio(store: store),
+  TelaConfiguracoes(store: store),
+];
           if (FirebaseAuth.instance.currentUser != null) {
       SincronizacaoFirestoreService.sincronizarAoEntrar().then(
         (restaurou) async {

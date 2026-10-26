@@ -430,6 +430,32 @@ class _TelaAcessoState extends State<TelaAcesso> {
   if (valor != _senhaController.text) return 'As senhas não conferem.';
   return null;
     }
+    Future<void> _garantirPeriodoGratis() async {
+  final usuario = FirebaseAuth.instance.currentUser;
+  if (usuario == null) return;
+
+  final referencia = FirebaseFirestore.instance
+      .collection('usuarios')
+      .doc(usuario.uid)
+      .collection('dados')
+      .doc('_periodo_gratis');
+
+  await FirebaseFirestore.instance.runTransaction((transacao) async {
+    final documento = await transacao.get(referencia);
+    if (documento.exists) return;
+
+    final inicio = DateTime.now();
+
+    transacao.set(referencia, {
+      'inicio': Timestamp.fromDate(inicio),
+      'termino': Timestamp.fromDate(
+        inicio.add(const Duration(days: 30)),
+      ),
+      'status': 'teste_gratis',
+      'boasVindasExibida': false,
+    });
+  });
+    }
 
   String _mensagemErro(FirebaseAuthException erro) {
     switch (erro.code) {

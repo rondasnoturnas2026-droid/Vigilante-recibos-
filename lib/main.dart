@@ -558,6 +558,7 @@ class _TelaAcessoState extends State<TelaAcesso> {
         );
       }
         await _garantirPeriodoGratis();
+        await _mostrarBoasVindasSeNecessario();
               final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('contaComLogin', true);
       exigirLoginDaConta.value = true;

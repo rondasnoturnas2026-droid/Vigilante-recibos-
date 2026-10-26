@@ -6607,6 +6607,7 @@ double naoInformado = 0;
   pix: pix,
   dinheiro: dinheiro,
   cartao: cartao,
+                  naoInformado: naoInformado,
 ),
             _graficoBalanco(recebido, pendente),
             _comparativoMensal(mensalidades, anoSelecionado),

@@ -759,6 +759,111 @@ class _TelaAcessoState extends State<TelaAcesso> {
     );
   }
 }
+class TelaMinhaConta extends StatelessWidget {
+  const TelaMinhaConta({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final usuario = FirebaseAuth.instance.currentUser;
+
+    if (usuario == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Minha conta')),
+        body: const Center(
+          child: Text('Entre na sua conta para ver o plano.'),
+        ),
+      );
+    }
+
+    final referencia = FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(usuario.uid)
+        .collection('dados')
+        .doc('_periodo_gratis');
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Minha conta')),
+      body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        future: referencia.get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Não foi possível carregar os dados da conta.'),
+            );
+          }
+
+          final dados = snapshot.data?.data();
+          final valorTermino = dados?['termino'];
+
+          if (dados == null || valorTermino is! Timestamp) {
+            return const Center(
+              child: Text('Não foi possível carregar o período grátis.'),
+            );
+          }
+
+          final termino = valorTermino.toDate();
+          final expirou = !termino.isAfter(DateTime.now());
+          final dataFormatada =
+              '${termino.day.toString().padLeft(2, '0')}/'
+              '${termino.month.toString().padLeft(2, '0')}/'
+              '${termino.year}';
+
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              ListTile(
+                leading: const Icon(Icons.account_circle_outlined),
+                title: const Text('Conta'),
+                subtitle: Text(usuario.email ?? ''),
+              ),
+              const SizedBox(height: 12),
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.workspace_premium_outlined),
+                  title: Text(
+                    expirou ? 'Período grátis encerrado' : 'Teste grátis ativo',
+                  ),
+                  subtitle: Text(
+                    expirou
+                        ? 'Terminou em $dataFormatada. Escolha um plano para continuar.'
+                        : 'Válido até $dataFormatada.',
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Planos'),
+                      content: const Text(
+                        'As opções e os valores dos planos serão exibidos '
+                        'aqui depois que forem configurados.',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Fechar'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.list_alt),
+                label: const Text('Ver planos'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
 
 class TelaPrincipal extends StatefulWidget {
   const TelaPrincipal({super.key});

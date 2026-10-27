@@ -117,20 +117,32 @@ List<RoteiroRonda> _rondasFeitas = [];
 
     if (roteiro == null || !mounted) return;
 
-    final atualizados = [roteiro, ..._roteiros];
     final prefs = await SharedPreferences.getInstance();
+final salvo = await prefs.setString(
+  _chaveRotaPrincipal,
+  jsonEncode(roteiro.toMap()),
+);
 
-    await prefs.setString(
-      _chaveRoteiros,
-      jsonEncode(atualizados.map((item) => item.toMap()).toList()),
-    );
+if (!salvo) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Não foi possível salvar o roteiro.'),
+    ),
+  );
+  return;
+}
 
-    if (!mounted) return;
-    setState(() => _roteiros = atualizados);
+if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Roteiro salvo neste aparelho.')),
-    );
+setState(() {
+  _rotaPrincipal = roteiro;
+});
+
+ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(
+    content: Text('Roteiro principal salvo neste aparelho.'),
+  ),
+);
   }
 
   @override

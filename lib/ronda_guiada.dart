@@ -387,6 +387,7 @@ class RondaEmAndamentoPage extends StatefulWidget {
 }
 
 class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
+  final FlutterTts _fala = FlutterTts();
   final List<PontoRonda> _pontos = [];
   final MapController _mapController = MapController();
   bool _mapaPronto = false;

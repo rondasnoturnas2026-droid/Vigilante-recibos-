@@ -804,10 +804,12 @@ Future<void> _marcarCasa() async {
                   children: [
                     Text(
                       _carregando
-                          ? 'Obtendo GPS...'
-                          : _gravando
-                              ? 'Gravação em andamento'
-                              : 'Gravação pausada',
+    ? 'Obtendo GPS...'
+    : widget.rotaPrincipal != null
+        ? 'Seguindo o roteiro salvo'
+        : _gravando
+            ? 'Gravação em andamento'
+            : 'Gravação pausada',
                     ),
                     const SizedBox(height: 8),
                     Text(

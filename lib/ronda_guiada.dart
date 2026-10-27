@@ -493,7 +493,57 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
     }
   }
 
-    Future<void> _marcarCasa() async {
+    void _registrarPosicao(Position posicao, {bool forcar = false}) {
+  final anterior = _pontos.isEmpty ? null : _pontos.last;
+  var trechoMetros = 0.0;
+
+  if (anterior != null) {
+    trechoMetros = Geolocator.distanceBetween(
+      anterior.latitude,
+      anterior.longitude,
+      posicao.latitude,
+      posicao.longitude,
+    );
+
+    if (!forcar && trechoMetros < 5) {
+      if (mounted) {
+        setState(() {
+          _ultimaPosicao = posicao;
+        });
+        _acompanharPosicao(posicao);
+      }
+      return;
+    }
+  }
+
+  if (!mounted) return;
+
+  setState(() {
+    _ultimaPosicao = posicao;
+    _distanciaMetros += trechoMetros;
+    _pontos.add(
+      PontoRonda(
+        latitude: posicao.latitude,
+        longitude: posicao.longitude,
+        dataHora: posicao.timestamp,
+        tipo: TipoPontoRonda.percurso,
+      ),
+    );
+  });
+
+  _acompanharPosicao(posicao);
+}
+
+void _acompanharPosicao(Position posicao) {
+  if (!mounted || !_mapaPronto) return;
+
+  _mapController.move(
+    LatLng(posicao.latitude, posicao.longitude),
+    16,
+  );
+}
+
+Future<void> _marcarCasa() async {
   final posicao = _ultimaPosicao;
   if (posicao == null) return;
 
@@ -542,65 +592,7 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
       ),
     );
   });
-    }
-
-  Future<void> _marcarCasa() async {
-    final posicao = _ultimaPosicao;
-    if (posicao == null) return;
-
-    final identificacao = TextEditingController();
-    final nomeCasa = await _mostrarDialogoAguardandoFechar<String>(
-  builder: (context) => AlertDialog(
-    title: const Text('Marcar casa'),
-    content: TextField(
-      controller: identificacao,
-      autofocus: true,
-      decoration: const InputDecoration(
-        labelText: 'Identificação da casa',
-        hintText: 'Ex.: Casa 25',
-      ),
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Cancelar'),
-      ),
-      FilledButton(
-        onPressed: () {
-          final valor = identificacao.text.trim();
-          if (valor.isNotEmpty) Navigator.pop(context, valor);
-        },
-        child: const Text('Marcar'),
-      ),
-    ],
-  ),
-);
-          FilledButton(
-            onPressed: () {
-              final valor = identificacao.text.trim();
-              if (valor.isNotEmpty) Navigator.pop(context, valor);
-            },
-            child: const Text('Marcar'),
-          ),
-        ],
-      ),
-    );
-
-    identificacao.dispose();
-    if (nomeCasa == null || !mounted) return;
-
-    setState(() {
-      _pontos.add(
-        PontoRonda(
-          latitude: posicao.latitude,
-          longitude: posicao.longitude,
-          dataHora: DateTime.now(),
-          tipo: TipoPontoRonda.casa,
-          identificacao: nomeCasa,
-        ),
-      );
-    });
-  }
+}
 
   Future<void> _sairSemSalvar() async {
     final descartar = await showDialog<bool>(

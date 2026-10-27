@@ -778,7 +778,9 @@ Future<void> _marcarCasa() async {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Gravando ronda'),
+          title: Text(
+  widget.rotaPrincipal == null ? 'Gravando roteiro' : 'Seguindo ronda',
+),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: _sairSemSalvar,

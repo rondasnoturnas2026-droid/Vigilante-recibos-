@@ -220,14 +220,7 @@ ScaffoldMessenger.of(context).showSnackBar(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancelar'),
           ),
-          FilledButton(
-            onPressed: () {
-              final nome = campoNome.text.trim();
-              if (nome.isNotEmpty) Navigator.pop(context, nome);
-            },
-            child: const Text('Começar'),
-          ),
-        ],
+        
       ),
     );
 

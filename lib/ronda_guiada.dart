@@ -347,10 +347,13 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
   bool _podeSair = false;
   String? _erro;
 
-  @override
+    @override
   void initState() {
     super.initState();
-    _iniciarGps();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _iniciarGps();
+    });
   }
 
   Future<void> _iniciarGps() async {

@@ -521,6 +521,9 @@ String? _instrucaoAtual;
   }
 
     void _registrarPosicao(Position posicao, {bool forcar = false}) {
+      if (widget.rotaPrincipal != null) {
+  _orientarPelaRota(posicao);
+      }
   final anterior = _pontos.isEmpty ? null : _pontos.last;
   var trechoMetros = 0.0;
 

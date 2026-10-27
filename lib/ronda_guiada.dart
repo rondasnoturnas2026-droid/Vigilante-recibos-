@@ -681,9 +681,15 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    ),
+  urlTemplate:
+      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  userAgentPackageName: 'br.com.vigilanterecibos.vigilante_recibos',
+),
+RichAttributionWidget(
+  attributions: [
+    TextSourceAttribution('© OpenStreetMap contributors'),
+  ],
+),
                     if (coordenadasRota.length > 1)
                       PolylineLayer(
                         polylines: [

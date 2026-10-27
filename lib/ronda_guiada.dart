@@ -230,7 +230,7 @@ ScaffoldMessenger.of(context).showSnackBar(
             },
             child: const Text('Começar'),
           ),
-        
+                  ],
       ),
     );
 

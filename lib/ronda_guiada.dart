@@ -501,6 +501,11 @@ String? _instrucaoAtual;
       });
     }
   }
+  List<PontoRonda> get _pontosDaRotaSalva {
+  return (widget.rotaPrincipal?.pontos ?? const <PontoRonda>[])
+      .where((ponto) => ponto.tipo == TipoPontoRonda.percurso)
+      .toList(growable: false);
+  }
   Future<void> _anunciarInstrucao(String instrucao, int indice) async {
   if (_ultimaCurvaAnunciada == indice) return;
 

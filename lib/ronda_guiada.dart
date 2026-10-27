@@ -472,6 +472,15 @@ String? _instrucaoAtual;
       final primeiraPosicao = await Geolocator.getCurrentPosition(
         locationSettings: configuracao,
       );
+      if (widget.rotaPrincipal != null &&
+    _pontosDaRotaSalva.length > 1) {
+  unawaited(
+    _anunciarInstrucao(
+      'Siga pelo percurso salvo indicado no mapa.',
+      0,
+    ),
+  );
+      }
 
       _registrarPosicao(primeiraPosicao, forcar: true);
 

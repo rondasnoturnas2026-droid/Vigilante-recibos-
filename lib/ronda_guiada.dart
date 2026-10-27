@@ -524,6 +524,12 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
           tipo: TipoPontoRonda.percurso,
         ),
       );
+          if (_mapaPronto) {
+      _mapController.move(
+        LatLng(posicao.latitude, posicao.longitude),
+        16,
+      );
+          }
     });
   }
 

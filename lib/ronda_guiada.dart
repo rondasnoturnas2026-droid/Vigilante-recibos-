@@ -292,17 +292,44 @@ ScaffoldMessenger.of(context).showSnackBar(
             style: TextStyle(fontSize: 16),
           ),
           const SizedBox(height: 12),
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.route_outlined),
-              title: const Text('Sua ronda'),
-              subtitle: const Text('Gravar roteiro casa por casa'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: _carregando
-    ? null
-    : _rotaPrincipal == null
-        ? _novaRonda
-        : _iniciarExecucao,
+                    Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.route_outlined),
+                    title: const Text('Ronda principal'),
+                    subtitle: Text(
+                      _carregando
+                          ? 'Carregando...'
+                          : _rotaPrincipal == null
+                              ? 'Nenhum roteiro salvo'
+                              : '${_rotaPrincipal!.nome} • '
+                                  '${_rotaPrincipal!.area}',
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _carregando ? null : _novaRonda,
+                    icon: const Icon(Icons.route),
+                    label: Text(
+                      _rotaPrincipal == null
+                          ? 'Gravar roteiro principal'
+                          : 'Gravar novamente o roteiro principal',
+                    ),
+                  ),
+                  if (_rotaPrincipal != null) ...[
+                    const SizedBox(height: 8),
+                    FilledButton.icon(
+                      onPressed: _carregando ? null : _iniciarExecucao,
+                      icon: const Icon(Icons.navigation),
+                      label: const Text('Seguir ronda'),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
           Card(

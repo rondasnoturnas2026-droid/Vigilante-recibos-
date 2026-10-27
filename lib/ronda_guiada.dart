@@ -95,7 +95,7 @@ List<RoteiroRonda> _rondasFeitas = [];
     final area = TextEditingController();
 
     
-      context: context,
+      
       builder: (context) => AlertDialog(
         title: const Text('Nova ronda'),
         content: Column(
@@ -206,7 +206,7 @@ ScaffoldMessenger.of(context).showSnackBar(
     final campoNome = TextEditingController();
 
     
-      context: context,
+      
       builder: (context) => AlertDialog(
         title: const Text('Iniciar ronda'),
         content: TextField(

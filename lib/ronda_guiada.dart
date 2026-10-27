@@ -501,6 +501,19 @@ String? _instrucaoAtual;
       });
     }
   }
+  Future<void> _anunciarInstrucao(String instrucao, int indice) async {
+  if (_ultimaCurvaAnunciada == indice) return;
+
+  _ultimaCurvaAnunciada = indice;
+  if (mounted) {
+    setState(() {
+      _instrucaoAtual = instrucao;
+    });
+  }
+
+  await _fala.stop();
+  await _fala.speak(instrucao);
+  }
 
     void _registrarPosicao(Position posicao, {bool forcar = false}) {
   final anterior = _pontos.isEmpty ? null : _pontos.last;

@@ -181,6 +181,24 @@ ScaffoldMessenger.of(context).showSnackBar(
   ),
 );
   }
+    Future<T?> _mostrarDialogoAguardandoFechar<T>({
+    required WidgetBuilder builder,
+  }) async {
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final rotaDialogo = DialogRoute<T>(
+      context: context,
+      builder: builder,
+      themes: InheritedTheme.capture(
+        from: context,
+        to: navigator.context,
+      ),
+      barrierDismissible: true,
+    );
+
+    final resultado = await navigator.push<T>(rotaDialogo);
+    await rotaDialogo.completed;
+    return resultado;
+    }
     Future<void> _iniciarExecucao() async {
     final principal = _rotaPrincipal;
     if (principal == null) return;

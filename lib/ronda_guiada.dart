@@ -95,7 +95,7 @@ List<RoteiroRonda> _rondasFeitas = [];
     final area = TextEditingController();
 
     
-      
+      final dados = await _mostrarDialogoAguardandoFechar<Map<String, String>>(
       builder: (context) => AlertDialog(
         title: const Text('Nova ronda'),
         content: Column(

@@ -493,7 +493,7 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
     }
   }
 
-  void _registrarPosicao(Position posicao, {bool forcar = false}) {
+    void _registrarPosicao(Position posicao, {bool forcar = false}) {
     final anterior = _pontos.isEmpty ? null : _pontos.last;
     var trechoMetros = 0.0;
 
@@ -506,7 +506,12 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
       );
 
       if (!forcar && trechoMetros < 5) {
-        if (mounted) setState(() => _ultimaPosicao = posicao);
+        if (mounted) {
+          setState(() {
+            _ultimaPosicao = posicao;
+          });
+          _acompanharPosicao(posicao);
+        }
         return;
       }
     }
@@ -524,13 +529,18 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
           tipo: TipoPontoRonda.percurso,
         ),
       );
-          if (_mapaPronto) {
-      _mapController.move(
-        LatLng(posicao.latitude, posicao.longitude),
-        16,
-      );
-          }
     });
+
+    _acompanharPosicao(posicao);
+  }
+
+  void _acompanharPosicao(Position posicao) {
+    if (!mounted || !_mapaPronto) return;
+
+    _mapController.move(
+      LatLng(posicao.latitude, posicao.longitude),
+      16,
+    );
   }
 
   Future<void> _marcarCasa() async {

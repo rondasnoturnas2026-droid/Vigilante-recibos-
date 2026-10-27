@@ -625,6 +625,76 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
                 ),
               ),
             ),
+                        const SizedBox(height: 12),
+            SizedBox(
+              height: 300,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: centroInicial,
+                    initialZoom: 16,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    ),
+                    if (coordenadasRota.length > 1)
+                      PolylineLayer(
+                        polylines: [
+                          Polyline(
+                            points: coordenadasRota,
+                            color: Colors.blue,
+                            strokeWidth: 4,
+                          ),
+                        ],
+                      ),
+                    if (coordenadasGravadas.length > 1)
+                      PolylineLayer(
+                        polylines: [
+                          Polyline(
+                            points: coordenadasGravadas,
+                            color: Colors.green,
+                            strokeWidth: 4,
+                          ),
+                        ],
+                      ),
+                    MarkerLayer(
+                      markers: [
+                        ...casas.map(
+                          (casa) => Marker(
+                            point: LatLng(casa.latitude, casa.longitude),
+                            width: 40,
+                            height: 40,
+                            child: const Icon(
+                              Icons.home,
+                              color: Colors.orange,
+                              size: 34,
+                            ),
+                          ),
+                        ),
+                        if (_ultimaPosicao != null)
+                          Marker(
+                            point: LatLng(
+                              _ultimaPosicao!.latitude,
+                              _ultimaPosicao!.longitude,
+                            ),
+                            width: 40,
+                            height: 40,
+                            child: const Icon(
+                              Icons.my_location,
+                              color: Colors.red,
+                              size: 32,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
             if (_erro != null && !_gravando)
               FilledButton(
                 onPressed: _carregando ? null : _iniciarGps,

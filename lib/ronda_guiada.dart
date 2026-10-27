@@ -273,7 +273,11 @@ ScaffoldMessenger.of(context).showSnackBar(
               title: const Text('Sua ronda'),
               subtitle: const Text('Gravar roteiro casa por casa'),
               trailing: const Icon(Icons.chevron_right),
-              onTap: _novaRonda,
+              onTap: _carregando
+    ? null
+    : _rotaPrincipal == null
+        ? _novaRonda
+        : _iniciarExecucao,
             ),
           ),
           Card(

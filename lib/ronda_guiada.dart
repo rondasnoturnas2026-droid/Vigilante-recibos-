@@ -572,8 +572,9 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
     Navigator.pop(context, roteiro);
   }
 
-  @override
+    @override
   void dispose() {
+    _animacaoDaRota?.removeStatusListener(_esperarFimDaAbertura);
     _assinatura?.cancel();
     super.dispose();
   }

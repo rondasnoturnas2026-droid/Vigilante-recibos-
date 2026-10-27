@@ -215,7 +215,7 @@ ScaffoldMessenger.of(context).showSnackBar(
                   : () => Navigator.of(context).push<void>(
                         MaterialPageRoute(
                           builder: (_) => RondasRegistradasPage(
-                            roteiros: _roteiros,
+                            roteiros: _rondasFeitas,
                           ),
                         ),
                       ),

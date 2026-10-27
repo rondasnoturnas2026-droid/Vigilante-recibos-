@@ -718,6 +718,7 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
                     initialCenter: centroInicial,
                     initialZoom: 16,
                                         onMapReady: () {
+                                          _mapaPronto = true;
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         final posicao = _ultimaPosicao;
                         if (!mounted || posicao == null) return;

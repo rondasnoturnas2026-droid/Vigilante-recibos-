@@ -398,7 +398,9 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
   bool _gravando = false;
   bool _podeSair = false;
   String? _erro;
-
+int _indiceProximoPontoRota = 1;
+int _ultimaCurvaAnunciada = -1;
+String? _instrucaoAtual;
       bool _gpsAgendado = false;
   Animation<double>? _animacaoDaRota;
 

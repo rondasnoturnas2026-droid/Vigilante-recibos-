@@ -635,6 +635,17 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
                   options: MapOptions(
                     initialCenter: centroInicial,
                     initialZoom: 16,
+                                        onMapReady: () {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        final posicao = _ultimaPosicao;
+                        if (!mounted || posicao == null) return;
+
+                        _mapController.move(
+                          LatLng(posicao.latitude, posicao.longitude),
+                          16,
+                        );
+                      });
+                    },
                   ),
                   children: [
                     TileLayer(

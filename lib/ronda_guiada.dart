@@ -220,6 +220,7 @@ ScaffoldMessenger.of(context).showSnackBar(
         builder: (_) => RondaEmAndamentoPage(
           nome: nomeVigilante,
           area: principal.area,
+          rotaPrincipal: principal,
         ),
       ),
     );

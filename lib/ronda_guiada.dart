@@ -347,9 +347,37 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
   bool _podeSair = false;
   String? _erro;
 
-    @override
-  void initState() {
-    super.initState();
+      bool _gpsAgendado = false;
+  Animation<double>? _animacaoDaRota;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final animacao = ModalRoute.of(context)?.animation;
+    if (identical(animacao, _animacaoDaRota)) return;
+
+    _animacaoDaRota?.removeStatusListener(_esperarFimDaAbertura);
+    _animacaoDaRota = animacao;
+    _animacaoDaRota?.addStatusListener(_esperarFimDaAbertura);
+
+    if (animacao == null ||
+        animacao.status == AnimationStatus.completed) {
+      _agendarInicioGps();
+    }
+  }
+
+  void _esperarFimDaAbertura(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      _agendarInicioGps();
+    }
+  }
+
+  void _agendarInicioGps() {
+    if (_gpsAgendado) return;
+    _gpsAgendado = true;
+    _animacaoDaRota?.removeStatusListener(_esperarFimDaAbertura);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _iniciarGps();

@@ -560,6 +560,80 @@ String? _instrucaoAtual;
 
   _acompanharPosicao(posicao);
 }
+  void _orientarPelaRota(Position posicao) {
+  final rota = _pontosDaRotaSalva;
+  if (rota.length < 4) return;
+
+  final intervalo = rota.length >= 8 ? 3 : 1;
+  var inicio = _indiceProximoPontoRota;
+  if (inicio < intervalo) inicio = intervalo;
+
+  final ultimoIndice = rota.length - intervalo - 1;
+  if (inicio > ultimoIndice) return;
+
+  var indiceMaisProximo = inicio;
+  var menorDistancia = double.infinity;
+  var fimBusca = inicio + 12;
+  if (fimBusca > ultimoIndice) fimBusca = ultimoIndice;
+
+  for (var i = inicio; i <= fimBusca; i++) {
+    final ponto = rota[i];
+    final distancia = Geolocator.distanceBetween(
+      posicao.latitude,
+      posicao.longitude,
+      ponto.latitude,
+      ponto.longitude,
+    );
+
+    if (distancia < menorDistancia) {
+      menorDistancia = distancia;
+      indiceMaisProximo = i;
+    }
+  }
+
+  _indiceProximoPontoRota = indiceMaisProximo;
+
+  for (var i = indiceMaisProximo; i <= ultimoIndice; i++) {
+    if (i <= _ultimaCurvaAnunciada) continue;
+
+    final antes = rota[i - intervalo];
+    final curva = rota[i];
+    final depois = rota[i + intervalo];
+
+    final rumoAntes = Geolocator.bearingBetween(
+      antes.latitude,
+      antes.longitude,
+      curva.latitude,
+      curva.longitude,
+    );
+    final rumoDepois = Geolocator.bearingBetween(
+      curva.latitude,
+      curva.longitude,
+      depois.latitude,
+      depois.longitude,
+    );
+
+    var diferenca = rumoDepois - rumoAntes;
+    if (diferenca > 180) diferenca -= 360;
+    if (diferenca < -180) diferenca += 360;
+    if (diferenca.abs() < 45) continue;
+
+    final distanciaAteCurva = Geolocator.distanceBetween(
+      posicao.latitude,
+      posicao.longitude,
+      curva.latitude,
+      curva.longitude,
+    );
+
+    if (distanciaAteCurva <= 35) {
+      final instrucao =
+          diferenca > 0 ? 'Vire à direita' : 'Vire à esquerda';
+      unawaited(_anunciarInstrucao(instrucao, i));
+    }
+
+    break;
+  }
+  }
 
 void _acompanharPosicao(Position posicao) {
   if (!mounted || !_mapaPronto) return;

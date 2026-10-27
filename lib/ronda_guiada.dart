@@ -19,6 +19,8 @@ class RondaGuiadaPage extends StatefulWidget {
 
 class _RondaGuiadaPageState extends State<RondaGuiadaPage> {
   List<RoteiroRonda> _roteiros = [];
+  RoteiroRonda? _rotaPrincipal;
+List<RoteiroRonda> _rondasFeitas = [];
   bool _carregando = true;
 
   @override

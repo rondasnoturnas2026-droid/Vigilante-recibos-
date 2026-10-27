@@ -548,23 +548,32 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
     if (posicao == null) return;
 
     final identificacao = TextEditingController();
-    final nomeCasa = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Marcar casa'),
-        content: TextField(
-          controller: identificacao,
-          autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Identificação da casa',
-            hintText: 'Ex.: Casa 25',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
+    final nomeCasa = await _mostrarDialogoAguardandoFechar<String>(
+  builder: (context) => AlertDialog(
+    title: const Text('Marcar casa'),
+    content: TextField(
+      controller: identificacao,
+      autofocus: true,
+      decoration: const InputDecoration(
+        labelText: 'Identificação da casa',
+        hintText: 'Ex.: Casa 25',
+      ),
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: const Text('Cancelar'),
+      ),
+      FilledButton(
+        onPressed: () {
+          final valor = identificacao.text.trim();
+          if (valor.isNotEmpty) Navigator.pop(context, valor);
+        },
+        child: const Text('Marcar'),
+      ),
+    ],
+  ),
+);
           FilledButton(
             onPressed: () {
               final valor = identificacao.text.trim();

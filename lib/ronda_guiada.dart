@@ -220,6 +220,16 @@ ScaffoldMessenger.of(context).showSnackBar(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancelar'),
           ),
+                    FilledButton(
+            onPressed: () {
+              final nome = campoNome.text.trim();
+              if (nome.isEmpty) return;
+
+              FocusManager.instance.primaryFocus?.unfocus();
+              Navigator.pop(context, nome);
+            },
+            child: const Text('Começar'),
+          ),
         
       ),
     );

@@ -207,7 +207,7 @@ ScaffoldMessenger.of(context).showSnackBar(
               subtitle: Text(
                 _carregando
                     ? 'Carregando...'
-                    '${_rondasFeitas.length} roteiro(s) salvo(s)',
+                    : '${_rondasFeitas.length} roteiro(s) salvo(s)',
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: _carregando

@@ -94,7 +94,7 @@ List<RoteiroRonda> _rondasFeitas = [];
     final nome = TextEditingController(text: 'Ronda');
     final area = TextEditingController();
 
-    final dados = await _mostrarDialogoAguardandoFechar<Map<String, String>>(
+    
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Nova ronda'),
@@ -205,7 +205,7 @@ ScaffoldMessenger.of(context).showSnackBar(
 
     final campoNome = TextEditingController();
 
-    final nomeVigilante = await _mostrarDialogoAguardandoFechar<String>(
+    
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Iniciar ronda'),

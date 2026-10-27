@@ -1017,95 +1017,9 @@ class _TelaPrincipalState extends State<TelaPrincipal>
 class TelaRondas extends StatelessWidget {
   const TelaRondas({super.key});
 
-  void _mostrarExplicacao(
-    BuildContext context,
-    String titulo,
-    String explicacao,
-  ) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(titulo),
-        content: Text(explicacao),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Entendi'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _botaoFuncao(
-    BuildContext context, {
-    required IconData icone,
-    required String titulo,
-    required String resumo,
-    required String explicacao,
-  }) {
-    return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          child: Icon(icone),
-        ),
-        title: Text(titulo),
-        subtitle: Text(resumo),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => _mostrarExplicacao(
-          context,
-          titulo,
-          explicacao,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rondas'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const Text(
-            'Escolha o que deseja fazer na ronda.',
-            style: TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 12),
-          _botaoFuncao(
-            context,
-            icone: Icons.route_outlined,
-            titulo: 'Sua ronda',
-            resumo: 'Grave e salve o roteiro original.',
-            explicacao:
-                'O vigilante principal grava o percurso do início ao fim. '
-                'O app mostra a quilometragem estimada da rota.',
-          ),
-          _botaoFuncao(
-            context,
-            icone: Icons.share_outlined,
-            titulo: 'Compartilhar roteiro',
-            resumo: 'Envie o percurso para outro vigilante.',
-            explicacao:
-                                'Quando essa função estiver disponível, o link pedirá a instalação '
-                'do app. Depois, o novato terá acesso apenas à ronda compartilhada, '
-                'sem entrar em mensalidades, clientes, relatórios ou configurações.',
-          ),
-          _botaoFuncao(
-            context,
-            icone: Icons.history,
-            titulo: 'Rondas feitas',
-            resumo: 'Consulte os percursos realizados.',
-            explicacao:
-                'Cada execução fica registrada separadamente, com o nome '
-                'do vigilante, a data, os horários e a quilometragem.',
-          ),
-        ],
-      ),
-    );
+    return const RondaGuiadaPage();
   }
 }
 

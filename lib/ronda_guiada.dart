@@ -205,7 +205,7 @@ ScaffoldMessenger.of(context).showSnackBar(
 
     final campoNome = TextEditingController();
 
-    
+    final nomeVigilante = await _mostrarDialogoAguardandoFechar<String>(
       
       builder: (context) => AlertDialog(
         title: const Text('Iniciar ronda'),

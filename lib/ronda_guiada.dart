@@ -493,55 +493,56 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
     }
   }
 
-    void _registrarPosicao(Position posicao, {bool forcar = false}) {
-    final anterior = _pontos.isEmpty ? null : _pontos.last;
-    var trechoMetros = 0.0;
+    Future<void> _marcarCasa() async {
+  final posicao = _ultimaPosicao;
+  if (posicao == null) return;
 
-    if (anterior != null) {
-      trechoMetros = Geolocator.distanceBetween(
-        anterior.latitude,
-        anterior.longitude,
-        posicao.latitude,
-        posicao.longitude,
-      );
+  var identificacaoCasa = '';
 
-      if (!forcar && trechoMetros < 5) {
-        if (mounted) {
-          setState(() {
-            _ultimaPosicao = posicao;
-          });
-          _acompanharPosicao(posicao);
-        }
-        return;
-      }
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      _ultimaPosicao = posicao;
-      _distanciaMetros += trechoMetros;
-      _pontos.add(
-        PontoRonda(
-          latitude: posicao.latitude,
-          longitude: posicao.longitude,
-          dataHora: posicao.timestamp,
-          tipo: TipoPontoRonda.percurso,
+  final nomeCasa = await showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Marcar casa'),
+      content: TextField(
+        autofocus: true,
+        onChanged: (valor) => identificacaoCasa = valor.trim(),
+        decoration: const InputDecoration(
+          labelText: 'Identificação da casa',
+          hintText: 'Ex.: Casa 25',
         ),
-      );
-    });
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () {
+            final valor = identificacaoCasa.trim();
+            if (valor.isNotEmpty) {
+              Navigator.pop(context, valor);
+            }
+          },
+          child: const Text('Marcar'),
+        ),
+      ],
+    ),
+  );
 
-    _acompanharPosicao(posicao);
-  }
+  if (nomeCasa == null || !mounted) return;
 
-  void _acompanharPosicao(Position posicao) {
-    if (!mounted || !_mapaPronto) return;
-
-    _mapController.move(
-      LatLng(posicao.latitude, posicao.longitude),
-      16,
+  setState(() {
+    _pontos.add(
+      PontoRonda(
+        latitude: posicao.latitude,
+        longitude: posicao.longitude,
+        dataHora: DateTime.now(),
+        tipo: TipoPontoRonda.casa,
+        identificacao: nomeCasa,
+      ),
     );
-  }
+  });
+    }
 
   Future<void> _marcarCasa() async {
     final posicao = _ultimaPosicao;

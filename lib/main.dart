@@ -25,6 +25,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
+import 'ronda_guiada.dart';
 final ValueNotifier<ThemeMode> temaApp =
     ValueNotifier<ThemeMode>(ThemeMode.system);
 final ValueNotifier<bool> exigirLoginDaConta =

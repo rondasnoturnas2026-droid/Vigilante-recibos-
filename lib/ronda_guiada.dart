@@ -552,7 +552,21 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
     final casas = _pontos
         .where((ponto) => ponto.tipo == TipoPontoRonda.casa)
         .toList();
-
+    final pontosRota = widget.rotaPrincipal?.pontos ?? const <PontoRonda>[];
+    final coordenadasRota = pontosRota
+        .map((ponto) => LatLng(ponto.latitude, ponto.longitude))
+        .toList();
+    final coordenadasGravadas = _pontos
+        .map((ponto) => LatLng(ponto.latitude, ponto.longitude))
+        .toList();
+    final centroInicial = coordenadasRota.isNotEmpty
+        ? coordenadasRota.first
+        : _ultimaPosicao != null
+            ? LatLng(
+                _ultimaPosicao!.latitude,
+                _ultimaPosicao!.longitude,
+              )
+            : const LatLng(-15.7801, -47.9292);
     return PopScope<RoteiroRonda>(
       canPop: _podeSair,
       onPopInvokedWithResult: (didPop, resultado) {

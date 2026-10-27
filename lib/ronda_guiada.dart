@@ -338,6 +338,7 @@ class RondaEmAndamentoPage extends StatefulWidget {
 
 class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage> {
   final List<PontoRonda> _pontos = [];
+  final MapController _mapController = MapController();
   StreamSubscription<Position>? _assinatura;
   Position? _ultimaPosicao;
   double _distanciaMetros = 0;

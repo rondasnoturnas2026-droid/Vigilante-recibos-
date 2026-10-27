@@ -30,6 +30,8 @@ dependencies:
   firebase_auth: ^6.5.6
   cloud_firestore: ^6.10.0
   geolocator: ^14.0.2
+  flutter_map: ^8.3.2
+  latlong2: ^0.10.1
   device_info_plus: ^11.4.0
   local_auth: ^3.0.1
   read_pdf_text: ^0.3.1

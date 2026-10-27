@@ -178,6 +178,82 @@ ScaffoldMessenger.of(context).showSnackBar(
   ),
 );
   }
+    Future<void> _iniciarExecucao() async {
+    final principal = _rotaPrincipal;
+    if (principal == null) return;
+
+    final campoNome = TextEditingController();
+
+    final nomeVigilante = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Iniciar ronda'),
+        content: TextField(
+          controller: campoNome,
+          decoration: const InputDecoration(
+            labelText: 'Nome do vigilante',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final nome = campoNome.text.trim();
+              if (nome.isNotEmpty) Navigator.pop(context, nome);
+            },
+            child: const Text('Começar'),
+          ),
+        ],
+      ),
+    );
+
+    campoNome.dispose();
+    if (nomeVigilante == null || !mounted) return;
+
+    final execucao = await Navigator.of(context).push<RoteiroRonda>(
+      MaterialPageRoute(
+        builder: (_) => RondaEmAndamentoPage(
+          nome: nomeVigilante,
+          area: principal.area,
+        ),
+      ),
+    );
+
+    if (execucao == null || !mounted) return;
+
+    final rondasAtualizadas = [execucao, ..._rondasFeitas];
+    final prefs = await SharedPreferences.getInstance();
+    final salvo = await prefs.setString(
+      _chaveRondasFeitas,
+      jsonEncode(
+        rondasAtualizadas.map((item) => item.toMap()).toList(),
+      ),
+    );
+
+    if (!salvo) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível salvar a ronda feita.'),
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _rondasFeitas = rondasAtualizadas;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Ronda feita salva neste aparelho.'),
+      ),
+    );
+    }
 
   @override
   Widget build(BuildContext context) {

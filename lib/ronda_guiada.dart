@@ -8,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'rondas/models/roteiro_ronda.dart';
 
 const String _chaveRoteiros = 'roteirosRondaGuiadaV1';
-
+const String _chaveRotaPrincipal = 'rotaPrincipalRondaV1';
+const String _chaveRondasFeitas = 'rondasFeitasRondaV1';
 class RondaGuiadaPage extends StatefulWidget {
   const RondaGuiadaPage({super.key});
 

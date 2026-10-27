@@ -126,6 +126,7 @@ List<RoteiroRonda> _rondasFeitas = [];
               if (nome.text.trim().isEmpty || area.text.trim().isEmpty) {
                 return;
               }
+              FocusManager.instance.primaryFocus?.unfocus();
               Navigator.pop(context, {
                 'nome': nome.text.trim(),
                 'area': area.text.trim(),

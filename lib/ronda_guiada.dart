@@ -30,28 +30,62 @@ List<RoteiroRonda> _rondasFeitas = [];
   }
 
   Future<void> _carregarRoteiros() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final salvo = prefs.getString(_chaveRoteiros);
+  try {
+    final prefs = await SharedPreferences.getInstance();
 
-      if (salvo != null) {
-        final dados = jsonDecode(salvo);
-        if (dados is List) {
-          _roteiros = dados
-              .whereType<Map>()
-              .map(
-                (item) => RoteiroRonda.fromMap(
-                  Map<String, dynamic>.from(item),
-                ),
-              )
-              .toList();
-        }
-      }
-    } catch (_) {
-      _roteiros = [];
+    List<RoteiroRonda> converterLista(String? salvo) {
+      if (salvo == null) return [];
+      final dados = jsonDecode(salvo);
+      if (dados is! List) return [];
+
+      return dados
+          .whereType<Map>()
+          .map(
+            (item) => RoteiroRonda.fromMap(
+              Map<String, dynamic>.from(item),
+            ),
+          )
+          .toList();
     }
 
-    if (mounted) setState(() => _carregando = false);
+    final roteirosAntigos = converterLista(
+      prefs.getString(_chaveRoteiros),
+    );
+
+    final rondasSalvas = prefs.getString(_chaveRondasFeitas);
+    final rondasCarregadas = converterLista(rondasSalvas);
+
+    RoteiroRonda? rotaPrincipal;
+    final rotaSalva = prefs.getString(_chaveRotaPrincipal);
+
+    if (rotaSalva != null) {
+      final dados = jsonDecode(rotaSalva);
+      if (dados is Map) {
+        rotaPrincipal = RoteiroRonda.fromMap(
+          Map<String, dynamic>.from(dados),
+        );
+      }
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _roteiros = roteirosAntigos;
+      _rondasFeitas =
+          rondasSalvas == null ? roteirosAntigos : rondasCarregadas;
+      _rotaPrincipal = rotaPrincipal;
+      _carregando = false;
+    });
+  } catch (_) {
+    if (!mounted) return;
+
+    setState(() {
+      _roteiros = [];
+      _rondasFeitas = [];
+      _rotaPrincipal = null;
+      _carregando = false;
+    });
+  }
   }
 
   Future<void> _novaRonda() async {

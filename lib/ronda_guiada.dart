@@ -812,6 +812,14 @@ Future<void> _marcarCasa() async {
                       'Distância: ${_formatarDistancia(_distanciaMetros)}',
                     ),
                     Text('Casas marcadas: ${casas.length}'),
+                    if (_instrucaoAtual != null)
+  Text(
+    'Orientação: $_instrucaoAtual',
+    style: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
                     if (_ultimaPosicao != null)
                       Text(
                         'GPS: '

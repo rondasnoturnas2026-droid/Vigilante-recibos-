@@ -445,6 +445,11 @@ String? _instrucaoAtual;
     });
 
     try {
+      if (widget.rotaPrincipal != null) {
+  await _fala.setLanguage('pt-BR');
+  await _fala.setSpeechRate(0.48);
+  await _fala.setVolume(1.0);
+      }
       if (!await Geolocator.isLocationServiceEnabled()) {
         throw Exception('Ative a localização do celular para começar.');
       }

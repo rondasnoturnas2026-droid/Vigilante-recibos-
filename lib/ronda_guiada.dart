@@ -294,6 +294,81 @@ ScaffoldMessenger.of(context).showSnackBar(
       ),
     );
     }
+    Future<void> _retomarExecucao() async {
+    final pausa = _execucaoPausada;
+    if (pausa == null) return;
+
+    final dadosExecucao = pausa['execucao'];
+    if (dadosExecucao is! Map) return;
+
+    final parcial = RoteiroRonda.fromMap(
+      Map<String, dynamic>.from(dadosExecucao),
+    );
+
+    RoteiroRonda? rotaPausada;
+    final dadosRota = pausa['rotaPrincipal'];
+    if (dadosRota is Map) {
+      rotaPausada = RoteiroRonda.fromMap(
+        Map<String, dynamic>.from(dadosRota),
+      );
+    }
+
+    final resultado = await Navigator.of(context).push<RoteiroRonda>(
+      MaterialPageRoute(
+        builder: (_) => RondaEmAndamentoPage(
+          nome: parcial.nome,
+          area: parcial.area,
+          rotaPrincipal: rotaPausada,
+          execucaoPausada: pausa,
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (resultado == null) {
+      await _carregarRoteiros();
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+
+    if (rotaPausada == null) {
+      final salvo = await prefs.setString(
+        _chaveRotaPrincipal,
+        jsonEncode(resultado.toMap()),
+      );
+
+      if (!salvo) return;
+
+      await prefs.remove(_chaveExecucaoPausada);
+      if (!mounted) return;
+
+      setState(() {
+        _rotaPrincipal = resultado;
+        _execucaoPausada = null;
+      });
+      return;
+    }
+
+    final rondasAtualizadas = [resultado, ..._rondasFeitas];
+    final salvo = await prefs.setString(
+      _chaveRondasFeitas,
+      jsonEncode(
+        rondasAtualizadas.map((item) => item.toMap()).toList(),
+      ),
+    );
+
+    if (!salvo) return;
+
+    await prefs.remove(_chaveExecucaoPausada);
+    if (!mounted) return;
+
+    setState(() {
+      _rondasFeitas = rondasAtualizadas;
+      _execucaoPausada = null;
+    });
+    }
 
   @override
   Widget build(BuildContext context) {

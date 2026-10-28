@@ -26,6 +26,7 @@ class _RondaGuiadaPageState extends State<RondaGuiadaPage> {
   List<RoteiroRonda> _roteiros = [];
   RoteiroRonda? _rotaPrincipal;
 List<RoteiroRonda> _rondasFeitas = [];
+    Map<String, dynamic>? _execucaoPausada;
   bool _carregando = true;
 
   @override

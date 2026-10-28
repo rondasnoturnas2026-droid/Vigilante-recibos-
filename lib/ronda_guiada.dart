@@ -167,7 +167,11 @@ List<RoteiroRonda> _rondasFeitas = [];
       ),
     );
 
-    if (roteiro == null || !mounted) return;
+        if (!mounted) return;
+    if (roteiro == null) {
+      await _carregarRoteiros();
+      return;
+    }
 
     final prefs = await SharedPreferences.getInstance();
 final salvo = await prefs.setString(

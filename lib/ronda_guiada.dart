@@ -575,6 +575,23 @@ bool _percursoIniciado = false;
 
   _acompanharPosicao(posicao);
 }
+    void _iniciarPercursoAqui() {
+    if (!mounted) return;
+
+    setState(() {
+      _percursoIniciado = true;
+      _indiceProximoPontoRota = 0;
+      _indiceCurvaEmAndamento = null;
+      _leiturasForaDaRota = 0;
+    });
+
+    unawaited(
+      _anunciarInstrucao(
+        'Percurso iniciado. Siga pela rota gravada.',
+        'inicio-manual',
+      ),
+    );
+    }
   
   Future<void> _abrirNavegacaoAoInicio() async {
   final rota = _pontosDaRotaSalva;

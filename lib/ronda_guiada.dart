@@ -99,6 +99,7 @@ List<RoteiroRonda> _rondasFeitas = [];
       _roteiros = [];
       _rondasFeitas = [];
       _rotaPrincipal = null;
+            _execucaoPausada = null;
       _carregando = false;
     });
   }

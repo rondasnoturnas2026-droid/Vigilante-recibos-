@@ -830,13 +830,15 @@ Future<void> _marcarCasa() async {
       child: Row(
         children: [
           Icon(
-            _instrucaoAtual!.toLowerCase().contains('direita')
-                ? Icons.turn_right
-                : _instrucaoAtual!.toLowerCase().contains('esquerda')
-                    ? Icons.turn_left
-                    : Icons.straight,
-            size: 36,
-          ),
+  _instrucaoAtual!.toLowerCase().contains('insuficiente')
+      ? Icons.warning_amber_rounded
+      : _instrucaoAtual!.toLowerCase().contains('direita')
+          ? Icons.turn_right
+          : _instrucaoAtual!.toLowerCase().contains('esquerda')
+              ? Icons.turn_left
+              : Icons.straight,
+  size: 36,
+),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

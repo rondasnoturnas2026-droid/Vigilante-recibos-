@@ -389,6 +389,7 @@ class RondaEmAndamentoPage extends StatefulWidget {
     required this.nome,
     required this.area,
     this.rotaPrincipal,
+        this.execucaoPausada,
   });
 
   final String nome;

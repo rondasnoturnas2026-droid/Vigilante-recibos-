@@ -578,18 +578,87 @@ bool _percursoIniciado = false;
   if (rota.length < 4) return;
 
   final intervalo = rota.length >= 8 ? 3 : 1;
-  var inicio = _indiceProximoPontoRota;
-  if (inicio < intervalo) inicio = intervalo;
+  Future<void> _abrirNavegacaoAoInicio() async {
+  final rota = _pontosDaRotaSalva;
+  if (rota.isEmpty) return;
 
-  final ultimoIndice = rota.length - intervalo - 1;
-  if (inicio > ultimoIndice) return;
+  final inicio = rota.first;
+  final uri = Uri.https(
+    'www.google.com',
+    '/maps/dir/',
+    {
+      'api': '1',
+      'destination': '${inicio.latitude},${inicio.longitude}',
+      'travelmode': 'walking',
+    },
+  );
 
-  var indiceMaisProximo = inicio;
+  final abriu = await launchUrl(
+    uri,
+    mode: LaunchMode.externalApplication,
+  );
+
+  if (!abriu && mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Não foi possível abrir a navegação até o início.'),
+      ),
+    );
+  }
+}
+
+void _orientarPelaRota(Position posicao) {
+  final rota = _pontosDaRotaSalva;
+
+  if (rota.length < 2) {
+    unawaited(
+      _anunciarInstrucao(
+        'Roteiro sem percurso suficiente. Grave novamente caminhando pelo trajeto.',
+        'roteiro-insuficiente',
+      ),
+    );
+    return;
+  }
+
+  final inicio = rota.first;
+  final distanciaAoInicio = Geolocator.distanceBetween(
+    posicao.latitude,
+    posicao.longitude,
+    inicio.latitude,
+    inicio.longitude,
+  );
+
+  if (!_percursoIniciado) {
+    if (distanciaAoInicio > 25) {
+      unawaited(
+        _anunciarInstrucao(
+          'Vá até o início do percurso gravado. Distância: ${distanciaAoInicio.round()} m.',
+          'a-caminho-do-inicio',
+        ),
+      );
+      return;
+    }
+
+    _percursoIniciado = true;
+    _indiceProximoPontoRota = 0;
+    unawaited(
+      _anunciarInstrucao(
+        'Você chegou ao início. Começando o percurso gravado.',
+        'chegou-ao-inicio',
+      ),
+    );
+    return;
+  }
+
+  final inicioBusca =
+      (_indiceProximoPontoRota - 3).clamp(0, rota.length - 1).toInt();
+  final fimBusca =
+      (_indiceProximoPontoRota + 40).clamp(0, rota.length - 1).toInt();
+
+  var indiceMaisProximo = inicioBusca;
   var menorDistancia = double.infinity;
-  var fimBusca = inicio + 12;
-  if (fimBusca > ultimoIndice) fimBusca = ultimoIndice;
 
-  for (var i = inicio; i <= fimBusca; i++) {
+  for (var i = inicioBusca; i <= fimBusca; i++) {
     final ponto = rota[i];
     final distancia = Geolocator.distanceBetween(
       posicao.latitude,
@@ -604,11 +673,46 @@ bool _percursoIniciado = false;
     }
   }
 
-  _indiceProximoPontoRota = indiceMaisProximo;
+  if (_indiceProximoPontoRota == 0 || menorDistancia > 80) {
+    for (var i = 0; i < rota.length; i++) {
+      final ponto = rota[i];
+      final distancia = Geolocator.distanceBetween(
+        posicao.latitude,
+        posicao.longitude,
+        ponto.latitude,
+        ponto.longitude,
+      );
 
-  for (var i = indiceMaisProximo; i <= ultimoIndice; i++) {
-    if (i <= _ultimaCurvaAnunciada) continue;
+      if (distancia < menorDistancia) {
+        menorDistancia = distancia;
+        indiceMaisProximo = i;
+      }
+    }
+  }
 
+  if (indiceMaisProximo > _indiceProximoPontoRota) {
+    _indiceProximoPontoRota = indiceMaisProximo;
+  }
+
+  if (menorDistancia > 60) {
+    unawaited(
+      _anunciarInstrucao(
+        'Você saiu do percurso. Volte para a linha azul do mapa.',
+        'fora-do-percurso',
+      ),
+    );
+    return;
+  }
+
+  final intervalo = rota.length >= 8 ? 3 : 1;
+  final primeiroIndiceCurva =
+      (_indiceProximoPontoRota + intervalo).clamp(0, rota.length - 1).toInt();
+  final ultimoIndiceCurva =
+      (primeiroIndiceCurva + 40).clamp(0, rota.length - 1).toInt();
+
+  for (var i = primeiroIndiceCurva;
+      i + intervalo < rota.length && i <= ultimoIndiceCurva;
+      i++) {
     final antes = rota[i - intervalo];
     final curva = rota[i];
     final depois = rota[i + intervalo];
@@ -631,28 +735,44 @@ bool _percursoIniciado = false;
     if (diferenca < -180) diferenca += 360;
     if (diferenca.abs() < 45) continue;
 
-    final distanciaAteCurva = Geolocator.distanceBetween(
-      posicao.latitude,
-      posicao.longitude,
-      curva.latitude,
-      curva.longitude,
-    );
-
-    if (distanciaAteCurva <= 35) {
-      final instrucao =
-          diferenca > 0 ? 'Vire à direita' : 'Vire à esquerda';
-      unawaited(_anunciarInstrucao(instrucao, i));
+    var distanciaAteCurva = 0.0;
+    for (var ponto = _indiceProximoPontoRota; ponto < i; ponto++) {
+      distanciaAteCurva += Geolocator.distanceBetween(
+        rota[ponto].latitude,
+        rota[ponto].longitude,
+        rota[ponto + 1].latitude,
+        rota[ponto + 1].longitude,
+      );
     }
 
-    break;
-  }
+    final lado = diferenca > 0 ? 'direita' : 'esquerda';
+
+    if (distanciaAteCurva <= 35) {
+      unawaited(
+        _anunciarInstrucao(
+          'Vire à $lado agora.',
+          'curva-agora-$i',
+        ),
+      );
+    } else {
+      final distanciaArredondada = (distanciaAteCurva / 10).round() * 10;
+      unawaited(
+        _anunciarInstrucao(
+          'Em $distanciaArredondada metros, vire à $lado.',
+          'curva-$i',
+        ),
+      );
+    }
+    return;
   }
 
-void _acompanharPosicao(Position posicao) {
-  if (!mounted || !_mapaPronto) return;
-
-  _mapController.move(
-    LatLng(posicao.latitude, posicao.longitude),
+  unawaited(
+    _anunciarInstrucao(
+      'Continue pelo percurso gravado. Você está a ${menorDistancia.round()} m da rota.',
+      'seguir-percurso',
+    ),
+  );
+}
     16,
   );
 }

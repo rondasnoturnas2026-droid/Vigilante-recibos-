@@ -646,10 +646,10 @@ void _orientarPelaRota(Position posicao) {
     return;
   }
 
-  final inicioBusca =
-      (_indiceProximoPontoRota - 3).clamp(0, rota.length - 1).toInt();
+    final inicioBusca =
+      _indiceProximoPontoRota.clamp(0, rota.length - 1).toInt();
   final fimBusca =
-      (_indiceProximoPontoRota + 40).clamp(0, rota.length - 1).toInt();
+      (_indiceProximoPontoRota + 1).clamp(0, rota.length - 1).toInt();
 
   var indiceMaisProximo = inicioBusca;
   var menorDistancia = double.infinity;
@@ -666,23 +666,6 @@ void _orientarPelaRota(Position posicao) {
     if (distancia < menorDistancia) {
       menorDistancia = distancia;
       indiceMaisProximo = i;
-    }
-  }
-
-  if (_indiceProximoPontoRota == 0 || menorDistancia > 80) {
-    for (var i = 0; i < rota.length; i++) {
-      final ponto = rota[i];
-      final distancia = Geolocator.distanceBetween(
-        posicao.latitude,
-        posicao.longitude,
-        ponto.latitude,
-        ponto.longitude,
-      );
-
-      if (distancia < menorDistancia) {
-        menorDistancia = distancia;
-        indiceMaisProximo = i;
-      }
     }
   }
 

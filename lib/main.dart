@@ -27,6 +27,44 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'ronda_guiada.dart';
+@pragma('vm:entry-point')
+void overlayMain() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: _BotaoFlutuanteRonda(),
+    ),
+  );
+}
+
+class _BotaoFlutuanteRonda extends StatelessWidget {
+  const _BotaoFlutuanteRonda();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: SizedBox(
+          width: 60,
+          height: 60,
+          child: FloatingActionButton(
+            heroTag: 'botaoFlutuanteRonda',
+            backgroundColor: Colors.blue,
+            onPressed: () async {
+              await FlutterOverlayWindow.shareData('abrir_menu');
+            },
+            child: const Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 final ValueNotifier<ThemeMode> temaApp =
     ValueNotifier<ThemeMode>(ThemeMode.system);
 final ValueNotifier<bool> exigirLoginDaConta =

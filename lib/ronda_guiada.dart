@@ -932,7 +932,9 @@ Future<void> _marcarCasa() async {
                       _carregando
     ? 'Obtendo GPS...'
     : widget.rotaPrincipal != null
-        ? 'Seguindo o roteiro salvo'
+        ? (_percursoIniciado
+    ? 'Seguindo o roteiro salvo'
+    : 'A caminho do início do percurso')
         : _gravando
             ? 'Gravação em andamento'
             : 'Gravação pausada',

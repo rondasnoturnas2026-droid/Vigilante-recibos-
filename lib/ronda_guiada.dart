@@ -545,6 +545,29 @@ bool _percursoIniciado = false;
         (pausa['indiceCurvaEmAndamento'] as num?)?.toInt();
     _percursoIniciado = pausa['percursoIniciado'] == true;
   }
+    @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed || _carregando) return;
+    unawaited(_sincronizarGpsAoVoltar());
+  }
+
+  Future<void> _sincronizarGpsAoVoltar() async {
+    try {
+      final posicao = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 0,
+        ),
+      );
+
+      if (!mounted) return;
+      _registrarPosicao(
+        posicao,
+        forcar: true,
+        ignorarDistancia: true,
+      );
+    } catch (_) {}
+  }
   void didChangeDependencies() {
     super.didChangeDependencies();
 

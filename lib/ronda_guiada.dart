@@ -1252,6 +1252,12 @@ Future<void> _marcarCasa() async {
                         icon: const Icon(Icons.play_arrow),
                         label: const Text('Já estou no início'),
                       ),
+                                        if (widget.rotaPrincipal != null && _percursoIniciado)
+                      OutlinedButton.icon(
+                        onPressed: _pularPontoRota,
+                        icon: const Icon(Icons.skip_next),
+                        label: const Text('Pular ponto'),
+                      ),
                     if (_ultimaPosicao != null)
                       Text(
                         'GPS: '

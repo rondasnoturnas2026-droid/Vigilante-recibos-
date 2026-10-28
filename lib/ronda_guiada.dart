@@ -262,7 +262,11 @@ ScaffoldMessenger.of(context).showSnackBar(
       ),
     );
 
-    if (execucao == null || !mounted) return;
+        if (!mounted) return;
+    if (execucao == null) {
+      await _carregarRoteiros();
+      return;
+    }
 
     final rondasAtualizadas = [execucao, ..._rondasFeitas];
     final prefs = await SharedPreferences.getInstance();

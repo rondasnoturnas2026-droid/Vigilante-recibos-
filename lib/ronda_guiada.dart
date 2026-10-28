@@ -424,6 +424,28 @@ bool _percursoIniciado = false;
   Animation<double>? _animacaoDaRota;
 
   @override
+    @override
+  void initState() {
+    super.initState();
+
+    final pausa = widget.execucaoPausada;
+    if (pausa == null) return;
+
+    final dadosExecucao = pausa['execucao'];
+    if (dadosExecucao is Map) {
+      final execucao = RoteiroRonda.fromMap(
+        Map<String, dynamic>.from(dadosExecucao),
+      );
+      _pontos.addAll(execucao.pontos);
+      _distanciaMetros = execucao.distanciaMetros;
+    }
+
+    _indiceProximoPontoRota =
+        (pausa['indiceProximoPontoRota'] as num?)?.toInt() ?? 0;
+    _indiceCurvaEmAndamento =
+        (pausa['indiceCurvaEmAndamento'] as num?)?.toInt();
+    _percursoIniciado = pausa['percursoIniciado'] == true;
+  }
   void didChangeDependencies() {
     super.didChangeDependencies();
 

@@ -1214,6 +1214,7 @@ Future<void> _marcarCasa() async {
 
     @override
   void dispose() {
+        WidgetsBinding.instance.removeObserver(this);
     _animacaoDaRota?.removeStatusListener(_esperarFimDaAbertura);
     _assinatura?.cancel();
     super.dispose();

@@ -701,7 +701,7 @@ bool _percursoIniciado = false;
 
   setState(() {
     _ultimaPosicao = posicao;
-    _distanciaMetros += trechoMetros;
+    _distanciaMetros += ignorarDistancia ? 0 : trechoMetros;
     _pontos.add(
       PontoRonda(
         latitude: posicao.latitude,

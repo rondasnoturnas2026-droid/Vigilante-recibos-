@@ -964,11 +964,12 @@ RichAttributionWidget(
                 onPressed: _carregando ? null : _iniciarGps,
                 child: const Text('Tentar novamente'),
               ),
-            FilledButton.icon(
-              onPressed: !_gravando ? null : _marcarCasa,
-              icon: const Icon(Icons.home_outlined),
-              label: const Text('Marcar casa neste ponto'),
-            ),
+            if (widget.rotaPrincipal == null)
+  FilledButton.icon(
+    onPressed: !_gravando ? null : _marcarCasa,
+    icon: const Icon(Icons.home_outlined),
+    label: const Text('Marcar casa neste ponto'),
+  ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: !_gravando ? null : _finalizar,

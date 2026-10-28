@@ -973,9 +973,10 @@ bool _percursoIniciado = false;
   bool forcar = false,
   bool ignorarDistancia = false,
 }) {
-      if (widget.rotaPrincipal != null) {
-  _orientarPelaRota(posicao);
-      }
+            if (widget.rotaPrincipal != null) {
+        _ultimaPosicao = posicao;
+        _orientarPelaRota(posicao);
+            }
   final anterior = _pontos.isEmpty ? null : _pontos.last;
   var trechoMetros = 0.0;
 

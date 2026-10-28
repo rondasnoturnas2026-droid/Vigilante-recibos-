@@ -943,31 +943,36 @@ Future<void> _marcarCasa() async {
     } catch (_) {}
     }
 
-  Future<void> _sairSemSalvar() async {
-    final descartar = await showDialog<bool>(
+    Future<void> _sairSemSalvar() async {
+    final pausar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Sair da gravação?'),
-        content: const Text('A ronda atual será descartada.'),
+        title: const Text('Pausar ronda?'),
+        content: const Text(
+          'O progresso será salvo para você continuar depois.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Continuar'),
+            child: const Text('Continuar ronda'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Descartar'),
+            child: const Text('Salvar e sair'),
           ),
         ],
       ),
     );
 
-    if (descartar == true && mounted) {
-      await _assinatura?.cancel();
-      setState(() => _podeSair = true);
-      Navigator.pop(context);
+    if (pausar != true || !mounted) return;
+
+    await _salvarProgressoPausado();
+    await _assinatura?.cancel();
+
+    if (!mounted) return;
+    setState(() => _podeSair = true);
+    Navigator.pop(context);
     }
-  }
 
   Future<void> _finalizar() async {
     await _assinatura?.cancel();

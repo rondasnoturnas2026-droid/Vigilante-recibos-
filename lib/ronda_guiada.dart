@@ -948,25 +948,36 @@ bool _percursoIniciado = false;
       _buscandoRua = false;
     }
   }
-  Future<void> _anunciarInstrucao(String instrucao, Object chave) async {
-  if (!mounted) return;
+    Future<void> _anunciarInstrucao(String instrucao, Object chave) async {
+    if (!mounted) return;
 
-  setState(() {
-    _instrucaoAtual = instrucao;
-  });
+    if (chave is int) {
+      if (_ultimaCurvaAnunciada == chave) return;
+      _ultimaCurvaAnunciada = chave;
+    }
 
-  if (chave is int) {
-    if (_ultimaCurvaAnunciada == chave) return;
-    _ultimaCurvaAnunciada = chave;
-  }
+    final chaveTexto = chave.toString();
+    if (_ultimaChaveInstrucaoFalado == chaveTexto) return;
+    _ultimaChaveInstrucaoFalado = chaveTexto;
 
-  final chaveTexto = chave.toString();
-  if (_ultimaChaveInstrucaoFalado == chaveTexto) return;
-  _ultimaChaveInstrucaoFalado = chaveTexto;
+    final posicao = _ultimaPosicao;
+    final rua = posicao == null
+        ? _nomeRuaAtual
+        : await _buscarNomeRua(posicao);
 
-  await _fala.stop();
-  await _fala.speak(instrucao);
-  }
+    final fala = rua == null || rua.isEmpty
+        ? instrucao
+        : 'Você está na via $rua. $instrucao';
+
+    if (!mounted) return;
+
+    setState(() {
+      _instrucaoAtual = fala;
+    });
+
+    await _fala.stop();
+    await _fala.speak(fala);
+    }
 
     void _registrarPosicao(
   Position posicao, {

@@ -1294,14 +1294,32 @@ void _orientarPelaRota(Position posicao) {
     ),
   );
 }
-    void _acompanharPosicao(Position posicao) {
-  if (!mounted || !_mapaPronto) return;
+      void _acompanharPosicao(Position posicao) {
+    if (!mounted || !_mapaPronto) return;
 
-  _mapController.move(
-    LatLng(posicao.latitude, posicao.longitude),
-    16,
-  );
+    final posicaoAtual = LatLng(posicao.latitude, posicao.longitude);
+    final pontosRota = _pontosDaRotaSalva
+        .map((ponto) => LatLng(ponto.latitude, ponto.longitude))
+        .toList();
+
+    _mapController.rotate(0);
+
+    if (pontosRota.isEmpty) {
+      _mapController.move(posicaoAtual, 16);
+      return;
     }
+
+    _mapController.fitCamera(
+      CameraFit.bounds(
+        bounds: LatLngBounds.fromPoints([
+          ...pontosRota,
+          posicaoAtual,
+        ]),
+        padding: const EdgeInsets.all(32),
+        maxZoom: 16,
+      ),
+    );
+      }
 
 Future<void> _marcarCasa() async {
   final posicao = _ultimaPosicao;

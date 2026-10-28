@@ -179,32 +179,41 @@ List<RoteiroRonda> _rondasFeitas = [];
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-final salvo = await prefs.setString(
-  _chaveRotaPrincipal,
-  jsonEncode(roteiro.toMap()),
-);
+        final prefs = await SharedPreferences.getInstance();
+    final roteirosAtualizados = [
+      roteiro,
+      ..._roteiros.where((item) => item.id != roteiro.id),
+    ];
+    final salvoLista = await prefs.setString(
+      _chaveRoteiros,
+      jsonEncode(roteirosAtualizados.map((item) => item.toMap()).toList()),
+    );
+    final salvoPrincipal = await prefs.setString(
+      _chaveRotaPrincipal,
+      jsonEncode(roteiro.toMap()),
+    );
 
-if (!salvo) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text('Não foi possível salvar o roteiro.'),
-    ),
-  );
-  return;
-}
+    if (!salvoLista || !salvoPrincipal) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível salvar o roteiro.'),
+        ),
+      );
+      return;
+    }
 
-if (!mounted) return;
+    if (!mounted) return;
 
-setState(() {
-  _rotaPrincipal = roteiro;
-});
+    setState(() {
+      _roteiros = roteirosAtualizados;
+      _rotaPrincipal = roteiro;
+    });
 
-ScaffoldMessenger.of(context).showSnackBar(
-  const SnackBar(
-    content: Text('Roteiro principal salvo neste aparelho.'),
-  ),
-);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Roteiro salvo. Você pode escolhê-lo para navegar.'),
+      ),
+    );
   }
     Future<T?> _mostrarDialogoAguardandoFechar<T>({
     required WidgetBuilder builder,

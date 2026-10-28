@@ -1054,6 +1054,17 @@ RichAttributionWidget(
                       ),
                     MarkerLayer(
                       markers: [
+                        if (coordenadasRota.isNotEmpty)
+  Marker(
+    point: coordenadasRota.first,
+    width: 42,
+    height: 42,
+    child: const Icon(
+      Icons.flag,
+      color: Colors.green,
+      size: 34,
+    ),
+  ),
                         ...casas.map(
                           (casa) => Marker(
                             point: LatLng(casa.latitude, casa.longitude),

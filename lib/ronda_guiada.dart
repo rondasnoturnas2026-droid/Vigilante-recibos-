@@ -311,7 +311,7 @@ List<RoteiroRonda> _rondasFeitas = [];
       builder: (context) => AlertDialog(
         title: const Text('Excluir roteiro?'),
         content: Text(
-          'Deseja excluir "\${roteiro.nome}" da área \${roteiro.area}? '
+                    'Deseja excluir "${roteiro.nome}" da área ${roteiro.area}? '
           'As rondas já realizadas continuarão no histórico.',
         ),
         actions: [

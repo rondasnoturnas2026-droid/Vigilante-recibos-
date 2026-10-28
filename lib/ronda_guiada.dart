@@ -215,6 +215,157 @@ List<RoteiroRonda> _rondasFeitas = [];
       ),
     );
   }
+    Future<void> _editarRoteiro(RoteiroRonda roteiro) async {
+    final nome = TextEditingController(text: roteiro.nome);
+    final area = TextEditingController(text: roteiro.area);
+
+    final dados = await _mostrarDialogoAguardandoFechar<Map<String, String>>(
+      builder: (context) => AlertDialog(
+        title: const Text('Editar roteiro'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nome,
+              decoration: const InputDecoration(labelText: 'Nome do roteiro'),
+            ),
+            TextField(
+              controller: area,
+              decoration: const InputDecoration(labelText: 'Área da ronda'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (nome.text.trim().isEmpty || area.text.trim().isEmpty) {
+                return;
+              }
+              FocusManager.instance.primaryFocus?.unfocus();
+              Navigator.pop(context, {
+                'nome': nome.text.trim(),
+                'area': area.text.trim(),
+              });
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+
+    nome.dispose();
+    area.dispose();
+    if (dados == null || !mounted) return;
+
+    final roteiroEditado = RoteiroRonda(
+      id: roteiro.id,
+      nome: dados['nome']!,
+      area: dados['area']!,
+      criadoEm: roteiro.criadoEm,
+      inicioGravacao: roteiro.inicioGravacao,
+      fimGravacao: roteiro.fimGravacao,
+      distanciaMetros: roteiro.distanciaMetros,
+      pontos: roteiro.pontos,
+    );
+
+    final roteirosAtualizados = _roteiros
+        .map((item) => item.id == roteiro.id ? roteiroEditado : item)
+        .toList();
+    final prefs = await SharedPreferences.getInstance();
+    final salvo = await prefs.setString(
+      _chaveRoteiros,
+      jsonEncode(roteirosAtualizados.map((item) => item.toMap()).toList()),
+    );
+
+    if (!salvo) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Não foi possível editar o roteiro.')),
+        );
+      }
+      return;
+    }
+
+    RoteiroRonda? rotaPrincipalAtualizada = _rotaPrincipal;
+    if (_rotaPrincipal?.id == roteiro.id) {
+      rotaPrincipalAtualizada = roteiroEditado;
+      await prefs.setString(
+        _chaveRotaPrincipal,
+        jsonEncode(roteiroEditado.toMap()),
+      );
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _roteiros = roteirosAtualizados;
+      _rotaPrincipal = rotaPrincipalAtualizada;
+    });
+  }
+
+  Future<void> _excluirRoteiro(RoteiroRonda roteiro) async {
+    final confirmado = await _mostrarDialogoAguardandoFechar<bool>(
+      builder: (context) => AlertDialog(
+        title: const Text('Excluir roteiro?'),
+        content: Text(
+          'Deseja excluir "\${roteiro.nome}" da área \${roteiro.area}? '
+          'As rondas já realizadas continuarão no histórico.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmado != true || !mounted) return;
+
+    final roteirosAtualizados =
+        _roteiros.where((item) => item.id != roteiro.id).toList();
+    final prefs = await SharedPreferences.getInstance();
+    final salvo = await prefs.setString(
+      _chaveRoteiros,
+      jsonEncode(roteirosAtualizados.map((item) => item.toMap()).toList()),
+    );
+
+    if (!salvo) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Não foi possível excluir o roteiro.')),
+        );
+      }
+      return;
+    }
+
+    RoteiroRonda? rotaPrincipalAtualizada = _rotaPrincipal;
+    if (_rotaPrincipal?.id == roteiro.id) {
+      rotaPrincipalAtualizada =
+          roteirosAtualizados.isEmpty ? null : roteirosAtualizados.first;
+      if (rotaPrincipalAtualizada == null) {
+        await prefs.remove(_chaveRotaPrincipal);
+      } else {
+        await prefs.setString(
+          _chaveRotaPrincipal,
+          jsonEncode(rotaPrincipalAtualizada.toMap()),
+        );
+      }
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _roteiros = roteirosAtualizados;
+      _rotaPrincipal = rotaPrincipalAtualizada;
+    });
+  }
     Future<T?> _mostrarDialogoAguardandoFechar<T>({
     required WidgetBuilder builder,
   }) async {

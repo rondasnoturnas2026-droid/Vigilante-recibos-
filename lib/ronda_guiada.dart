@@ -275,8 +275,8 @@ List<RoteiroRonda> _rondasFeitas = [];
       MaterialPageRoute(
         builder: (_) => RondaEmAndamentoPage(
           nome: nomeVigilante,
-          area: principal.area,
-          rotaPrincipal: principal,
+                    area: rota.area,
+          rotaPrincipal: rota,
         ),
       ),
     );

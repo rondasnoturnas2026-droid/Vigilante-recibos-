@@ -573,11 +573,7 @@ bool _percursoIniciado = false;
 
   _acompanharPosicao(posicao);
 }
-  void _orientarPelaRota(Position posicao) {
-  final rota = _pontosDaRotaSalva;
-  if (rota.length < 4) return;
-
-  final intervalo = rota.length >= 8 ? 3 : 1;
+  
   Future<void> _abrirNavegacaoAoInicio() async {
   final rota = _pontosDaRotaSalva;
   if (rota.isEmpty) return;

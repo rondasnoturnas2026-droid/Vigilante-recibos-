@@ -902,6 +902,7 @@ bool _percursoIniciado = false;
           _gravando = true;
         });
       }
+            await _abrirBotaoFlutuante();
     } catch (erro) {
       if (!mounted) return;
       setState(() {

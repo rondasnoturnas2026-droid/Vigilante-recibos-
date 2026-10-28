@@ -709,6 +709,27 @@ bool _percursoIniciado = false;
   _acompanharPosicao(posicao);
         unawaited(_salvarProgressoPausado());
 }
+    void _pularPontoRota() {
+    final rota = _pontosDaRotaSalva;
+    if (!_percursoIniciado || _indiceProximoPontoRota >= rota.length - 1) {
+      return;
+    }
+
+    setState(() {
+      _indiceProximoPontoRota =
+          (_indiceProximoPontoRota + 1).clamp(0, rota.length - 1).toInt();
+      _indiceCurvaEmAndamento = null;
+      _leiturasForaDaRota = 0;
+    });
+
+    unawaited(_salvarProgressoPausado());
+    unawaited(
+      _anunciarInstrucao(
+        'Ponto pulado por decisão do vigilante. Continue pelo percurso gravado.',
+        'ponto-pulado-$_indiceProximoPontoRota',
+      ),
+    );
+    }
     void _iniciarPercursoAqui() {
     if (!mounted) return;
 

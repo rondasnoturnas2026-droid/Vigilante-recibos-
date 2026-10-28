@@ -826,11 +826,32 @@ Future<void> _marcarCasa() async {
                     ),
                     Text('Casas marcadas: ${casas.length}'),
                     if (_instrucaoAtual != null)
-  Text(
-    'Orientação: $_instrucaoAtual',
-    style: const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
+  Card(
+    color: Theme.of(context).colorScheme.primaryContainer,
+    child: Padding(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: [
+          Icon(
+            _instrucaoAtual!.toLowerCase().contains('direita')
+                ? Icons.turn_right
+                : _instrucaoAtual!.toLowerCase().contains('esquerda')
+                    ? Icons.turn_left
+                    : Icons.straight,
+            size: 36,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              _instrucaoAtual!,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
     ),
   ),
                     if (_ultimaPosicao != null)

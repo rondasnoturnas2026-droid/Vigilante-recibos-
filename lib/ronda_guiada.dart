@@ -973,6 +973,12 @@ Future<void> _marcarCasa() async {
       ),
     ),
   ),
+                    if (widget.rotaPrincipal != null && !_percursoIniciado)
+  OutlinedButton.icon(
+    onPressed: _abrirNavegacaoAoInicio,
+    icon: const Icon(Icons.map_outlined),
+    label: const Text('Navegar até o início'),
+  ),
                     if (_ultimaPosicao != null)
                       Text(
                         'GPS: '

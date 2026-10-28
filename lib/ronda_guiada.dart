@@ -1609,10 +1609,7 @@ Future<void> _marcarCasa() async {
                         final posicao = _ultimaPosicao;
                         if (!mounted || posicao == null) return;
 
-                        _mapController.move(
-                          LatLng(posicao.latitude, posicao.longitude),
-                          16,
-                        );
+                                                _acompanharPosicao(posicao);
                       });
                     },
                   ),

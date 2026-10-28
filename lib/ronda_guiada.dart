@@ -699,6 +699,25 @@ void _orientarPelaRota(Position posicao) {
     );
     return;
   }
+    final pontoFinal = rota.last;
+  final distanciaAoFinal = Geolocator.distanceBetween(
+    posicao.latitude,
+    posicao.longitude,
+    pontoFinal.latitude,
+    pontoFinal.longitude,
+  );
+
+  if (rota.length >= 4 &&
+      _indiceProximoPontoRota >= rota.length - 3 &&
+      distanciaAoFinal <= 35) {
+    unawaited(
+      _anunciarInstrucao(
+        'Você chegou ao final do percurso gravado.',
+        'fim-do-percurso',
+      ),
+    );
+    return;
+  }
 
   final intervalo = rota.length >= 8 ? 3 : 1;
   final primeiroIndiceCurva =

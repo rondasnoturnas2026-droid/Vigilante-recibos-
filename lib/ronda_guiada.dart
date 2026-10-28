@@ -82,14 +82,20 @@ List<RoteiroRonda> _rondasFeitas = [];
       }
     }
 
+        final roteirosCarregados = [...roteirosAntigos];
+    if (rotaPrincipal != null &&
+        !roteirosCarregados.any((item) => item.id == rotaPrincipal.id)) {
+      roteirosCarregados.insert(0, rotaPrincipal);
+    }
+
     if (!mounted) return;
 
     setState(() {
-      _roteiros = roteirosAntigos;
+      _roteiros = roteirosCarregados;
       _rondasFeitas =
-          rondasSalvas == null ? roteirosAntigos : rondasCarregadas;
+          rondasSalvas == null ? roteirosCarregados : rondasCarregadas;
       _rotaPrincipal = rotaPrincipal;
-            _execucaoPausada = execucaoPausada;
+      _execucaoPausada = execucaoPausada;
       _carregando = false;
     });
   } catch (_) {

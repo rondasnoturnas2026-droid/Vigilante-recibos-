@@ -72,6 +72,15 @@ List<RoteiroRonda> _rondasFeitas = [];
         );
       }
     }
+        Map<String, dynamic>? execucaoPausada;
+    final execucaoPausadaSalva =
+        prefs.getString(_chaveExecucaoPausada);
+    if (execucaoPausadaSalva != null) {
+      final dadosPausados = jsonDecode(execucaoPausadaSalva);
+      if (dadosPausados is Map) {
+        execucaoPausada = Map<String, dynamic>.from(dadosPausados);
+      }
+    }
 
     if (!mounted) return;
 

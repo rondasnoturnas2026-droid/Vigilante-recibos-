@@ -233,9 +233,9 @@ List<RoteiroRonda> _rondasFeitas = [];
     await rotaDialogo.completed;
     return resultado;
     }
-    Future<void> _iniciarExecucao() async {
-    final principal = _rotaPrincipal;
-    if (principal == null) return;
+      Future<void> _iniciarExecucao([RoteiroRonda? rotaSelecionada]) async {
+    final rota = rotaSelecionada ?? _rotaPrincipal;
+    if (rota == null) return;
 
     final campoNome = TextEditingController();
 

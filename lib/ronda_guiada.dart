@@ -587,6 +587,7 @@ bool _percursoIniciado = false;
   });
 
   _acompanharPosicao(posicao);
+        unawaited(_salvarProgressoPausado());
 }
     void _iniciarPercursoAqui() {
     if (!mounted) return;

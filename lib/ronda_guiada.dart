@@ -84,7 +84,7 @@ List<RoteiroRonda> _rondasFeitas = [];
 
         final roteirosCarregados = [...roteirosAntigos];
     if (rotaPrincipal != null &&
-        !roteirosCarregados.any((item) => item.id == rotaPrincipal.id)) {
+                !roteirosCarregados.any((item) => item.id == rotaPrincipal!.id)) {
       roteirosCarregados.insert(0, rotaPrincipal);
     }
 

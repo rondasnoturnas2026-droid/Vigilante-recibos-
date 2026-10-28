@@ -703,18 +703,58 @@ void _orientarPelaRota(Position posicao) {
     return;
   }
 
-  final intervalo = rota.length >= 8 ? 3 : 1;
-  final primeiroIndiceCurva =
-      (_indiceProximoPontoRota + intervalo).clamp(0, rota.length - 1).toInt();
-  final ultimoIndiceCurva =
-      (primeiroIndiceCurva + 40).clamp(0, rota.length - 1).toInt();
+    final intervalo = rota.length >= 8 ? 3 : 1;
 
-  for (var i = primeiroIndiceCurva;
-      i + intervalo < rota.length && i <= ultimoIndiceCurva;
-      i++) {
-    final antes = rota[i - intervalo];
-    final curva = rota[i];
-    final depois = rota[i + intervalo];
+  if (_indiceCurvaEmAndamento != null &&
+      _indiceProximoPontoRota > _indiceCurvaEmAndamento!) {
+    _indiceCurvaEmAndamento = null;
+  }
+
+  if (_indiceCurvaEmAndamento == null) {
+    final primeiroIndiceCurva =
+        (_indiceProximoPontoRota + intervalo)
+            .clamp(0, rota.length - 1)
+            .toInt();
+    final ultimoIndiceCurva =
+        (primeiroIndiceCurva + 40)
+            .clamp(0, rota.length - 1)
+            .toInt();
+
+    for (var i = primeiroIndiceCurva;
+        i + intervalo < rota.length && i <= ultimoIndiceCurva;
+        i++) {
+      final antes = rota[i - intervalo];
+      final curva = rota[i];
+      final depois = rota[i + intervalo];
+
+      final rumoAntes = Geolocator.bearingBetween(
+        antes.latitude,
+        antes.longitude,
+        curva.latitude,
+        curva.longitude,
+      );
+      final rumoDepois = Geolocator.bearingBetween(
+        curva.latitude,
+        curva.longitude,
+        depois.latitude,
+        depois.longitude,
+      );
+
+      var diferenca = rumoDepois - rumoAntes;
+      if (diferenca > 180) diferenca -= 360;
+      if (diferenca < -180) diferenca += 360;
+      if (diferenca.abs() < 45) continue;
+
+      _indiceCurvaEmAndamento = i;
+      break;
+    }
+  }
+
+  final indiceCurva = _indiceCurvaEmAndamento;
+  if (indiceCurva != null) {
+    final antes = rota[indiceCurva - intervalo];
+    final curva = rota[indiceCurva];
+    final depois = rota[indiceCurva + intervalo];
 
     final rumoAntes = Geolocator.bearingBetween(
       antes.latitude,
@@ -732,10 +772,11 @@ void _orientarPelaRota(Position posicao) {
     var diferenca = rumoDepois - rumoAntes;
     if (diferenca > 180) diferenca -= 360;
     if (diferenca < -180) diferenca += 360;
-    if (diferenca.abs() < 45) continue;
 
     var distanciaAteCurva = 0.0;
-    for (var ponto = _indiceProximoPontoRota; ponto < i; ponto++) {
+    for (var ponto = _indiceProximoPontoRota;
+        ponto < indiceCurva;
+        ponto++) {
       distanciaAteCurva += Geolocator.distanceBetween(
         rota[ponto].latitude,
         rota[ponto].longitude,
@@ -750,15 +791,16 @@ void _orientarPelaRota(Position posicao) {
       unawaited(
         _anunciarInstrucao(
           'Vire à $lado agora.',
-          'curva-agora-$i',
+          'curva-agora-$indiceCurva',
         ),
       );
     } else {
-      final distanciaArredondada = (distanciaAteCurva / 10).round() * 10;
+      final distanciaArredondada =
+          (distanciaAteCurva / 10).round() * 10;
       unawaited(
         _anunciarInstrucao(
           'Em $distanciaArredondada metros, vire à $lado.',
-          'curva-$i',
+          'curva-$indiceCurva',
         ),
       );
     }

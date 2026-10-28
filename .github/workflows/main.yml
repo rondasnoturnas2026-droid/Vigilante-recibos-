@@ -84,8 +84,8 @@ jobs:
               )
               arquivo.write_text(texto)
           PY
-             - name: Adicionar permissões de ronda e botão flutuante
-          run: |
+          - name: Adicionar permissões de ronda e botão flutuante
+        run: |
           python3 - <<'PY'
           from pathlib import Path
           import re

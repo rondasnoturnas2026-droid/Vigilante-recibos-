@@ -788,9 +788,14 @@ void _orientarPelaRota(Position posicao) {
     ),
   );
 }
+    void _acompanharPosicao(Position posicao) {
+  if (!mounted || !_mapaPronto) return;
+
+  _mapController.move(
+    LatLng(posicao.latitude, posicao.longitude),
     16,
   );
-}
+    }
 
 Future<void> _marcarCasa() async {
   final posicao = _ultimaPosicao;

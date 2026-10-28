@@ -610,6 +610,62 @@ List<RoteiroRonda> _rondasFeitas = [];
               ),
             ),
           ),
+                    if (_roteiros.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Roteiros salvos',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 4),
+            ..._roteiros.map(
+              (roteiro) => Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.route_outlined),
+                        title: Text(roteiro.nome),
+                        subtitle: Text(
+                          '${roteiro.area} • '
+                          '${_formatarDistancia(roteiro.distanciaMetros)}',
+                        ),
+                        trailing: PopupMenuButton<String>(
+                          onSelected: (acao) {
+                            if (acao == 'editar') {
+                              _editarRoteiro(roteiro);
+                            } else if (acao == 'excluir') {
+                              _excluirRoteiro(roteiro);
+                            }
+                          },
+                          itemBuilder: (context) => const [
+                            PopupMenuItem(
+                              value: 'editar',
+                              child: Text('Editar'),
+                            ),
+                            PopupMenuItem(
+                              value: 'excluir',
+                              child: Text('Excluir'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: _carregando || _execucaoPausada != null
+                              ? null
+                              : () => _iniciarExecucao(roteiro),
+                          icon: const Icon(Icons.navigation),
+                          label: const Text('Navegar nesta ronda'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
           Card(
             child: ListTile(
               leading: const Icon(Icons.history),

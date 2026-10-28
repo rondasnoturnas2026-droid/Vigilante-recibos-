@@ -395,7 +395,7 @@ class RondaEmAndamentoPage extends StatefulWidget {
   final String nome;
   final String area;
   final RoteiroRonda? rotaPrincipal;
-
+  final Map<String, dynamic>? execucaoPausada;
   @override
   State<RondaEmAndamentoPage> createState() =>
       _RondaEmAndamentoPageState();

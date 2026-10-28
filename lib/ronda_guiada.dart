@@ -1057,6 +1057,12 @@ Future<void> _marcarCasa() async {
     icon: const Icon(Icons.map_outlined),
     label: const Text('Navegar até o início'),
   ),
+                                        if (widget.rotaPrincipal != null && !_percursoIniciado)
+                      FilledButton.icon(
+                        onPressed: _iniciarPercursoAqui,
+                        icon: const Icon(Icons.play_arrow),
+                        label: const Text('Já estou no início'),
+                      ),
                     if (_ultimaPosicao != null)
                       Text(
                         'GPS: '

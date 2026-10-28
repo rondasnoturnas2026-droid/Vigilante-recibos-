@@ -912,6 +912,7 @@ Future<void> _marcarCasa() async {
       ),
     );
   });
+    await _salvarProgressoPausado();
 }
     Future<void> _salvarProgressoPausado() async {
     try {

@@ -893,6 +893,61 @@ bool _percursoIniciado = false;
       .where((ponto) => ponto.tipo == TipoPontoRonda.percurso)
       .toList(growable: false);
   }
+    final Geocoding _geocoding = Geocoding(
+    locale: const Locale('pt', 'BR'),
+  );
+  String? _nomeRuaAtual;
+  DateTime? _ultimaBuscaRua;
+  Position? _posicaoUltimaBuscaRua;
+  bool _buscandoRua = false;
+
+  Future<String?> _buscarNomeRua(Position posicao) async {
+    final agora = DateTime.now();
+    final ultimaBusca = _ultimaBuscaRua;
+    final posicaoAnterior = _posicaoUltimaBuscaRua;
+
+    final passouTempo = ultimaBusca == null ||
+        agora.difference(ultimaBusca).inSeconds >= 15;
+    final passouDistancia = posicaoAnterior == null ||
+        Geolocator.distanceBetween(
+          posicaoAnterior.latitude,
+          posicaoAnterior.longitude,
+          posicao.latitude,
+          posicao.longitude,
+        ) >= 30;
+
+    if (_buscandoRua || (!passouTempo && !passouDistancia)) {
+      return _nomeRuaAtual;
+    }
+
+    _buscandoRua = true;
+    _ultimaBuscaRua = agora;
+    _posicaoUltimaBuscaRua = posicao;
+
+    try {
+      final locais = await _geocoding.placemarkFromCoordinates(
+        posicao.latitude,
+        posicao.longitude,
+      );
+      if (locais.isEmpty) return _nomeRuaAtual;
+
+      final local = locais.first;
+      final rua = (
+        local.street?.trim().isNotEmpty == true
+            ? local.street
+            : local.thoroughfare
+      )?.trim();
+
+      if (rua == null || rua.isEmpty) return _nomeRuaAtual;
+
+      _nomeRuaAtual = rua;
+      return rua;
+    } catch (_) {
+      return _nomeRuaAtual;
+    } finally {
+      _buscandoRua = false;
+    }
+  }
   Future<void> _anunciarInstrucao(String instrucao, Object chave) async {
   if (!mounted) return;
 

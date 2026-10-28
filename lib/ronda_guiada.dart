@@ -667,7 +667,11 @@ bool _percursoIniciado = false;
   await _fala.speak(instrucao);
   }
 
-    void _registrarPosicao(Position posicao, {bool forcar = false}) {
+    void _registrarPosicao(
+  Position posicao, {
+  bool forcar = false,
+  bool ignorarDistancia = false,
+}) {
       if (widget.rotaPrincipal != null) {
   _orientarPelaRota(posicao);
       }

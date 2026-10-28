@@ -89,6 +89,7 @@ List<RoteiroRonda> _rondasFeitas = [];
       _rondasFeitas =
           rondasSalvas == null ? roteirosAntigos : rondasCarregadas;
       _rotaPrincipal = rotaPrincipal;
+            _execucaoPausada = execucaoPausada;
       _carregando = false;
     });
   } catch (_) {

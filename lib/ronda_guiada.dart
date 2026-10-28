@@ -401,16 +401,30 @@ ScaffoldMessenger.of(context).showSnackBar(
                                   '${_rotaPrincipal!.area}',
                     ),
                   ),
-                  OutlinedButton.icon(
-                    onPressed: _carregando ? null : _novaRonda,
-                    icon: const Icon(Icons.route),
-                    label: Text(
-                      _rotaPrincipal == null
-                          ? 'Gravar roteiro principal'
-                          : 'Gravar novamente o roteiro principal',
+                                    if (_execucaoPausada != null) ...[
+                    FilledButton.icon(
+                      onPressed: _carregando ? null : _retomarExecucao,
+                      icon: const Icon(Icons.play_arrow),
+                      label: Text(
+                        _execucaoPausada!['rotaPrincipal'] == null
+                            ? 'Continuar gravação'
+                            : 'Continuar ronda',
+                      ),
                     ),
-                  ),
-                  if (_rotaPrincipal != null) ...[
+                    const SizedBox(height: 8),
+                  ],
+                  if (_execucaoPausada == null)
+                    OutlinedButton.icon(
+                      onPressed: _carregando ? null : _novaRonda,
+                      icon: const Icon(Icons.route),
+                      label: Text(
+                        _rotaPrincipal == null
+                            ? 'Gravar roteiro principal'
+                            : 'Gravar novamente o roteiro principal',
+                      ),
+                    ),
+                  if (_rotaPrincipal != null &&
+                      _execucaoPausada == null) ...[
                     const SizedBox(height: 8),
                     FilledButton.icon(
                       onPressed: _carregando ? null : _iniciarExecucao,

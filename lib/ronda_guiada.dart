@@ -521,7 +521,7 @@ bool _percursoIniciado = false;
   Animation<double>? _animacaoDaRota;
 
   @override
-    @override
+  
   void initState() {
     super.initState();
 

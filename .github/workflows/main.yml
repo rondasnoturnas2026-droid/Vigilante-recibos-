@@ -84,7 +84,7 @@ jobs:
               )
               arquivo.write_text(texto)
           PY
-      - name: Adicionar permissões de localização
+            - name: Adicionar permissões de ronda e botão flutuante
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -96,18 +96,26 @@ jobs:
           permissoes = [
               "android.permission.ACCESS_COARSE_LOCATION",
               "android.permission.ACCESS_FINE_LOCATION",
+              "android.permission.CAMERA",
+              "android.permission.POST_NOTIFICATIONS",
+              "android.permission.SYSTEM_ALERT_WINDOW",
+              "android.permission.FOREGROUND_SERVICE",
+              "android.permission.FOREGROUND_SERVICE_CAMERA",
+              "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
           ]
+
           faltantes = [
               nome for nome in permissoes
               if f'android:name="{nome}"' not in texto
           ]
 
+          aplicacao = re.search(r"(?m)^([ \t]*)<application\b", texto)
+          if aplicacao is None:
+              raise SystemExit(
+                  "Não encontrei <application> no AndroidManifest.xml."
+              )
+
           if faltantes:
-              aplicacao = re.search(r"(?m)^([ \t]*)<application\b", texto)
-              if aplicacao is None:
-                  raise SystemExit(
-                      "Não encontrei <application> no AndroidManifest.xml."
-                  )
               recuo = aplicacao.group(1)
               bloco = "\n".join(
                   f'{recuo}<uses-permission android:name="{nome}" />'
@@ -119,7 +127,40 @@ jobs:
                   + "\n"
                   + texto[aplicacao.start():]
               )
-              manifesto.write_text(texto, encoding="utf-8")
+
+          nome_servico = (
+              "flutter.overlay.window.flutter_overlay_window.OverlayService"
+          )
+
+          if nome_servico not in texto:
+              aplicacao_fechamento = re.search(
+                  r"(?m)^([ \t]*)</application>",
+                  texto,
+              )
+              if aplicacao_fechamento is None:
+                  raise SystemExit(
+                      "Não encontrei </application> no AndroidManifest.xml."
+                  )
+
+              recuo = aplicacao_fechamento.group(1) + "    "
+              servico = (
+                  f'{recuo}<service\n'
+                  f'{recuo}    android:name="{nome_servico}"\n'
+                  f'{recuo}    android:exported="false"\n'
+                  f'{recuo}    android:foregroundServiceType="specialUse">\n'
+                  f'{recuo}    <property\n'
+                  f'{recuo}        android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"\n'
+                  f'{recuo}        android:value="Floating control for an active security patrol" />\n'
+                  f'{recuo}</service>\n'
+              )
+
+              texto = (
+                  texto[:aplicacao_fechamento.start()]
+                  + servico
+                  + texto[aplicacao_fechamento.start():]
+              )
+
+          manifesto.write_text(texto, encoding="utf-8")
           PY
       - name: Limpar projeto
         run: flutter clean

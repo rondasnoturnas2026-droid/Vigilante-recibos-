@@ -525,6 +525,7 @@ bool _percursoIniciado = false;
   
   void initState() {
     super.initState();
+        WidgetsBinding.instance.addObserver(this);
 
     final pausa = widget.execucaoPausada;
     if (pausa == null) return;

@@ -510,15 +510,21 @@ bool _percursoIniciado = false;
       .where((ponto) => ponto.tipo == TipoPontoRonda.percurso)
       .toList(growable: false);
   }
-  Future<void> _anunciarInstrucao(String instrucao, int indice) async {
-  if (_ultimaCurvaAnunciada == indice) return;
+  Future<void> _anunciarInstrucao(String instrucao, Object chave) async {
+  if (!mounted) return;
 
-  _ultimaCurvaAnunciada = indice;
-  if (mounted) {
-    setState(() {
-      _instrucaoAtual = instrucao;
-    });
+  setState(() {
+    _instrucaoAtual = instrucao;
+  });
+
+  if (chave is int) {
+    if (_ultimaCurvaAnunciada == chave) return;
+    _ultimaCurvaAnunciada = chave;
   }
+
+  final chaveTexto = chave.toString();
+  if (_ultimaChaveInstrucaoFalado == chaveTexto) return;
+  _ultimaChaveInstrucaoFalado = chaveTexto;
 
   await _fala.stop();
   await _fala.speak(instrucao);

@@ -912,6 +912,34 @@ Future<void> _marcarCasa() async {
     );
   });
 }
+    Future<void> _salvarProgressoPausado() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final agora = DateTime.now();
+
+      final parcial = RoteiroRonda(
+        id: 'pausada-${agora.microsecondsSinceEpoch}',
+        nome: widget.nome,
+        area: widget.area,
+        criadoEm: agora,
+        inicioGravacao:
+            _pontos.isEmpty ? agora : _pontos.first.dataHora,
+        distanciaMetros: _distanciaMetros,
+        pontos: List<PontoRonda>.unmodifiable(_pontos),
+      );
+
+      await prefs.setString(
+        _chaveExecucaoPausada,
+        jsonEncode({
+          'execucao': parcial.toMap(),
+          'rotaPrincipal': widget.rotaPrincipal?.toMap(),
+          'indiceProximoPontoRota': _indiceProximoPontoRota,
+          'indiceCurvaEmAndamento': _indiceCurvaEmAndamento,
+          'percursoIniciado': _percursoIniciado,
+        }),
+      );
+    } catch (_) {}
+    }
 
   Future<void> _sairSemSalvar() async {
     final descartar = await showDialog<bool>(

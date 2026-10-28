@@ -84,84 +84,43 @@ List<RoteiroRonda> _rondasFeitas = [];
     }
 
         final roteirosCarregados = [...roteirosAntigos];
-          - name: Adicionar permissões de ronda e botão flutuante
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
+              if (rotaPrincipal != null &&
+                !roteirosCarregados.any((item) => item.id == rotaPrincipal!.id)) {
+      roteirosCarregados.insert(0, rotaPrincipal);
+    }
 
-          manifesto = Path("android/app/src/main/AndroidManifest.xml")
-          texto = manifesto.read_text(encoding="utf-8")
+    if (!mounted) return;
 
-          permissoes = [
-              "android.permission.ACCESS_COARSE_LOCATION",
-              "android.permission.ACCESS_FINE_LOCATION",
-              "android.permission.CAMERA",
-              "android.permission.POST_NOTIFICATIONS",
-              "android.permission.SYSTEM_ALERT_WINDOW",
-              "android.permission.FOREGROUND_SERVICE",
-              "android.permission.FOREGROUND_SERVICE_CAMERA",
-              "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
-          ]
+    setState(() {
+      _roteiros = roteirosCarregados;
+      _rondasFeitas =
+          rondasSalvas == null ? roteirosCarregados : rondasCarregadas;
+      _rotaPrincipal = rotaPrincipal;
+      _execucaoPausada = execucaoPausada;
+      _carregando = false;
+    });
+  } catch (_) {
+    if (!mounted) return;
 
-          faltantes = [
-              nome for nome in permissoes
-              if f'android:name="{nome}"' not in texto
-          ]
+    setState(() {
+      _roteiros = [];
+      _rondasFeitas = [];
+      _rotaPrincipal = null;
+            _execucaoPausada = null;
+      _carregando = false;
+    });
+  }
+  }
 
-          aplicacao = re.search(r"(?m)^([ \t]*)<application\b", texto)
-          if aplicacao is None:
-              raise SystemExit(
-                  "Não encontrei <application> no AndroidManifest.xml."
-              )
+  Future<void> _novaRonda() async {
+    final nome = TextEditingController(text: 'Ronda');
+    final area = TextEditingController();
 
-          if faltantes:
-              recuo = aplicacao.group(1)
-              bloco = "\n".join(
-                  f'{recuo}<uses-permission android:name="{nome}" />'
-                  for nome in faltantes
-              )
-              texto = (
-                  texto[:aplicacao.start()]
-                  + bloco
-                  + "\n"
-                  + texto[aplicacao.start():]
-              )
-
-          nome_servico = (
-              "flutter.overlay.window.flutter_overlay_window.OverlayService"
-          )
-
-          if nome_servico not in texto:
-              aplicacao_fechamento = re.search(
-                  r"(?m)^([ \t]*)</application>",
-                  texto,
-              )
-              if aplicacao_fechamento is None:
-                  raise SystemExit(
-                      "Não encontrei </application> no AndroidManifest.xml."
-                  )
-
-              recuo = aplicacao_fechamento.group(1) + "    "
-              servico = (
-                  f'{recuo}<service\n'
-                  f'{recuo}    android:name="{nome_servico}"\n'
-                  f'{recuo}    android:exported="false"\n'
-                  f'{recuo}    android:foregroundServiceType="specialUse">\n'
-                  f'{recuo}    <property\n'
-                  f'{recuo}        android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"\n'
-                  f'{recuo}        android:value="Floating control for an active security patrol" />\n'
-                  f'{recuo}</service>\n'
-              )
-
-              texto = (
-                  texto[:aplicacao_fechamento.start()]
-                  + servico
-                  + texto[aplicacao_fechamento.start():]
-              )
-
-          manifesto.write_text(texto, encoding="utf-8")
-          PY
+    
+      final dados = await _mostrarDialogoAguardandoFechar<Map<String, String>>(
+      builder: (context) => AlertDialog(
+        title: const Text('Nova ronda'),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(

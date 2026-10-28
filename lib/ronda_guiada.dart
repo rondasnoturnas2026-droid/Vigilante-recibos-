@@ -882,7 +882,7 @@ Future<void> _marcarCasa() async {
     final casas = _pontos
         .where((ponto) => ponto.tipo == TipoPontoRonda.casa)
         .toList();
-    final pontosRota = widget.rotaPrincipal?.pontos ?? const <PontoRonda>[];
+    final pontosRota = _pontosDaRotaSalva;
     final coordenadasRota = pontosRota
         .map((ponto) => LatLng(ponto.latitude, ponto.longitude))
         .toList();

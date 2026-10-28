@@ -826,6 +826,26 @@ bool _percursoIniciado = false;
       _iniciarGps();
     });
   }
+  Future<void> _abrirBotaoFlutuante() async {
+  try {
+    var permitido = await FlutterOverlayWindow.isPermissionGranted();
+
+    if (!permitido) {
+      permitido =
+          await FlutterOverlayWindow.requestPermission() ?? false;
+    }
+
+    if (!permitido) return;
+
+    await FlutterOverlayWindow.showOverlay(
+      overlayTitle: 'Ronda Guiada',
+      overlayContent: 'Botão flutuante da ronda',
+      enableDrag: true,
+      height: 80,
+      width: 80,
+    );
+  } catch (_) {}
+}
 
   Future<void> _iniciarGps() async {
     setState(() {

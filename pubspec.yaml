@@ -30,6 +30,7 @@ dependencies:
   firebase_auth: ^6.5.6
   cloud_firestore: ^6.10.0
   geolocator: ^14.0.2
+  geocoding: ^5.0.0
   flutter_tts: ^4.2.5
   flutter_map: ^8.3.2
   latlong2: ^0.10.1

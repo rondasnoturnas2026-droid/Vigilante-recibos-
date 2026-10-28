@@ -475,12 +475,7 @@ bool _percursoIniciado = false;
       final primeiraPosicao = await Geolocator.getCurrentPosition(
         locationSettings: configuracao,
       );
-      if (widget.rotaPrincipal != null) {
-  final instrucaoInicial = _pontosDaRotaSalva.length > 1
-      ? 'Siga pelo percurso salvo indicado no mapa.'
-      : 'Roteiro sem percurso suficiente. Grave novamente caminhando pelo trajeto.';
-  unawaited(_anunciarInstrucao(instrucaoInicial, 0));
-      }
+      
 
       _registrarPosicao(primeiraPosicao, forcar: true);
 

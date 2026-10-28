@@ -675,7 +675,13 @@ void _orientarPelaRota(Position posicao) {
     _indiceProximoPontoRota = indiceMaisProximo;
   }
 
-  if (menorDistancia > 60) {
+    final toleranciaForaDaRota =
+      (posicao.accuracy * 1.5).clamp(60.0, 120.0);
+
+  if (menorDistancia > toleranciaForaDaRota) {
+    _leiturasForaDaRota++;
+    if (_leiturasForaDaRota < 3) return;
+
     unawaited(
       _anunciarInstrucao(
         'Você saiu do percurso. Volte para a linha azul do mapa.',
@@ -684,6 +690,8 @@ void _orientarPelaRota(Position posicao) {
     );
     return;
   }
+
+  _leiturasForaDaRota = 0;
     final pontoFinal = rota.last;
   final distanciaAoFinal = Geolocator.distanceBetween(
     posicao.latitude,

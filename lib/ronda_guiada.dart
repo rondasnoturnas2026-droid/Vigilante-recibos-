@@ -1549,6 +1549,7 @@ Future<void> _marcarCasa() async {
         WidgetsBinding.instance.removeObserver(this);
     _animacaoDaRota?.removeStatusListener(_esperarFimDaAbertura);
     _assinatura?.cancel();
+        FlutterOverlayWindow.closeOverlay();
     super.dispose();
   }
 

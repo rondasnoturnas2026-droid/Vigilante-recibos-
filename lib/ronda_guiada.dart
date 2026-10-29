@@ -1031,27 +1031,43 @@ bool _percursoIniciado = false;
       return null;
     }
     }
-    Future<void> _anunciarInstrucao(String instrucao, Object chave) async {
-  if (!mounted) return;
+      Future<void> _anunciarInstrucao(
+    String instrucao,
+    Object chave, {
+    PontoRonda? pontoDaRua,
+  }) async {
+    if (!mounted) return;
 
-  if (chave is int) {
-    if (_ultimaCurvaAnunciada == chave) return;
-    _ultimaCurvaAnunciada = chave;
-  }
+    if (chave is int) {
+      if (_ultimaCurvaAnunciada == chave) return;
+      _ultimaCurvaAnunciada = chave;
+    }
 
-  final chaveTexto = chave.toString();
-  if (_ultimaChaveInstrucaoFalado == chaveTexto) return;
-  _ultimaChaveInstrucaoFalado = chaveTexto;
+    final chaveTexto = chave.toString();
+    if (_ultimaChaveInstrucaoFalado == chaveTexto) return;
+    _ultimaChaveInstrucaoFalado = chaveTexto;
 
-  final sequencia = ++_sequenciaInstrucao;
-  final posicao = _ultimaPosicao;
-  final rua = posicao == null
-      ? _nomeRuaAtual
-      : await _buscarNomeRua(posicao);
+    final sequencia = ++_sequenciaInstrucao;
+    final rua = pontoDaRua == null
+        ? null
+        : await _buscarNomeRuaDoPonto(pontoDaRua);
 
+    final instrucaoSemPonto =
+        instrucao.replaceFirst(RegExp(r'[.!?]+$'), '');
     final fala = rua == null || rua.isEmpty
-      ? instrucao
-      : '$rua. $instrucao';
+        ? instrucao
+        : '$instrucaoSemPonto na $rua.';
+
+    if (!mounted || sequencia != _sequenciaInstrucao) return;
+
+    setState(() {
+      _instrucaoAtual = fala;
+    });
+
+    await _fala.stop();
+    if (!mounted || sequencia != _sequenciaInstrucao) return;
+    await _fala.speak(fala);
+      }
 
   if (!mounted || sequencia != _sequenciaInstrucao) return;
 

@@ -1069,15 +1069,7 @@ bool _percursoIniciado = false;
     await _fala.speak(fala);
       }
 
-  if (!mounted || sequencia != _sequenciaInstrucao) return;
-
-  setState(() {
-    _instrucaoAtual = fala;
-  });
-
-  await _fala.stop();
-  if (!mounted || sequencia != _sequenciaInstrucao) return;
-  await _fala.speak(fala);
+  
 }
 
     void _registrarPosicao(

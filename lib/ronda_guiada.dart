@@ -1217,30 +1217,7 @@ void _orientarPelaRota(Position posicao) {
     inicio.longitude,
   );
 
-  if (!_percursoIniciado) {
-    if (!_navegacaoParaInicioEscolhida) return;
-    final toleranciaInicio =
-        (posicao.accuracy * 1.5).clamp(50.0, 100.0);
-    if (distanciaAoInicio > toleranciaInicio) {
-      unawaited(
-        _anunciarInstrucao(
-          'Vá até o início do percurso gravado. Distância: ${distanciaAoInicio.round()} m.',
-          'a-caminho-do-inicio',
-        ),
-      );
-      return;
-    }
-
-    _percursoIniciado = true;
-    _indiceProximoPontoRota = 0;
-    unawaited(
-      _anunciarInstrucao(
-        'Você chegou ao início. Começando o percurso gravado.',
-        'chegou-ao-inicio',
-      ),
-    );
-    return;
-  }
+    if (!_percursoIniciado) return;
 
       final inicioBusca =
       _indiceProximoPontoRota.clamp(0, rota.length - 1).toInt();

@@ -875,7 +875,7 @@ bool _percursoIniciado = false;
         throw Exception('Libere a permissão de localização para o app.');
       }
 
-      const configuracao = AndroidSettings(
+      final configuracao = AndroidSettings(
   accuracy: LocationAccuracy.high,
   distanceFilter: 5,
   foregroundNotificationConfig: ForegroundNotificationConfig(

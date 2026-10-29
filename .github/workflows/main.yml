@@ -102,6 +102,7 @@ jobs:
               "android.permission.FOREGROUND_SERVICE",
               "android.permission.FOREGROUND_SERVICE_CAMERA",
               "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
+                            "android.permission.FOREGROUND_SERVICE_LOCATION",
           ]
 
           faltantes = [

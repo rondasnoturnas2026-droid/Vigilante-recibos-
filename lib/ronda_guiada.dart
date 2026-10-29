@@ -196,6 +196,17 @@ List<RoteiroRonda> _rondasFeitas = [];
       await _carregarRoteiros();
       return;
     }
+        if (!_roteiroTemPercurso(roteiro)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Percurso curto demais para salvar. Caminhe pelo trajeto e tente novamente.',
+          ),
+        ),
+      );
+      await _carregarRoteiros();
+      return;
+        }
 
         final prefs = await SharedPreferences.getInstance();
     final roteirosAtualizados = [

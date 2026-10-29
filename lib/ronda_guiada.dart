@@ -1006,11 +1006,7 @@ bool _percursoIniciado = false;
       if (locais.isEmpty) return _nomeRuaAtual;
 
       final local = locais.first;
-      final rua = (
-        local.street?.trim().isNotEmpty == true
-            ? local.street
-            : local.thoroughfare
-      )?.trim();
+      final rua = local.thoroughfare?.trim();
 
       if (rua == null || rua.isEmpty) return _nomeRuaAtual;
 

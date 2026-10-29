@@ -1346,59 +1346,12 @@ void _orientarPelaRota(Position posicao) {
       );
     }
 
-        final lado = diferenca > 0 ? 'direita' : 'esquerda';
-    var textoProximaCurva = '';
-
-    final limiteProximaCurva =
-        (indiceCurva + 40).clamp(0, rota.length - 1).toInt();
-
-    for (var i = indiceCurva + intervalo;
-        i + intervalo < rota.length && i <= limiteProximaCurva;
-        i++) {
-      final antesProxima = rota[i - intervalo];
-      final curvaProxima = rota[i];
-      final depoisProxima = rota[i + intervalo];
-
-      final rumoAntesProxima = Geolocator.bearingBetween(
-        antesProxima.latitude,
-        antesProxima.longitude,
-        curvaProxima.latitude,
-        curvaProxima.longitude,
-      );
-      final rumoDepoisProxima = Geolocator.bearingBetween(
-        curvaProxima.latitude,
-        curvaProxima.longitude,
-        depoisProxima.latitude,
-        depoisProxima.longitude,
-      );
-
-      var diferencaProxima = rumoDepoisProxima - rumoAntesProxima;
-      if (diferencaProxima > 180) diferencaProxima -= 360;
-      if (diferencaProxima < -180) diferencaProxima += 360;
-      if (diferencaProxima.abs() < 45) continue;
-
-      var distanciaProxima = 0.0;
-      for (var ponto = _indiceProximoPontoRota; ponto < i; ponto++) {
-        distanciaProxima += Geolocator.distanceBetween(
-          rota[ponto].latitude,
-          rota[ponto].longitude,
-          rota[ponto + 1].latitude,
-          rota[ponto + 1].longitude,
-        );
-      }
-
-      final ladoProximo =
-          diferencaProxima > 0 ? 'direita' : 'esquerda';
-      final metrosProxima = (distanciaProxima / 10).round() * 10;
-      textoProximaCurva =
-          ' Depois, em $metrosProxima metros, vire à $ladoProximo.';
-      break;
-    }
+            final lado = diferenca > 0 ? 'direita' : 'esquerda';
 
     if (distanciaAteCurva <= 35) {
       unawaited(
         _anunciarInstrucao(
-          'Vire à $lado agora.$textoProximaCurva',
+          'Vire à $lado agora.',
           'curva-agora-$indiceCurva',
         ),
       );
@@ -1407,8 +1360,7 @@ void _orientarPelaRota(Position posicao) {
           (distanciaAteCurva / 10).round() * 10;
       unawaited(
         _anunciarInstrucao(
-          'Em $distanciaArredondada metros, vire à $lado.'
-          '$textoProximaCurva',
+          'Em $distanciaArredondada metros, vire à $lado.',
           'curva-$indiceCurva',
         ),
       );

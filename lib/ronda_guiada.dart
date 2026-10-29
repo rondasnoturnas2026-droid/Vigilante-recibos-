@@ -781,6 +781,7 @@ String? _ultimaChaveInstrucaoFalado;
   int _sequenciaInstrucao = 0;
 bool _percursoIniciado = false;
   bool _navegacaoParaInicioEscolhida = false;
+  String? _navegacaoEscolhida;
       bool _gpsAgendado = false;
   Animation<double>? _animacaoDaRota;
 

@@ -20,6 +20,15 @@ const String _chaveRoteiros = 'roteirosRondaGuiadaV1';
 const String _chaveRotaPrincipal = 'rotaPrincipalRondaV1';
 const String _chaveRondasFeitas = 'rondasFeitasRondaV1';
 const String _chaveExecucaoPausada = 'execucaoPausadaRondaV1';
+const double _distanciaMinimaRoteiroMetros = 50;
+
+bool _roteiroTemPercurso(RoteiroRonda roteiro) {
+  final pontosDoPercurso = roteiro.pontos
+      .where((ponto) => ponto.tipo == TipoPontoRonda.percurso)
+      .length;
+  return roteiro.distanciaMetros >= _distanciaMinimaRoteiroMetros &&
+      pontosDoPercurso >= 2;
+}
 class RondaGuiadaPage extends StatefulWidget {
   const RondaGuiadaPage({super.key});
 

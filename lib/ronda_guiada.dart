@@ -1143,7 +1143,9 @@ void _orientarPelaRota(Position posicao) {
   );
 
   if (!_percursoIniciado) {
-    if (distanciaAoInicio > 25) {
+    final toleranciaInicio =
+    (posicao.accuracy * 1.5).clamp(50.0, 100.0);
+if (distanciaAoInicio > toleranciaInicio) {
       unawaited(
         _anunciarInstrucao(
           'Vá até o início do percurso gravado. Distância: ${distanciaAoInicio.round()} m.',

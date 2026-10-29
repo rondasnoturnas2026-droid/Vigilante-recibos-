@@ -1435,21 +1435,23 @@ void _orientarPelaRota(Position posicao) {
 
             final lado = diferenca > 0 ? 'direita' : 'esquerda';
 
-        if (distanciaAteCurva <= 10) {
+            if (distanciaAteCurva <= 10) {
       unawaited(
         _anunciarInstrucao(
           'Vire à $lado agora.',
           'curva-agora-$indiceCurva',
+          pontoDaRua: depois,
         ),
       );
     } else if (distanciaAteCurva <= 40) {
       unawaited(
         _anunciarInstrucao(
-          'Em 30 metros, vire à $lado.',
-          'curva-30-$indiceCurva',
+          'Em 35 metros, vire à $lado.',
+          'curva-35-$indiceCurva',
+          pontoDaRua: depois,
         ),
       );
-        }
+            }
     return;
   }
 

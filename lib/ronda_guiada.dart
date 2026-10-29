@@ -1178,6 +1178,9 @@ if (distancia > tolerancia) {
       'travelmode': 'two-wheeler',
     },
   );
+      _navegacaoParaInicioEscolhida = true;
+  _sequenciaInstrucao++;
+  await _fala.stop();
 
   final abriu = await launchUrl(
     uri,

@@ -1219,10 +1219,40 @@ void _orientarPelaRota(Position posicao) {
       final inicioBusca =
       _indiceProximoPontoRota.clamp(0, rota.length - 1).toInt();
 
-  var indiceMaisProximo = inicioBusca;
+    var indiceMaisProximo = inicioBusca;
   var menorDistancia = double.infinity;
+  var menorDistanciaDaLinha = double.infinity;
 
-    for (var i = inicioBusca; i < rota.length && i <= inicioBusca + 10; i++) {
+  double distanciaAteSegmento(PontoRonda a, PontoRonda b) {
+    const metrosPorGrau = 111320.0;
+    final latitudeMedia =
+        ((posicao.latitude + a.latitude + b.latitude) / 3) *
+            math.pi /
+            180;
+    final escalaLongitude = metrosPorGrau * math.cos(latitudeMedia);
+
+    final x1 = (a.longitude - posicao.longitude) * escalaLongitude;
+    final y1 = (a.latitude - posicao.latitude) * metrosPorGrau;
+    final x2 = (b.longitude - posicao.longitude) * escalaLongitude;
+    final y2 = (b.latitude - posicao.latitude) * metrosPorGrau;
+
+    final dx = x2 - x1;
+    final dy = y2 - y1;
+    final comprimentoQuadrado = dx * dx + dy * dy;
+
+    if (comprimentoQuadrado == 0) {
+      return math.sqrt(x1 * x1 + y1 * y1);
+    }
+
+    final proporcao =
+        (-(x1 * dx + y1 * dy) / comprimentoQuadrado).clamp(0.0, 1.0);
+    final pontoX = x1 + proporcao * dx;
+    final pontoY = y1 + proporcao * dy;
+
+    return math.sqrt(pontoX * pontoX + pontoY * pontoY);
+  }
+
+  for (var i = inicioBusca; i < rota.length && i <= inicioBusca + 10; i++) {
     final ponto = rota[i];
     final distancia = Geolocator.distanceBetween(
       posicao.latitude,
@@ -1237,12 +1267,17 @@ void _orientarPelaRota(Position posicao) {
     }
   }
 
-  
+  for (var i = 0; i < rota.length - 1; i++) {
+    final distanciaLinha = distanciaAteSegmento(rota[i], rota[i + 1]);
+    if (distanciaLinha < menorDistanciaDaLinha) {
+      menorDistanciaDaLinha = distanciaLinha;
+    }
+  }
 
-    final toleranciaForaDaRota =
-      (posicao.accuracy * 1.5).clamp(60.0, 120.0);
+  final toleranciaForaDaRota =
+      (posicao.accuracy * 1.5).clamp(20.0, 35.0).toDouble();
 
-  if (menorDistancia > toleranciaForaDaRota) {
+  if (menorDistanciaDaLinha > toleranciaForaDaRota) {
     _leiturasForaDaRota++;
     if (_leiturasForaDaRota < 3) return;
 

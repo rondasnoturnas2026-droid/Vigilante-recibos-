@@ -405,6 +405,16 @@ List<RoteiroRonda> _rondasFeitas = [];
       Future<void> _iniciarExecucao([RoteiroRonda? rotaSelecionada]) async {
     final rota = rotaSelecionada ?? _rotaPrincipal;
     if (rota == null) return;
+            if (!_roteiroTemPercurso(rota)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Não há percurso suficiente salvo. Grave a ronda caminhando pelo trajeto.',
+          ),
+        ),
+      );
+      return;
+            }
 
     final campoNome = TextEditingController();
 

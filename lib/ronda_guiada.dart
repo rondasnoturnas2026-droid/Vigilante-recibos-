@@ -1339,17 +1339,27 @@ void _orientarPelaRota(Position posicao) {
     pontoFinal.longitude,
   );
 
-    if (rota.length >= 4 &&
+      if (rota.length >= 4 &&
       (_indiceProximoPontoRota >= rota.length - 3 ||
           indiceMaisProximo >= rota.length - 3) &&
       distanciaAoFinal <= 35) {
+    setState(() {
+      _percursoIniciado = false;
+      _navegacaoParaInicioEscolhida = false;
+      _indiceProximoPontoRota = 0;
+      _indiceCurvaEmAndamento = null;
+      _leiturasForaDaRota = 0;
+      _ultimaChaveInstrucaoFalado = null;
+    });
+
     unawaited(
       _anunciarInstrucao(
-        'Você chegou ao final do percurso gravado.',
+        'Fim do percurso. Volte ao início da primeira ronda para repetir o mesmo roteiro.',
         'fim-do-percurso',
       ),
     );
     return;
+      }
   }
 
     final intervalo = rota.length >= 8 ? 3 : 1;

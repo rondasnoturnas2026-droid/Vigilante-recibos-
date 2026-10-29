@@ -84,6 +84,10 @@ List<RoteiroRonda> _rondasFeitas = [];
         rotaPrincipal = RoteiroRonda.fromMap(
           Map<String, dynamic>.from(dados),
         );
+                if (rotaPrincipal != null &&
+            !_roteiroTemPercurso(rotaPrincipal)) {
+          rotaPrincipal = null;
+                }
       }
     }
         Map<String, dynamic>? execucaoPausada;

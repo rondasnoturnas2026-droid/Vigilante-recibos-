@@ -1245,8 +1245,22 @@ void _orientarPelaRota(Position posicao) {
 
   _leiturasForaDaRota = 0;
   if (indiceMaisProximo > _indiceProximoPontoRota) {
-  _indiceProximoPontoRota = indiceMaisProximo;
-}
+  final pontoAtual = rota[inicioBusca];
+  final distanciaAoPontoAtual = Geolocator.distanceBetween(
+    posicao.latitude,
+    posicao.longitude,
+    pontoAtual.latitude,
+    pontoAtual.longitude,
+  );
+
+  final margemAvanco = (posicao.accuracy * 0.5)
+      .clamp(5.0, 20.0)
+      .toDouble();
+
+  if (distanciaAoPontoAtual - menorDistancia >= margemAvanco) {
+    _indiceProximoPontoRota = indiceMaisProximo;
+  }
+  }
     final pontoFinal = rota.last;
   final distanciaAoFinal = Geolocator.distanceBetween(
     posicao.latitude,

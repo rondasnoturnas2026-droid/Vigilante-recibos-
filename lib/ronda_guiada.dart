@@ -1018,6 +1018,19 @@ bool _percursoIniciado = false;
       _buscandoRua = false;
     }
   }
+    Future<String?> _buscarNomeRuaDoPonto(PontoRonda ponto) async {
+    try {
+      final locais = await _geocoding.placemarkFromCoordinates(
+        ponto.latitude,
+        ponto.longitude,
+      );
+
+      if (locais.isEmpty) return null;
+      return locais.first.thoroughfare?.trim();
+    } catch (_) {
+      return null;
+    }
+    }
     Future<void> _anunciarInstrucao(String instrucao, Object chave) async {
   if (!mounted) return;
 

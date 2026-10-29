@@ -1227,6 +1227,9 @@ void _orientarPelaRota(Position posicao) {
   }
 
   _leiturasForaDaRota = 0;
+  if (indiceMaisProximo > _indiceProximoPontoRota) {
+  _indiceProximoPontoRota = indiceMaisProximo;
+}
     final pontoFinal = rota.last;
   final distanciaAoFinal = Geolocator.distanceBetween(
     posicao.latitude,

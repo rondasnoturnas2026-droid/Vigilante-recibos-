@@ -1339,8 +1339,9 @@ void _orientarPelaRota(Position posicao) {
     pontoFinal.longitude,
   );
 
-  if (rota.length >= 4 &&
-      _indiceProximoPontoRota >= rota.length - 3 &&
+    if (rota.length >= 4 &&
+      (_indiceProximoPontoRota >= rota.length - 3 ||
+          indiceMaisProximo >= rota.length - 3) &&
       distanciaAoFinal <= 35) {
     unawaited(
       _anunciarInstrucao(

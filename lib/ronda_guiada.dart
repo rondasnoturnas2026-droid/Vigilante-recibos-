@@ -958,7 +958,11 @@ bool _percursoIniciado = false;
     }
   }
   List<PontoRonda> get _pontosDaRotaSalva {
-  return (widget.rotaPrincipal?.pontos ?? const <PontoRonda>[])
+    final roteiro = widget.rotaPrincipal;
+  if (roteiro == null || !_roteiroTemPercurso(roteiro)) {
+    return const <PontoRonda>[];
+  }
+  return roteiro.pontos
       .where((ponto) => ponto.tipo == TipoPontoRonda.percurso)
       .toList(growable: false);
   }

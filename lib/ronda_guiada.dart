@@ -1280,20 +1280,19 @@ void _orientarPelaRota(Position posicao) {
   final toleranciaForaDaRota =
       (posicao.accuracy * 1.5).clamp(20.0, 35.0).toDouble();
 
-  if (menorDistanciaDaLinha > toleranciaForaDaRota) {
+    if (menorDistanciaDaLinha > toleranciaForaDaRota) {
     _leiturasForaDaRota++;
-    if (_leiturasForaDaRota < 3) return;
-
-    unawaited(
-      _anunciarInstrucao(
-        'Você saiu do percurso. Volte para a linha azul do mapa.',
-        'fora-do-percurso',
-      ),
-    );
-    return;
-  }
-
-  _leiturasForaDaRota = 0;
+    if (_leiturasForaDaRota == 3) {
+      unawaited(
+        _anunciarInstrucao(
+          'Você saiu do percurso. Volte para a linha azul do mapa.',
+          'fora-do-percurso',
+        ),
+      );
+    }
+  } else {
+    _leiturasForaDaRota = 0;
+    }
   if (indiceMaisProximo > _indiceProximoPontoRota) {
   final pontoAtual = rota[inicioBusca];
   final distanciaAoPontoAtual = Geolocator.distanceBetween(

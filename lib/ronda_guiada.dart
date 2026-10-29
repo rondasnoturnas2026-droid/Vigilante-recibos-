@@ -745,6 +745,7 @@ int _ultimaCurvaAnunciada = -1;
 String? _instrucaoAtual;
 String? _ultimaChaveInstrucaoFalado;
 bool _percursoIniciado = false;
+  bool _navegacaoParaInicioEscolhida = false;
       bool _gpsAgendado = false;
   Animation<double>? _animacaoDaRota;
 

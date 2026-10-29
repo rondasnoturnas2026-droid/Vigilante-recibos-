@@ -1209,7 +1209,7 @@ void _orientarPelaRota(Position posicao) {
   }
 
   if (indiceMaisProximo > _indiceProximoPontoRota) {
-    _indiceProximoPontoRota = indiceMaisProximo;
+  _indiceProximoPontoRota = indiceMaisProximo;
   }
 
     final toleranciaForaDaRota =

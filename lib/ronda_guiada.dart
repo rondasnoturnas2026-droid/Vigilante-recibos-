@@ -1010,6 +1010,10 @@ bool _percursoIniciado = false;
   bool forcar = false,
   bool ignorarDistancia = false,
 }) {
+      if (!_percursoIniciado) {
+  _acompanharPosicao(posicao);
+  return;
+}
             if (widget.rotaPrincipal != null) {
         _ultimaPosicao = posicao;
         _orientarPelaRota(posicao);

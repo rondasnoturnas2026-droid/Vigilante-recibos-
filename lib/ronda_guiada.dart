@@ -1076,7 +1076,28 @@ bool _percursoIniciado = false;
     }
     void _iniciarPercursoAqui() {
     if (!mounted) return;
+final rota = _pontosDaRotaSalva;
+final posicao = _ultimaPosicao;
+if (rota.isEmpty || posicao == null) return;
 
+final inicio = rota.first;
+final distancia = Geolocator.distanceBetween(
+  posicao.latitude,
+  posicao.longitude,
+  inicio.latitude,
+  inicio.longitude,
+);
+final tolerancia = (posicao.accuracy * 1.5).clamp(50.0, 100.0);
+
+if (distancia > tolerancia) {
+  unawaited(
+    _anunciarInstrucao(
+      'Você ainda está longe do início do percurso. Vá até o início para começar.',
+      'inicio-longe',
+    ),
+  );
+  return;
+}
     setState(() {
       _percursoIniciado = true;
       _indiceProximoPontoRota = 0;

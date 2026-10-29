@@ -1178,7 +1178,7 @@ if (distancia > tolerancia) {
     {
       'api': '1',
       'destination': '${inicio.latitude},${inicio.longitude}',
-      'travelmode': 'walking',
+      'travelmode': 'two-wheeler',
     },
   );
 

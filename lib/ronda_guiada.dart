@@ -875,10 +875,18 @@ bool _percursoIniciado = false;
         throw Exception('Libere a permissão de localização para o app.');
       }
 
-      const configuracao = LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 5,
-      );
+      const configuracao = AndroidSettings(
+  accuracy: LocationAccuracy.high,
+  distanceFilter: 5,
+  foregroundNotificationConfig: ForegroundNotificationConfig(
+    notificationTitle: 'Ronda em andamento',
+    notificationText: 'O GPS está acompanhando o percurso.',
+    notificationChannelName: 'Ronda guiada',
+    enableWakeLock: true,
+    setOngoing: true,
+  ),
+);
+      
 
       final primeiraPosicao = await Geolocator.getCurrentPosition(
         locationSettings: configuracao,

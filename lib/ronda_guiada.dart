@@ -1208,9 +1208,7 @@ void _orientarPelaRota(Position posicao) {
     }
   }
 
-  if (indiceMaisProximo > _indiceProximoPontoRota) {
-  _indiceProximoPontoRota = indiceMaisProximo;
-  }
+  
 
     final toleranciaForaDaRota =
       (posicao.accuracy * 1.5).clamp(60.0, 120.0);

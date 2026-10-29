@@ -1085,7 +1085,7 @@ bool _percursoIniciado = false;
           return;
         }
             }
-  final anterior = _pontos.isEmpty ? null : _pontos.last
+  final anterior = _pontos.isEmpty ? null : _pontos.last;
       if (anterior == null && posicao.accuracy > 25) {
     _ultimaPosicao = posicao;
     _acompanharPosicao(posicao);

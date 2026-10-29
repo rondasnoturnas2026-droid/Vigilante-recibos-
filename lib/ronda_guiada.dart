@@ -1360,7 +1360,7 @@ void _orientarPelaRota(Position posicao) {
     );
     return;
       }
-  }
+  
 
     final intervalo = rota.length >= 8 ? 3 : 1;
 

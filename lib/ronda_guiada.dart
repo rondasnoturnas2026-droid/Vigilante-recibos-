@@ -1036,9 +1036,9 @@ bool _percursoIniciado = false;
       ? _nomeRuaAtual
       : await _buscarNomeRua(posicao);
 
-  final fala = rua == null || rua.isEmpty
+    final fala = rua == null || rua.isEmpty
       ? instrucao
-      : 'Você está na via $rua. $instrucao';
+      : '$rua. $instrucao';
 
   if (!mounted || sequencia != _sequenciaInstrucao) return;
 

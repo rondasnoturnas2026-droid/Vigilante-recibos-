@@ -984,35 +984,37 @@ bool _percursoIniciado = false;
     }
   }
     Future<void> _anunciarInstrucao(String instrucao, Object chave) async {
-    if (!mounted) return;
+  if (!mounted) return;
 
-    if (chave is int) {
-      if (_ultimaCurvaAnunciada == chave) return;
-      _ultimaCurvaAnunciada = chave;
-    }
+  if (chave is int) {
+    if (_ultimaCurvaAnunciada == chave) return;
+    _ultimaCurvaAnunciada = chave;
+  }
 
-    final chaveTexto = chave.toString();
-    if (_ultimaChaveInstrucaoFalado == chaveTexto) return;
-    _ultimaChaveInstrucaoFalado = chaveTexto;
+  final chaveTexto = chave.toString();
+  if (_ultimaChaveInstrucaoFalado == chaveTexto) return;
+  _ultimaChaveInstrucaoFalado = chaveTexto;
 
-    final posicao = _ultimaPosicao;
-    final rua = posicao == null
-        ? _nomeRuaAtual
-        : await _buscarNomeRua(posicao);
+  final sequencia = ++_sequenciaInstrucao;
+  final posicao = _ultimaPosicao;
+  final rua = posicao == null
+      ? _nomeRuaAtual
+      : await _buscarNomeRua(posicao);
 
-    final fala = rua == null || rua.isEmpty
-        ? instrucao
-        : 'Você está na via $rua. $instrucao';
+  final fala = rua == null || rua.isEmpty
+      ? instrucao
+      : 'Você está na via $rua. $instrucao';
 
-    if (!mounted) return;
+  if (!mounted || sequencia != _sequenciaInstrucao) return;
 
-    setState(() {
-      _instrucaoAtual = fala;
-    });
+  setState(() {
+    _instrucaoAtual = fala;
+  });
 
-    await _fala.stop();
-    await _fala.speak(fala);
-    }
+  await _fala.stop();
+  if (!mounted || sequencia != _sequenciaInstrucao) return;
+  await _fala.speak(fala);
+}
 
     void _registrarPosicao(
   Position posicao, {

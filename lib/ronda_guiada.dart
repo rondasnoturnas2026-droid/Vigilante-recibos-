@@ -1070,7 +1070,7 @@ bool _percursoIniciado = false;
       }
 
   
-}
+
 
     void _registrarPosicao(
   Position posicao, {

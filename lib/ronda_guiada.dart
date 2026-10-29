@@ -68,9 +68,9 @@ List<RoteiroRonda> _rondasFeitas = [];
           .toList();
     }
 
-    final roteirosAntigos = converterLista(
+        final roteirosAntigos = converterLista(
       prefs.getString(_chaveRoteiros),
-    );
+    ).where(_roteiroTemPercurso).toList();
 
     final rondasSalvas = prefs.getString(_chaveRondasFeitas);
     final rondasCarregadas = converterLista(rondasSalvas);

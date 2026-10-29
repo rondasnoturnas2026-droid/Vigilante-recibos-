@@ -744,6 +744,7 @@ int _indiceProximoPontoRota = 0;
 int _ultimaCurvaAnunciada = -1;
 String? _instrucaoAtual;
 String? _ultimaChaveInstrucaoFalado;
+  int _sequenciaInstrucao = 0;
 bool _percursoIniciado = false;
   bool _navegacaoParaInicioEscolhida = false;
       bool _gpsAgendado = false;

@@ -1195,7 +1195,7 @@ void _orientarPelaRota(Position posicao) {
   var indiceMaisProximo = inicioBusca;
   var menorDistancia = double.infinity;
 
-  for (var i = inicioBusca; i < rota.length; i++) {
+  for (var i = inicioBusca; i < rota.length && i <= inicioBusca + 3; i++) {
     final ponto = rota[i];
     final distancia = Geolocator.distanceBetween(
       posicao.latitude,

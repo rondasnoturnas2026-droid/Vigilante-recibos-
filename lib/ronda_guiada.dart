@@ -1133,7 +1133,7 @@ if (distancia > tolerancia) {
     uri,
     mode: LaunchMode.externalApplication,
   );
-
+if (abriu) _navegacaoParaInicioEscolhida = true;
   if (!abriu && mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(

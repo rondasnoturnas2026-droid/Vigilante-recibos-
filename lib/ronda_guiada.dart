@@ -1394,6 +1394,7 @@ void _orientarPelaRota(Position posicao) {
   _mapController.rotate(0);
   _mapController.move(posicaoAtual, 16);
       }
+  Future<void> _marcarCasa() async {
   final posicao = _ultimaPosicao;
   if (posicao == null) return;
 

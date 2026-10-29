@@ -1165,6 +1165,7 @@ void _orientarPelaRota(Position posicao) {
   );
 
   if (!_percursoIniciado) {
+    if (!_navegacaoParaInicioEscolhida) return;
     final toleranciaInicio =
         (posicao.accuracy * 1.5).clamp(50.0, 100.0);
     if (distanciaAoInicio > toleranciaInicio) {

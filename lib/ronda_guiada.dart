@@ -1338,6 +1338,15 @@ void _orientarPelaRota(Position posicao) {
     (_indiceProximoPontoRota + 1).clamp(0, rota.length - 1).toInt();
   }
   }
+    final curvaEmAndamento = _indiceCurvaEmAndamento;
+  if (curvaEmAndamento != null &&
+      curvaEmAndamento + 1 < rota.length &&
+      indiceMaisProximo > curvaEmAndamento &&
+      posicao.hasHeading &&
+      posicao.speed >= 1) {
+    final rumoDaSaida = Geolocator.bearingBetween(
+      rota[curvaEmAndamento].latitude,
+      rota[curvaEmAndamento].
     final pontoFinal = rota.last;
   final distanciaAoFinal = Geolocator.distanceBetween(
     posicao.latitude,

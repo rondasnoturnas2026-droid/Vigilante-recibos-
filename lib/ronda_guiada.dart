@@ -1470,7 +1470,7 @@ void _orientarPelaRota(Position posicao) {
         ),
       );
             }
-            }
+            
     return;
   }
 

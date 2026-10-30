@@ -1368,7 +1368,7 @@ void _orientarPelaRota(Position posicao) {
       }
   
 
-    final intervalo = rota.length >= 8 ? 3 : 1;
+    const intervalo = 1;
 
   if (_indiceCurvaEmAndamento != null &&
       _indiceProximoPontoRota > _indiceCurvaEmAndamento!) {

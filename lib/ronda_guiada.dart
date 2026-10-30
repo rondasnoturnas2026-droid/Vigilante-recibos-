@@ -1502,7 +1502,7 @@ void _orientarPelaRota(Position posicao) {
       var diferencaProxima = rumoDepoisProxima - rumoAntesProxima;
       if (diferencaProxima > 180) diferencaProxima -= 360;
       if (diferencaProxima < -180) diferencaProxima += 360;
-      if (diferencaProxima.abs() < 45) continue;
+      if (diferencaProxima.abs() < 30) continue;
 
       var distanciaEntreCurvas = 0.0;
       for (var ponto = indiceCurva; ponto < i; ponto++) {

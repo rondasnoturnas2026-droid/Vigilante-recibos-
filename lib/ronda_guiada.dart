@@ -1333,7 +1333,8 @@ void _orientarPelaRota(Position posicao) {
       .toDouble();
 
   if (distanciaAoPontoAtual - menorDistancia >= margemAvanco) {
-    _indiceProximoPontoRota = indiceMaisProximo;
+    _indiceProximoPontoRota =
+    (_indiceProximoPontoRota + 1).clamp(0, rota.length - 1).toInt();
   }
   }
     final pontoFinal = rota.last;

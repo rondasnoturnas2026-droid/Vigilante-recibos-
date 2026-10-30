@@ -1433,7 +1433,7 @@ void _orientarPelaRota(Position posicao) {
       var diferenca = rumoDepois - rumoAntes;
       if (diferenca > 180) diferenca -= 360;
       if (diferenca < -180) diferenca += 360;
-      if (diferenca.abs() < 45) continue;
+      if (diferenca.abs() < 30) continue;
 
       _indiceCurvaEmAndamento = i;
       break;

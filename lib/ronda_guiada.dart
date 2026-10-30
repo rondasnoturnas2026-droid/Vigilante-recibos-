@@ -1483,7 +1483,9 @@ void _orientarPelaRota(Position posicao) {
   if (!mounted || !_mapaPronto) return;
 
   final posicaoAtual = LatLng(posicao.latitude, posicao.longitude);
-  _mapController.rotate(0);
+  if (posicao.hasHeading && posicao.speed >= 1) {
+  _mapController.rotate(-posicao.heading);
+  }
   _mapController.move(posicaoAtual, 16);
       }
   Future<void> _marcarCasa() async {

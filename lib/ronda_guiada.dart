@@ -913,7 +913,7 @@ bool _percursoIniciado = false;
 
       final configuracao = AndroidSettings(
   accuracy: LocationAccuracy.high,
-  distanceFilter: 5,
+  distanceFilter: 1,
   foregroundNotificationConfig: ForegroundNotificationConfig(
     notificationTitle: 'Ronda em andamento',
     notificationText: 'O GPS está acompanhando o percurso.',

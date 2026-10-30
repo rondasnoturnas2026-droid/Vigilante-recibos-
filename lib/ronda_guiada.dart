@@ -1461,14 +1461,15 @@ void _orientarPelaRota(Position posicao) {
           pontoDaRua: depois,
         ),
       );
-    } else if (distanciaAteCurva <= 40) {
+        } else if (distanciaAteCurva <= 70) {
       unawaited(
         _anunciarInstrucao(
-          'Em 35 metros, vire à $lado.',
-          'curva-35-$indiceCurva',
+          'Prepare-se para virar à $lado.',
+          'curva-antes-$indiceCurva',
           pontoDaRua: depois,
         ),
       );
+            }
             }
     return;
   }

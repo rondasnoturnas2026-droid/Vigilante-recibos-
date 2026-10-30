@@ -1451,26 +1451,78 @@ void _orientarPelaRota(Position posicao) {
       );
     }
 
-            final lado = diferenca > 0 ? 'direita' : 'esquerda';
+                final lado = diferenca > 0 ? 'direita' : 'esquerda';
+    var curvasProximas = false;
+    var ladoProxima = '';
 
-            if (distanciaAteCurva <= 10) {
+    for (var i = indiceCurva + intervalo;
+        i + intervalo < rota.length && i <= indiceCurva + 40;
+        i++) {
+      final antesProxima = rota[i - intervalo];
+      final curvaProxima = rota[i];
+      final depoisProxima = rota[i + intervalo];
+
+      final rumoAntesProxima = Geolocator.bearingBetween(
+        antesProxima.latitude,
+        antesProxima.longitude,
+        curvaProxima.latitude,
+        curvaProxima.longitude,
+      );
+      final rumoDepoisProxima = Geolocator.bearingBetween(
+        curvaProxima.latitude,
+        curvaProxima.longitude,
+        depoisProxima.latitude,
+        depoisProxima.longitude,
+      );
+
+      var diferencaProxima = rumoDepoisProxima - rumoAntesProxima;
+      if (diferencaProxima > 180) diferencaProxima -= 360;
+      if (diferencaProxima < -180) diferencaProxima += 360;
+      if (diferencaProxima.abs() < 45) continue;
+
+      var distanciaEntreCurvas = 0.0;
+      for (var ponto = indiceCurva; ponto < i; ponto++) {
+        distanciaEntreCurvas += Geolocator.distanceBetween(
+          rota[ponto].latitude,
+          rota[ponto].longitude,
+          rota[ponto + 1].latitude,
+          rota[ponto + 1].longitude,
+        );
+      }
+
+      if (distanciaEntreCurvas <= 40) {
+        curvasProximas = true;
+        ladoProxima =
+            diferencaProxima > 0 ? 'direita' : 'esquerda';
+      }
+      break;
+    }
+
+    final instrucaoAgora = curvasProximas
+        ? 'Vire à $lado agora e, logo depois, à $ladoProxima.'
+        : 'Vire à $lado agora.';
+    final instrucaoAntes = curvasProximas
+        ? 'Prepare-se: vire à $lado e, logo depois, à $ladoProxima.'
+        : 'Prepare-se para virar à $lado.';
+
+    if (distanciaAteCurva <= 10) {
       unawaited(
         _anunciarInstrucao(
-          'Vire à $lado agora.',
+          instrucaoAgora,
           'curva-agora-$indiceCurva',
-          pontoDaRua: depois,
+          pontoDaRua: curvasProximas ? null : depois,
         ),
       );
-        } else if (distanciaAteCurva <= 70) {
+    } else if (distanciaAteCurva <= 70) {
       unawaited(
         _anunciarInstrucao(
-          'Prepare-se para virar à $lado.',
+          instrucaoAntes,
           'curva-antes-$indiceCurva',
-          pontoDaRua: depois,
+          pontoDaRua: curvasProximas ? null : depois,
         ),
       );
-            }
-            
+    }
+
     return;
   }
 

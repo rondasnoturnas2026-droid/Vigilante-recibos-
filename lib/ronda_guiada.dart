@@ -1393,7 +1393,7 @@ void _orientarPelaRota(Position posicao) {
       }
   
 
-    const intervalo = 1;
+    const intervalo = 2;
 
   if (_indiceCurvaEmAndamento != null &&
       _indiceProximoPontoRota > _indiceCurvaEmAndamento!) {

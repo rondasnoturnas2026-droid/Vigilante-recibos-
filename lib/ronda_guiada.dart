@@ -1338,7 +1338,7 @@ void _orientarPelaRota(Position posicao) {
     (_indiceProximoPontoRota + 1).clamp(0, rota.length - 1).toInt();
   }
   }
-    final curvaEmAndamento = _indiceCurvaEmAndamento;
+      final curvaEmAndamento = _indiceCurvaEmAndamento;
   if (curvaEmAndamento != null &&
       curvaEmAndamento + 1 < rota.length &&
       indiceMaisProximo > curvaEmAndamento &&
@@ -1346,7 +1346,22 @@ void _orientarPelaRota(Position posicao) {
       posicao.speed >= 1) {
     final rumoDaSaida = Geolocator.bearingBetween(
       rota[curvaEmAndamento].latitude,
-      rota[curvaEmAndamento].
+      rota[curvaEmAndamento].longitude,
+      rota[curvaEmAndamento + 1].latitude,
+      rota[curvaEmAndamento + 1].longitude,
+    );
+
+    var diferencaRumo = posicao.heading - rumoDaSaida;
+    if (diferencaRumo > 180) diferencaRumo -= 360;
+    if (diferencaRumo < -180) diferencaRumo += 360;
+
+    if (diferencaRumo.abs() <= 45) {
+      if (_indiceProximoPontoRota < curvaEmAndamento) {
+        _indiceProximoPontoRota = curvaEmAndamento;
+      }
+      _indiceCurvaEmAndamento = null;
+    }
+  }
     final pontoFinal = rota.last;
   final distanciaAoFinal = Geolocator.distanceBetween(
     posicao.latitude,

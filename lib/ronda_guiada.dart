@@ -1522,9 +1522,7 @@ void _orientarPelaRota(Position posicao) {
       break;
     }
 
-    final instrucaoAgora = curvasProximas
-    ? 'Vire à $lado agora e, logo depois, vire à $ladoProxima.'
-    : 'Vire à $lado agora.';
+    final instrucaoAgora = 'Vire à $lado agora.';
 final instrucaoAntes = curvasProximas
     ? 'Na próxima curva, vire à $lado e, logo depois, vire à $ladoProxima.'
     : 'Na próxima curva, vire à $lado.';

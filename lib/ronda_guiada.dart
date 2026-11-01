@@ -1730,8 +1730,9 @@ final instrucaoAntes = curvasProximas
         .map((ponto) => LatLng(ponto.latitude, ponto.longitude))
         .toList();
     final coordenadasGravadas = _pontos
-        .map((ponto) => LatLng(ponto.latitude, ponto.longitude))
-        .toList();
+    .skip(_indiceInicioTrechoVerde)
+    .map((ponto) => LatLng(ponto.latitude, ponto.longitude))
+    .toList();
     final centroInicial = coordenadasRota.isNotEmpty
         ? coordenadasRota.first
         : _ultimaPosicao != null

@@ -1487,6 +1487,7 @@ if (_distanciaAteProximaCurva != distanciaNoCartao && mounted) {
     _distanciaAteProximaCurva = distanciaNoCartao;
   });
 }
+    final ehRetornoNaMesmaRua = diferenca.abs() >= 150;
 
                 final lado = diferenca > 0 ? 'direita' : 'esquerda';
     var curvasProximas = false;

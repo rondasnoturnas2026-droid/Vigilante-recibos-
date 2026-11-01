@@ -810,6 +810,8 @@ bool _percursoIniciado = false;
     _indiceCurvaEmAndamento =
         (pausa['indiceCurvaEmAndamento'] as num?)?.toInt();
     _percursoIniciado = pausa['percursoIniciado'] == true;
+    _indiceInicioTrechoVerde =
+    (pausa['indiceInicioTrechoVerde'] as num?)?.toInt() ?? 0;
   }
     @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

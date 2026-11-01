@@ -1657,6 +1657,7 @@ final instrucaoAntes = curvasProximas
           'indiceProximoPontoRota': _indiceProximoPontoRota,
           'indiceCurvaEmAndamento': _indiceCurvaEmAndamento,
           'percursoIniciado': _percursoIniciado,
+          'indiceInicioTrechoVerde': _indiceInicioTrechoVerde,
         }),
       );
     } catch (_) {}

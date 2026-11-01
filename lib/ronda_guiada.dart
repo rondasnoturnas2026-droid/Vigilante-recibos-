@@ -1794,6 +1794,45 @@ final instrucaoAntes = curvasProximas
                     if (widget.rotaPrincipal != null &&
     _percursoIniciado &&
     _distanciaAteProximaCurva != null)
+  Container(
+    margin: const EdgeInsets.only(bottom: 8),
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.tertiaryContainer,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Row(
+      children: [
+        Icon(
+          Icons.navigation,
+          size: 28,
+          color: Theme.of(context).colorScheme.onTertiaryContainer,
+        ),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Próxima curva',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onTertiaryContainer,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              '${_distanciaAteProximaCurva!} m',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onTertiaryContainer,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
   Padding(
     padding: const EdgeInsets.only(bottom: 8),
     child: Text(

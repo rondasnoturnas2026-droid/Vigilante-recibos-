@@ -1533,8 +1533,8 @@ if (_distanciaAteProximaCurva != distanciaNoCartao && mounted) {
 
     final instrucaoAgora = 'Vire à $lado agora.';
 final instrucaoAntes = curvasProximas
-    ? 'Na próxima curva, vire à $lado e, logo depois, vire à $ladoProxima.'
-    : 'Na próxima curva, vire à $lado.';
+    ? 'Próxima curva: à $lado; depois, à $ladoProxima.'
+    : 'Próxima curva: à $lado.';
 
     if (distanciaAteCurva <= 10) {
       unawaited(

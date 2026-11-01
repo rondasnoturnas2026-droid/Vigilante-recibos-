@@ -1917,7 +1917,9 @@ final instrucaoAntes = ehRetornoNaMesmaRua
             ),
                         const SizedBox(height: 12),
             SizedBox(
-              height: 300,
+              height: (MediaQuery.sizeOf(context).height * 0.50)
+    .clamp(360.0, 520.0)
+    .toDouble(),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: FlutterMap(

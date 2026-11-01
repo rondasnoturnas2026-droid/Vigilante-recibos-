@@ -1493,7 +1493,7 @@ if (_distanciaAteProximaCurva != distanciaNoCartao && mounted) {
     var curvasProximas = false;
     var ladoProxima = '';
 
-    for (var i = indiceCurva + intervalo;
+    for (var i = indiceCurva + (intervalo * 2) + 1;
         i + intervalo < rota.length && i <= indiceCurva + 40;
         i++) {
       final antesProxima = rota[i - intervalo];

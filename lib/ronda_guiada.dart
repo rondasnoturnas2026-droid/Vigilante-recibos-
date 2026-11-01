@@ -1475,6 +1475,14 @@ void _orientarPelaRota(Position posicao) {
         rota[ponto + 1].longitude,
       );
     }
+    final distanciaNoCartao =
+    distanciaAteCurva.round().clamp(0, 999999).toInt();
+
+if (_distanciaAteProximaCurva != distanciaNoCartao && mounted) {
+  setState(() {
+    _distanciaAteProximaCurva = distanciaNoCartao;
+  });
+}
 
                 final lado = diferenca > 0 ? 'direita' : 'esquerda';
     var curvasProximas = false;

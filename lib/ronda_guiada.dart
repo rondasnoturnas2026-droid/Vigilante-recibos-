@@ -1908,7 +1908,7 @@ RichAttributionWidget(
                           ),
                         ],
                       ),
-                    if (coordenadasGravadas.length > 1)
+                    if (_percursoIniciado && coordenadasGravadas.length > 1)
                       PolylineLayer(
                         polylines: [
                           Polyline(

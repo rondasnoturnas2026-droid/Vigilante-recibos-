@@ -1864,7 +1864,7 @@ final instrucaoAntes = ehRetornoNaMesmaRua
           : _instrucaoAtual!.toLowerCase().contains('esquerda')
               ? Icons.turn_left
               : Icons.straight,
-  size: 36,
+  size: 32,
 ),
           const SizedBox(width: 12),
           Expanded(

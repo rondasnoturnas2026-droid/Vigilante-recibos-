@@ -768,6 +768,7 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage>
   StreamSubscription<Position>? _assinatura;
   Position? _ultimaPosicao;
   double _distanciaMetros = 0;
+  int? _distanciaAteProximaCurva;
   bool _carregando = true;
   bool _gravando = false;
   bool _podeSair = false;

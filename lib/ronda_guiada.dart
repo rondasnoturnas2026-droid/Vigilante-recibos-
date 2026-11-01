@@ -1183,6 +1183,7 @@ if (distancia > tolerancia) {
       _indiceProximoPontoRota = 0;
       _indiceCurvaEmAndamento = null;
       _leiturasForaDaRota = 0;
+      _indiceInicioTrechoVerde = _pontos.length;
     });
 
     unawaited(

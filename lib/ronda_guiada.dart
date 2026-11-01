@@ -1559,7 +1559,7 @@ final instrucaoAntes = curvasProximas
 
   unawaited(
     _anunciarInstrucao(
-      'Continue pelo percurso gravado. Você está a ${menorDistancia.round()} m da rota.',
+      'Continue pelo percurso gravado.',
       'seguir-percurso',
     ),
   );

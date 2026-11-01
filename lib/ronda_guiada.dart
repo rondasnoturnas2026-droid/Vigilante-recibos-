@@ -763,6 +763,7 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage>
     with WidgetsBindingObserver {
   final FlutterTts _fala = FlutterTts();
   final List<PontoRonda> _pontos = [];
+  int _indiceInicioTrechoVerde = 0;
   final MapController _mapController = MapController();
   bool _mapaPronto = false;
   StreamSubscription<Position>? _assinatura;

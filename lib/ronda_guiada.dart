@@ -1556,6 +1556,11 @@ final instrucaoAntes = curvasProximas
 
     return;
   }
+  if (_distanciaAteProximaCurva != null && mounted) {
+  setState(() {
+    _distanciaAteProximaCurva = null;
+  });
+  }
 
   unawaited(
     _anunciarInstrucao(

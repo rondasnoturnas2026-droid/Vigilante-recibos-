@@ -1780,6 +1780,19 @@ final instrucaoAntes = curvasProximas
                       'Distância: ${_formatarDistancia(_distanciaMetros)}',
                     ),
                     Text('Casas marcadas: ${casas.length}'),
+                    if (widget.rotaPrincipal != null &&
+    _percursoIniciado &&
+    _distanciaAteProximaCurva != null)
+  Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      'Próxima curva: ${_distanciaAteProximaCurva} m',
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  ),
                     if (_instrucaoAtual != null)
   Card(
     color: Theme.of(context).colorScheme.primaryContainer,

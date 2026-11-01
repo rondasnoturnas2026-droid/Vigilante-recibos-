@@ -1871,7 +1871,7 @@ final instrucaoAntes = ehRetornoNaMesmaRua
             child: Text(
               _instrucaoAtual!,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),

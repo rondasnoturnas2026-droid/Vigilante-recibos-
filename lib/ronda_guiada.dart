@@ -1921,7 +1921,7 @@ final instrucaoAntes = ehRetornoNaMesmaRua
     .clamp(360.0, 520.0)
     .toDouble(),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(18),
                 child: FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(

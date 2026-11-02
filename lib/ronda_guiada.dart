@@ -1139,6 +1139,14 @@ List<RoteiroRonda> _rondasFeitas = [];
                       icon: const Icon(Icons.people_alt_outlined),
                       label: const Text('Pedidos de acompanhamento'),
                     ),
+                                          const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      onPressed: _carregando
+                          ? null
+                          : _abrirAcompanhamentoNovato,
+                      icon: const Icon(Icons.location_searching),
+                      label: const Text('Acompanhar novato'),
+                    ),
                   ],
                 ],
               ),

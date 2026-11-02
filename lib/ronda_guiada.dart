@@ -187,6 +187,154 @@ List<RoteiroRonda> _rondasFeitas = [];
       );
     }
     }
+    Future<void> _importarRoteiro() async {
+    try {
+      final escolha = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        withData: true,
+      );
+
+      if (escolha == null) return;
+
+      final bytes = escolha.files.single.bytes;
+      if (bytes == null) throw const FormatException();
+
+      final conteudo = jsonDecode(utf8.decode(bytes));
+      if (conteudo is! Map) throw const FormatException();
+
+      final dados = Map<String, dynamic>.from(conteudo);
+
+      if (dados['formato'] != 'vigilante_recibos_rota' ||
+          dados['versao'] != 1) {
+        throw const FormatException();
+      }
+
+      final nome = dados['nome']?.toString().trim() ?? '';
+      final area = dados['area']?.toString().trim() ?? '';
+      final distancia =
+          (dados['distanciaMetros'] as num?)?.toDouble() ?? 0;
+      final pontosRecebidos = dados['pontos'];
+
+      if (nome.isEmpty || area.isEmpty || pontosRecebidos is! List) {
+        throw const FormatException();
+      }
+
+      final pontos = <PontoRonda>[];
+
+      for (final item in pontosRecebidos) {
+        if (item is! Map) continue;
+
+        final ponto = Map<String, dynamic>.from(item);
+        final latitude = (ponto['latitude'] as num?)?.toDouble();
+        final longitude = (ponto['longitude'] as num?)?.toDouble();
+
+        if (latitude == null ||
+            longitude == null ||
+            latitude < -90 ||
+            latitude > 90 ||
+            longitude < -180 ||
+            longitude > 180) {
+          throw const FormatException();
+        }
+
+        final tipo = TipoPontoRonda.values.firstWhere(
+          (valor) => valor.name == ponto['tipo']?.toString(),
+          orElse: () => TipoPontoRonda.percurso,
+        );
+
+        pontos.add(
+          PontoRonda(
+            latitude: latitude,
+            longitude: longitude,
+            dataHora: DateTime.now(),
+            tipo: tipo,
+            identificacao: tipo == TipoPontoRonda.casa
+                ? ponto['identificacao']?.toString() ?? ''
+                : '',
+          ),
+        );
+      }
+
+      final rotaImportada = RoteiroRonda(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        nome: nome,
+        area: area,
+        criadoEm: DateTime.now(),
+        distanciaMetros: distancia,
+        pontos: pontos,
+      );
+
+      if (!_roteiroTemPercurso(rotaImportada)) {
+        throw const FormatException();
+      }
+
+      if (_rotaPrincipal != null) {
+        final substituir = await _mostrarDialogoAguardandoFechar<bool>(
+          builder: (context) => AlertDialog(
+            title: const Text('Substituir rota principal?'),
+            content: const Text(
+              'A rota recebida será definida como a nova rota principal.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancelar'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Substituir'),
+              ),
+            ],
+          ),
+        );
+
+        if (substituir != true || !mounted) return;
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      final roteirosAtualizados = [
+        rotaImportada,
+        ..._roteiros.where((item) => item.id != rotaImportada.id),
+      ];
+
+      final salvouLista = await prefs.setString(
+        _chaveRoteiros,
+        jsonEncode(roteirosAtualizados.map((item) => item.toMap()).toList()),
+      );
+      final salvouPrincipal = await prefs.setString(
+        _chaveRotaPrincipal,
+        jsonEncode(rotaImportada.toMap()),
+      );
+
+      if (!salvouLista || !salvouPrincipal) {
+        throw StateError('Não foi possível salvar a rota.');
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _roteiros = roteirosAtualizados;
+        _rotaPrincipal = rotaImportada;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Roteiro importado como rota principal.'),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Não foi possível importar esse arquivo de roteiro.',
+          ),
+        ),
+      );
+    }
+    }
 
   Future<void> _novaRonda() async {
     final nome = TextEditingController(text: 'Ronda');

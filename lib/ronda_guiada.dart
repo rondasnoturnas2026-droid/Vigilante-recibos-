@@ -1190,18 +1190,20 @@ List<RoteiroRonda> _rondasFeitas = [];
 }
 
 class RondaEmAndamentoPage extends StatefulWidget {
-  const RondaEmAndamentoPage({
+    const RondaEmAndamentoPage({
     super.key,
     required this.nome,
     required this.area,
     this.rotaPrincipal,
-        this.execucaoPausada,
+    this.execucaoPausada,
+    this.sessaoCompartilhadaId,
   });
 
   final String nome;
   final String area;
   final RoteiroRonda? rotaPrincipal;
   final Map<String, dynamic>? execucaoPausada;
+  final String? sessaoCompartilhadaId;
   @override
   State<RondaEmAndamentoPage> createState() =>
       _RondaEmAndamentoPageState();

@@ -132,6 +132,61 @@ List<RoteiroRonda> _rondasFeitas = [];
     });
   }
   }
+    Future<void> _compartilharRotaPrincipal() async {
+    final rota = _rotaPrincipal;
+
+    if (rota == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Salve uma rota principal antes de compartilhar.'),
+        ),
+      );
+      return;
+    }
+
+    try {
+      final dadosDaRota = {
+        'formato': 'vigilante_recibos_rota',
+        'versao': 1,
+        'nome': rota.nome,
+        'area': rota.area,
+        'distanciaMetros': rota.distanciaMetros,
+        'pontos': rota.pontos.map((ponto) {
+          return {
+            'latitude': ponto.latitude,
+            'longitude': ponto.longitude,
+            'tipo': ponto.tipo.name,
+            if (ponto.tipo == TipoPontoRonda.casa)
+              'identificacao': ponto.identificacao,
+          };
+        }).toList(),
+      };
+
+      final pasta = await Directory.systemTemp.createTemp('rota_vigilante_');
+      final arquivo = File('${pasta.path}/roteiro_ronda.json');
+
+      await arquivo.writeAsString(
+        jsonEncode(dadosDaRota),
+        encoding: utf8,
+      );
+
+      await SharePlus.instance.share(
+        ShareParams(
+          title: 'Compartilhar roteiro',
+          text: 'Roteiro da ronda: ${rota.nome}',
+          files: [XFile(arquivo.path)],
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível compartilhar o roteiro.'),
+        ),
+      );
+    }
+    }
 
   Future<void> _novaRonda() async {
     final nome = TextEditingController(text: 'Ronda');

@@ -2530,6 +2530,7 @@ RichAttributionWidget(
                       ),
                     if ((widget.rotaPrincipal == null || _percursoIniciado) &&
     coordenadasGravadas.length > 1)
+    coordenadasGravadas.length > 1)
                       PolylineLayer(
                         polylines: [
                           Polyline(

@@ -2597,7 +2597,7 @@ RichAttributionWidget(
   ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
-              onPressed: !_gravando ? null : _finalizar,
+              onPressed: _finalizar,
               icon: const Icon(Icons.stop_circle_outlined),
               label: const Text('Finalizar e salvar'),
             ),

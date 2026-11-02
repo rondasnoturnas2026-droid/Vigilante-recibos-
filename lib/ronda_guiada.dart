@@ -169,10 +169,12 @@ List<RoteiroRonda> _rondasFeitas = [];
       return;
     }
 
-    try {
+        try {
+      final sessaoId = await _criarSessaoCompartilhada();
       final dadosDaRota = {
         'formato': 'vigilante_recibos_rota',
         'versao': 1,
+        'sessaoId': sessaoId,
         'nome': rota.nome,
         'area': rota.area,
         'distanciaMetros': rota.distanciaMetros,

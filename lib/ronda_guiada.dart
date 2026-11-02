@@ -2207,6 +2207,7 @@ final instrucaoAntes = ehRetornoNaMesmaRua
     if (pausar != true || !mounted) return;
 
     await _salvarProgressoPausado();
+            await _encerrarAcompanhamento();
     await _assinatura?.cancel();
 
     if (!mounted) return;

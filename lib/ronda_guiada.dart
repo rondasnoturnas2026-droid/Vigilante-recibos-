@@ -24,6 +24,7 @@ import 'rondas/models/roteiro_ronda.dart';
 const String _chaveRoteiros = 'roteirosRondaGuiadaV1';
 const String _chaveRotaPrincipal = 'rotaPrincipalRondaV1';
 const String _chaveRondasFeitas = 'rondasFeitasRondaV1';
+const String _colecaoRondasCompartilhadas = 'rondas_compartilhadas';
 const String _chaveExecucaoPausada = 'execucaoPausadaRondaV1';
 const double _distanciaMinimaRoteiroMetros = 50;
 

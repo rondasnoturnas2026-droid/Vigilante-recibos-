@@ -871,6 +871,7 @@ List<RoteiroRonda> _rondasFeitas = [];
       if (permitir == true) {
         try {
           await _solicitarAcompanhamento(sessaoId!, nomeVigilante);
+                      sessaoIdParaAcompanhar = sessaoId;
         } catch (_) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(

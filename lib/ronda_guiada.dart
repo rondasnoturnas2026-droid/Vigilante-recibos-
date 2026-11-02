@@ -325,6 +325,16 @@ List<RoteiroRonda> _rondasFeitas = [];
       }
 
       final prefs = await SharedPreferences.getInstance();
+              final sessaoId = dados['sessaoId']?.toString() ?? '';
+
+      if (sessaoId.isEmpty) {
+        await prefs.remove(_chaveSessaoRondaCompartilhada);
+      } else {
+        await prefs.setString(
+          _chaveSessaoRondaCompartilhada,
+          sessaoId,
+        );
+      }
       final roteirosAtualizados = [
         rotaImportada,
         ..._roteiros.where((item) => item.id != rotaImportada.id),

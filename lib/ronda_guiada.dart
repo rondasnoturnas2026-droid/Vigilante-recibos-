@@ -1990,20 +1990,18 @@ if (_distanciaAteProximaCurva != distanciaNoCartao && mounted) {
 
 final instrucaoAntes = ehRetornoNaMesmaRua
     ? 'Retorne pela mesma rua até a próxima orientação.'
-      const RondaEmAndamentoPage({
-    super.key,
-    required this.nome,
-    required this.area,
-    this.rotaPrincipal,
-    this.execucaoPausada,
-    this.sessaoCompartilhadaId,
-  });
+    : curvasProximas
+        ? 'Próxima curva: à $lado; depois, à $ladoProxima.'
+        : 'Próxima curva: à $lado.';
 
-  final String nome;
-  final String area;
-  final RoteiroRonda? rotaPrincipal;
-  final Map<String, dynamic>? execucaoPausada;
-  final String? sessaoCompartilhadaId;
+    if (distanciaAteCurva <= 10) {
+      unawaited(
+        _anunciarInstrucao(
+          instrucaoAgora,
+          'curva-agora-$indiceCurva',
+          pontoDaRua: curvasProximas ? null : depois,
+        ),
+      );
     } else if (distanciaAteCurva <= 70) {
       unawaited(
         _anunciarInstrucao(

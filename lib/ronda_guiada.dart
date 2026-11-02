@@ -1082,6 +1082,14 @@ List<RoteiroRonda> _rondasFeitas = [];
                       icon: const Icon(Icons.share_outlined),
                       label: const Text('Compartilhar roteiro'),
                     ),
+                                          const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      onPressed: _carregando
+                          ? null
+                          : _mostrarPedidoAcompanhamento,
+                      icon: const Icon(Icons.people_alt_outlined),
+                      label: const Text('Pedidos de acompanhamento'),
+                    ),
                   ],
                 ],
               ),

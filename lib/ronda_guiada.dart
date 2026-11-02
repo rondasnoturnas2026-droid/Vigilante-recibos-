@@ -134,6 +134,29 @@ List<RoteiroRonda> _rondasFeitas = [];
     });
   }
   }
+    Future<String> _criarSessaoCompartilhada() async {
+    final usuario = FirebaseAuth.instance.currentUser;
+
+    if (usuario == null) {
+      throw StateError('Entre na sua conta para compartilhar uma ronda.');
+    }
+
+    final sessao = FirebaseFirestore.instance
+        .collection(_colecaoRondasCompartilhadas)
+        .doc();
+
+    await sessao.set({
+      'principalUid': usuario.uid,
+      'novatoUid': null,
+      'status': 'aguardando',
+      'criadoEm': FieldValue.serverTimestamp(),
+      'expiraEm': Timestamp.fromDate(
+        DateTime.now().add(const Duration(hours: 12)),
+      ),
+    });
+
+    return sessao.id;
+    }
     Future<void> _compartilharRotaPrincipal() async {
     final rota = _rotaPrincipal;
 

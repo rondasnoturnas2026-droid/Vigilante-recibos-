@@ -199,8 +199,21 @@ List<RoteiroRonda> _rondasFeitas = [];
 
       final dadosSessao = await sessao.get();
 
-      if (!dadosSessao.exists ||
-          dadosSessao.data()?['principalUid'] != usuario.uid) {
+            if (!dadosSessao.exists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sessão de acompanhamento não encontrada.')),
+        );
+        return;
+      }
+
+      if (dadosSessao.data()?['principalUid'] != usuario.uid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Somente quem compartilhou a rota pode aprovar o pedido.',
+            ),
+          ),
+        );
         return;
       }
 

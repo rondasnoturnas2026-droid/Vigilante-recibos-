@@ -2168,6 +2168,20 @@ final instrucaoAntes = ehRetornoNaMesmaRua
       );
     } catch (_) {}
     }
+      Future<void> _encerrarAcompanhamento() async {
+    final sessaoId = widget.sessaoCompartilhadaId;
+    if (sessaoId == null) return;
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_colecaoRondasCompartilhadas)
+          .doc(sessaoId)
+          .update({
+        'status': 'encerrado',
+        'encerradoEm': FieldValue.serverTimestamp(),
+      });
+    } catch (_) {}
+      }
 
     Future<void> _sairSemSalvar() async {
     final pausar = await showDialog<bool>(

@@ -1217,9 +1217,9 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage>
   int _indiceInicioTrechoVerde = 0;
   final MapController _mapController = MapController();
   bool _mapaPronto = false;
-  StreamSubscription<Position>? _assinatura;
-    DateTime? _ultimaAtualizacaoCompartilhada;
+    StreamSubscription<Position>? _assinatura;
   Position? _ultimaPosicao;
+  DateTime? _ultimaAtualizacaoCompartilhada;
   double _distanciaMetros = 0;
   int? _distanciaAteProximaCurva;
   bool _carregando = true;

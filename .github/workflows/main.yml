@@ -163,7 +163,7 @@ jobs:
 
           manifesto.write_text(texto, encoding="utf-8")
           PY
-                - name: Liberar espaço do runner
+                      - name: Liberar espaço do runner
         run: |
           sudo rm -rf /usr/local/lib/android/sdk/system-images
           sudo rm -rf /usr/local/lib/android/sdk/emulator

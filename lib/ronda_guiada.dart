@@ -2615,6 +2615,23 @@ RichAttributionWidget(
             ),
           ],
         ),
+                    ],
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: SizedBox(
+              height: 56,
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _sairSemSalvar,
+                icon: const Icon(Icons.exit_to_app),
+                label: const Text('Salvar e sair'),
+              ),
+            ),
+          ),
+        ),
+      ),
       ),
     );
   }

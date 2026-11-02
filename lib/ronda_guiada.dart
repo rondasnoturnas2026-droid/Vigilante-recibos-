@@ -2216,6 +2216,7 @@ final instrucaoAntes = ehRetornoNaMesmaRua
     }
 
   Future<void> _finalizar() async {
+          await _encerrarAcompanhamento();
     await _assinatura?.cancel();
 
     final agora = DateTime.now();

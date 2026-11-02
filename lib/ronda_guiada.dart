@@ -839,6 +839,7 @@ List<RoteiroRonda> _rondasFeitas = [];
 
     campoNome.dispose();
     if (nomeVigilante == null || !mounted) return;
+              String? sessaoIdParaAcompanhar;
               final prefsSessao = await SharedPreferences.getInstance();
     final sessaoId =
         prefsSessao.getString(_chaveSessaoRondaCompartilhada);

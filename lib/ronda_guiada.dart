@@ -1581,6 +1581,7 @@ bool _percursoIniciado = false;
   bool forcar = false,
   bool ignorarDistancia = false,
 }) {
+            unawaited(_enviarLocalizacaoCompartilhada(posicao));
             if (widget.rotaPrincipal != null) {
         _ultimaPosicao = posicao;
         _orientarPelaRota(posicao);

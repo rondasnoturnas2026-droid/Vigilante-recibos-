@@ -1528,7 +1528,54 @@ bool _percursoIniciado = false;
 
   
 
+  Future<void> _enviarLocalizacaoCompartilhada(
+    Position posicao,
+  ) async {
+    final sessaoId = widget.sessaoCompartilhadaId;
+    final usuario = FirebaseAuth.instance.currentUser;
 
+    if (sessaoId == null || usuario == null) return;
+
+    final agora = DateTime.now();
+    final ultimaAtualizacao = _ultimaAtualizacaoCompartilhada;
+
+    if (ultimaAtualizacao != null &&
+        agora.difference(ultimaAtualizacao) <
+            const Duration(seconds: 10)) {
+      return;
+    }
+
+    _ultimaAtualizacaoCompartilhada = agora;
+
+    try {
+      final sessao = await FirebaseFirestore.instance
+          .collection(_colecaoRondasCompartilhadas)
+          .doc(sessaoId)
+          .get();
+
+      final dados = sessao.data();
+
+      if (!sessao.exists ||
+          dados?['status'] != 'aprovado' ||
+          dados?['novatoUid'] != usuario.uid) {
+        return;
+      }
+
+      await FirebaseFirestore.instance
+          .collection(_colecaoRondasCompartilhadas)
+          .doc(sessaoId)
+          .collection('localizacoes')
+          .doc(usuario.uid)
+          .set({
+        'novatoUid': usuario.uid,
+        'latitude': posicao.latitude,
+        'longitude': posicao.longitude,
+        'atualizadoEm': FieldValue.serverTimestamp(),
+      });
+    } catch (_) {
+      _ultimaAtualizacaoCompartilhada = null;
+    }
+  }
     void _registrarPosicao(
   Position posicao, {
   bool forcar = false,

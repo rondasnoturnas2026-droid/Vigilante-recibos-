@@ -2564,6 +2564,129 @@ RichAttributionWidget(
     );
   }
 }
+class AcompanharNovatoPage extends StatelessWidget {
+  const AcompanharNovatoPage({
+    super.key,
+    required this.sessaoId,
+  });
+
+  final String sessaoId;
+
+  @override
+  Widget build(BuildContext context) {
+    final sessaoRef = FirebaseFirestore.instance
+        .collection(_colecaoRondasCompartilhadas)
+        .doc(sessaoId);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Acompanhar novato')),
+      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: sessaoRef.snapshots(),
+        builder: (context, sessaoSnapshot) {
+          if (sessaoSnapshot.hasError) {
+            return const Center(
+              child: Text('Não foi possível carregar a sessão.'),
+            );
+          }
+
+          if (!sessaoSnapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final dadosSessao = sessaoSnapshot.data!.data();
+
+          if (dadosSessao == null) {
+            return const Center(child: Text('Sessão não encontrada.'));
+          }
+
+          if (dadosSessao['status'] != 'aprovado') {
+            final encerrada = dadosSessao['status'] == 'encerrado';
+            return Center(
+              child: Text(
+                encerrada
+                    ? 'A ronda foi encerrada.'
+                    : 'Aguardando aprovação do acompanhamento.',
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+
+          final novatoUid = dadosSessao['novatoUid']?.toString();
+
+          if (novatoUid == null || novatoUid.isEmpty) {
+            return const Center(
+              child: Text('Ainda não há vigilante nesta sessão.'),
+            );
+          }
+
+          final localizacaoRef = sessaoRef
+              .collection('localizacoes')
+              .doc(novatoUid);
+
+          return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+            stream: localizacaoRef.snapshots(),
+            builder: (context, localizacaoSnapshot) {
+              if (localizacaoSnapshot.hasError) {
+                return const Center(
+                  child: Text('Não foi possível carregar a localização.'),
+                );
+              }
+
+              if (!localizacaoSnapshot.hasData ||
+                  !localizacaoSnapshot.data!.exists) {
+                return const Center(
+                  child: Text('Aguardando a primeira localização do novato.'),
+                );
+              }
+
+              final dados = localizacaoSnapshot.data!.data();
+              final latitude = (dados?['latitude'] as num?)?.toDouble();
+              final longitude = (dados?['longitude'] as num?)?.toDouble();
+
+              if (latitude == null || longitude == null) {
+                return const Center(
+                  child: Text('Localização inválida.'),
+                );
+              }
+
+              final ponto = LatLng(latitude, longitude);
+
+              return FlutterMap(
+                key: ValueKey('${latitude}_$longitude'),
+                options: MapOptions(
+                  initialCenter: ponto,
+                  initialZoom: 16,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName:
+                        'br.com.vigilanterecibos.vigilante_recibos',
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: ponto,
+                        width: 48,
+                        height: 48,
+                        child: const Icon(
+                          Icons.person_pin_circle,
+                          color: Colors.red,
+                          size: 42,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
 
 class RondasRegistradasPage extends StatelessWidget {
   const RondasRegistradasPage({super.key, required this.roteiros});

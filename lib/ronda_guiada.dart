@@ -1237,17 +1237,15 @@ List<RoteiroRonda> _rondasFeitas = [];
                 'para organizar percursos diferentes.',
               ),
             ),
-              final lado = diferenca > 0 ? 'direita' : 'esquerda';
-    if ((_distanciaAteProximaCurva != distanciaNoCartao ||
-            _ladoProximaCurva != lado) &&
-        mounted) {
-      setState(() {
-        _distanciaAteProximaCurva = distanciaNoCartao;
-        _ladoProximaCurva = lado;
-      });
-    }
-    final ehRetornoNaMesmaRua = diferenca.abs() >= 150;
-    const RondaEmAndamentoPage({
+                        ),
+        ],
+      ),
+    );
+  }
+}
+
+class RondaEmAndamentoPage extends StatefulWidget {
+  const RondaEmAndamentoPage({
     super.key,
     required this.nome,
     required this.area,

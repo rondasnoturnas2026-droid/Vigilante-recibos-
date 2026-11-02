@@ -2037,13 +2037,15 @@ void _orientarPelaRota(Position posicao) {
       );
     }
     final distanciaNoCartao =
-    distanciaAteCurva.round().clamp(0, 999999).toInt();
-
-if (_distanciaAteProximaCurva != distanciaNoCartao && mounted) {
-  setState(() {
-    _distanciaAteProximaCurva = distanciaNoCartao;
-  });
-}
+        final lado = diferenca > 0 ? 'direita' : 'esquerda';
+    if ((_distanciaAteProximaCurva != distanciaNoCartao ||
+            _ladoProximaCurva != lado) &&
+        mounted) {
+      setState(() {
+        _distanciaAteProximaCurva = distanciaNoCartao;
+        _ladoProximaCurva = lado;
+      });
+    }
     final ehRetornoNaMesmaRua = diferenca.abs() >= 150;
 
                 final lado = diferenca > 0 ? 'direita' : 'esquerda';

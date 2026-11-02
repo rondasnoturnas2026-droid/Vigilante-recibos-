@@ -173,6 +173,8 @@ List<RoteiroRonda> _rondasFeitas = [];
 
         try {
       final sessaoId = await _criarSessaoCompartilhada();
+                  final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_chaveSessaoRondaCompartilhada, sessaoId);
       final dadosDaRota = {
         'formato': 'vigilante_recibos_rota',
         'versao': 1,

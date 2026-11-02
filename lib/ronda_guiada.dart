@@ -159,6 +159,29 @@ List<RoteiroRonda> _rondasFeitas = [];
 
     return sessao.id;
     }
+      Future<void> _solicitarAcompanhamento(
+    String sessaoId,
+    String nomeVigilante,
+  ) async {
+    final usuario = FirebaseAuth.instance.currentUser;
+
+    if (usuario == null) {
+      throw StateError('Entre na sua conta para solicitar acompanhamento.');
+    }
+
+    final pedido = FirebaseFirestore.instance
+        .collection(_colecaoRondasCompartilhadas)
+        .doc(sessaoId)
+        .collection('solicitacoes')
+        .doc(usuario.uid);
+
+    await pedido.set({
+      'novatoUid': usuario.uid,
+      'nomeVigilante': nomeVigilante,
+      'status': 'aguardando',
+      'solicitadaEm': FieldValue.serverTimestamp(),
+    });
+      }
     Future<void> _compartilharRotaPrincipal() async {
     final rota = _rotaPrincipal;
 

@@ -182,6 +182,52 @@ List<RoteiroRonda> _rondasFeitas = [];
       'solicitadaEm': FieldValue.serverTimestamp(),
     });
       }
+      Future<void> _abrirAcompanhamentoNovato() async {
+    try {
+      final usuario = FirebaseAuth.instance.currentUser;
+      final prefs = await SharedPreferences.getInstance();
+      final sessaoId =
+          prefs.getString(_chaveSessaoRondaCompartilhada);
+
+      if (usuario == null || sessaoId == null || sessaoId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Compartilhe uma rota antes de acompanhar.'),
+          ),
+        );
+        return;
+      }
+
+      final sessao = await FirebaseFirestore.instance
+          .collection(_colecaoRondasCompartilhadas)
+          .doc(sessaoId)
+          .get();
+
+      if (sessao.data()?['principalUid'] != usuario.uid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Somente o vigilante principal pode acompanhar.'),
+          ),
+        );
+        return;
+      }
+
+      if (!mounted) return;
+
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => AcompanharNovatoPage(sessaoId: sessaoId),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível abrir o acompanhamento.'),
+        ),
+      );
+    }
+      }
       Future<void> _mostrarPedidoAcompanhamento() async {
     try {
       final usuario = FirebaseAuth.instance.currentUser;

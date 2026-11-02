@@ -2384,7 +2384,11 @@ final instrucaoAntes = ehRetornoNaMesmaRua
     child: Row(
       children: [
         Icon(
-          Icons.navigation,
+                    _ladoProximaCurva == 'direita'
+              ? Icons.turn_right
+              : _ladoProximaCurva == 'esquerda'
+                  ? Icons.turn_left
+                  : Icons.navigation,
           size: 28,
           color: Theme.of(context).colorScheme.onTertiaryContainer,
         ),

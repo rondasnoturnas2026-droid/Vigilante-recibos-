@@ -284,7 +284,8 @@ List<RoteiroRonda> _rondasFeitas = [];
       }
 
       final rotaImportada = RoteiroRonda(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        id: dados['sessaoId']?.toString() ??
+    DateTime.now().microsecondsSinceEpoch.toString(),
         nome: nome,
         area: area,
         criadoEm: DateTime.now(),

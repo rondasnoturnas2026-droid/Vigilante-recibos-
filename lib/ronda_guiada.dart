@@ -891,6 +891,7 @@ List<RoteiroRonda> _rondasFeitas = [];
           nome: nomeVigilante,
                     area: rota.area,
           rotaPrincipal: rota,
+                      sessaoCompartilhadaId: sessaoIdParaAcompanhar,
         ),
       ),
     );

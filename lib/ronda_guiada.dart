@@ -698,10 +698,18 @@ List<RoteiroRonda> _rondasFeitas = [];
                   if (_rotaPrincipal != null &&
                       _execucaoPausada == null) ...[
                     const SizedBox(height: 8),
-                    FilledButton.icon(
+                                        FilledButton.icon(
                       onPressed: _carregando ? null : _iniciarExecucao,
                       icon: const Icon(Icons.navigation),
                       label: const Text('Seguir ronda'),
+                    ),
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      onPressed: _carregando
+                          ? null
+                          : _compartilharRotaPrincipal,
+                      icon: const Icon(Icons.share_outlined),
+                      label: const Text('Compartilhar roteiro'),
                     ),
                   ],
                 ],

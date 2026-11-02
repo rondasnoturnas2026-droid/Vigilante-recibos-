@@ -2034,8 +2034,10 @@ void _orientarPelaRota(Position posicao) {
         rota[ponto + 1].longitude,
       );
     }
-    final distanciaNoCartao =
-        final lado = diferenca > 0 ? 'direita' : 'esquerda';
+        final distanciaNoCartao =
+        distanciaAteCurva.round().clamp(0, 999999).toInt();
+    final lado = diferenca > 0 ? 'direita' : 'esquerda';
+
     if ((_distanciaAteProximaCurva != distanciaNoCartao ||
             _ladoProximaCurva != lado) &&
         mounted) {
@@ -2044,9 +2046,8 @@ void _orientarPelaRota(Position posicao) {
         _ladoProximaCurva = lado;
       });
     }
-    final ehRetornoNaMesmaRua = diferenca.abs() >= 150;
 
-                final lado = diferenca > 0 ? 'direita' : 'esquerda';
+    final ehRetornoNaMesmaRua = diferenca.abs() >= 150;
     var curvasProximas = false;
     var ladoProxima = '';
 

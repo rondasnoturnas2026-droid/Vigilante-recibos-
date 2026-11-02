@@ -1276,6 +1276,7 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage>
   DateTime? _ultimaAtualizacaoCompartilhada;
   double _distanciaMetros = 0;
   int? _distanciaAteProximaCurva;
+    String? _ladoProximaCurva;
   bool _carregando = true;
   bool _gravando = false;
   bool _podeSair = false;

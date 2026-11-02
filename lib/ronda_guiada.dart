@@ -821,6 +821,14 @@ List<RoteiroRonda> _rondasFeitas = [];
                                   '${_rotaPrincipal!.area}',
                     ),
                   ),
+                                      const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      onPressed: _carregando || _execucaoPausada != null
+                          ? null
+                          : _importarRoteiro,
+                      icon: const Icon(Icons.file_open_outlined),
+                      label: const Text('Importar roteiro recebido'),
+                    ),
                                     if (_execucaoPausada != null) ...[
                     FilledButton.icon(
                       onPressed: _carregando ? null : _retomarExecucao,

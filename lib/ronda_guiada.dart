@@ -182,6 +182,100 @@ List<RoteiroRonda> _rondasFeitas = [];
       'solicitadaEm': FieldValue.serverTimestamp(),
     });
       }
+      Future<void> _mostrarPedidoAcompanhamento() async {
+    try {
+      final usuario = FirebaseAuth.instance.currentUser;
+      final prefs = await SharedPreferences.getInstance();
+      final sessaoId =
+          prefs.getString(_chaveSessaoRondaCompartilhada);
+
+      if (usuario == null || sessaoId == null || sessaoId.isEmpty) {
+        return;
+      }
+
+      final sessao = FirebaseFirestore.instance
+          .collection(_colecaoRondasCompartilhadas)
+          .doc(sessaoId);
+
+      final dadosSessao = await sessao.get();
+
+      if (!dadosSessao.exists ||
+          dadosSessao.data()?['principalUid'] != usuario.uid) {
+        return;
+      }
+
+      final pedidos = await sessao
+          .collection('solicitacoes')
+          .where('status', isEqualTo: 'aguardando')
+          .limit(1)
+          .get();
+
+      if (pedidos.docs.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Não há pedido de acompanhamento pendente.'),
+          ),
+        );
+        return;
+      }
+
+      final pedido = pedidos.docs.first;
+      final nome = pedido.data()['nomeVigilante']?.toString() ?? 'Vigilante';
+
+      final aprovado = await _mostrarDialogoAguardandoFechar<bool>(
+        builder: (context) => AlertDialog(
+          title: const Text('Pedido de acompanhamento'),
+          content: Text('$nome pediu para compartilhar a localização.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Recusar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Aprovar'),
+            ),
+          ],
+        ),
+      );
+
+      if (aprovado == null || !mounted) return;
+
+      final lote = FirebaseFirestore.instance.batch();
+
+      if (aprovado) {
+        lote.update(sessao, {
+          'novatoUid': pedido.id,
+          'status': 'aprovado',
+        });
+        lote.update(pedido.reference, {'status': 'aprovado'});
+      } else {
+        lote.update(pedido.reference, {'status': 'recusado'});
+      }
+
+      await lote.commit();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            aprovado
+                ? 'Pedido de $nome aprovado.'
+                : 'Pedido de $nome recusado.',
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível verificar o pedido.'),
+        ),
+      );
+    }
+      }
     Future<void> _compartilharRotaPrincipal() async {
     final rota = _rotaPrincipal;
 

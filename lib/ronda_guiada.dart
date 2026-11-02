@@ -732,6 +732,49 @@ List<RoteiroRonda> _rondasFeitas = [];
 
     campoNome.dispose();
     if (nomeVigilante == null || !mounted) return;
+              final prefsSessao = await SharedPreferences.getInstance();
+    final sessaoId =
+        prefsSessao.getString(_chaveSessaoRondaCompartilhada);
+    final rotaRecebida =
+        sessaoId != null && sessaoId == rota.id;
+
+    if (rotaRecebida) {
+      final permitir = await _mostrarDialogoAguardandoFechar<bool>(
+        builder: (context) => AlertDialog(
+          title: const Text('Compartilhar localização?'),
+          content: const Text(
+            'Se permitir, o vigilante principal poderá acompanhar '
+            'sua posição durante esta ronda. Você também pode seguir '
+            'sem compartilhar.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Seguir sem compartilhar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Permitir'),
+            ),
+          ],
+        ),
+      );
+
+      if (permitir == true) {
+        try {
+          await _solicitarAcompanhamento(sessaoId!, nomeVigilante);
+        } catch (_) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Não foi possível enviar o pedido de acompanhamento.',
+              ),
+            ),
+          );
+        }
+      }
+    }
 
     final execucao = await Navigator.of(context).push<RoteiroRonda>(
       MaterialPageRoute(

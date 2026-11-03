@@ -2072,7 +2072,7 @@ void _orientarPelaRota(Position posicao) {
         if (diferencaCard > 180) diferencaCard -= 360;
         if (diferencaCard < -180) diferencaCard += 360;
         if (diferencaCard.abs() < 30) continue;
-
+        if (i <= indiceMaisProximo) continue;
         var distanciaCard = 0.0;
         for (var ponto = indiceMaisProximo; ponto < i; ponto++) {
           distanciaCard += Geolocator.distanceBetween(

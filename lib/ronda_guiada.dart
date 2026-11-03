@@ -2046,6 +2046,59 @@ void _orientarPelaRota(Position posicao) {
         _ladoProximaCurva = lado;
       });
     }
+          if (indiceMaisProximo > indiceCurva + 2) {
+      for (var i = indiceMaisProximo + intervalo;
+          i + intervalo < rota.length &&
+              i <= indiceMaisProximo + 40;
+          i++) {
+        final antesCard = rota[i - intervalo];
+        final curvaCard = rota[i];
+        final depoisCard = rota[i + intervalo];
+
+        final rumoAntesCard = Geolocator.bearingBetween(
+          antesCard.latitude,
+          antesCard.longitude,
+          curvaCard.latitude,
+          curvaCard.longitude,
+        );
+        final rumoDepoisCard = Geolocator.bearingBetween(
+          curvaCard.latitude,
+          curvaCard.longitude,
+          depoisCard.latitude,
+          depoisCard.longitude,
+        );
+
+        var diferencaCard = rumoDepoisCard - rumoAntesCard;
+        if (diferencaCard > 180) diferencaCard -= 360;
+        if (diferencaCard < -180) diferencaCard += 360;
+        if (diferencaCard.abs() < 30) continue;
+
+        var distanciaCard = 0.0;
+        for (var ponto = indiceMaisProximo; ponto < i; ponto++) {
+          distanciaCard += Geolocator.distanceBetween(
+            rota[ponto].latitude,
+            rota[ponto].longitude,
+            rota[ponto + 1].latitude,
+            rota[ponto + 1].longitude,
+          );
+        }
+
+        final metrosCard =
+            distanciaCard.round().clamp(0, 999999).toInt();
+        final ladoCard =
+            diferencaCard > 0 ? 'direita' : 'esquerda';
+
+        if ((_distanciaAteProximaCurva != metrosCard ||
+                _ladoProximaCurva != ladoCard) &&
+            mounted) {
+          setState(() {
+            _distanciaAteProximaCurva = metrosCard;
+            _ladoProximaCurva = ladoCard;
+          });
+        }
+        break;
+      }
+          }
 
     final ehRetornoNaMesmaRua = diferenca.abs() >= 150;
     var curvasProximas = false;

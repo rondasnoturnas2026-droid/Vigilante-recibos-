@@ -1901,7 +1901,7 @@ void _orientarPelaRota(Position posicao) {
       final curvaEmAndamento = _indiceCurvaEmAndamento;
   if (curvaEmAndamento != null &&
       curvaEmAndamento + 1 < rota.length &&
-      indiceMaisProximo > curvaEmAndamento &&
+      indiceMaisProximo > curvaEmAndamento + 2 &&
       posicao.hasHeading &&
       posicao.speed >= 1) {
     final rumoDaSaida = Geolocator.bearingBetween(

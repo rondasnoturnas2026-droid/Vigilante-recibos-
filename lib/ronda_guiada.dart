@@ -2049,7 +2049,7 @@ void _orientarPelaRota(Position posicao) {
           if (indiceMaisProximo > indiceCurva + 2) {
       for (var i = indiceCurva + (intervalo * 2) + 1;
           i + intervalo < rota.length &&
-              i <= indiceMaisProximo + 40;
+              i <= indiceCurva + 40;
           i++) {
         final antesCard = rota[i - intervalo];
         final curvaCard = rota[i];

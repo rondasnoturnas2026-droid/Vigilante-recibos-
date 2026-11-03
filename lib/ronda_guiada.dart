@@ -2098,9 +2098,11 @@ void _orientarPelaRota(Position posicao) {
     ? 'Retorne pela mesma rua.'
     : 'Vire à $lado agora.';
 
-    final instrucaoAntes = ehRetornoNaMesmaRua
+        final instrucaoAntes = ehRetornoNaMesmaRua
         ? 'Retorne pela mesma rua até a próxima orientação.'
-        : 'Próxima curva: à $lado.';
+        : curvasProximas
+            ? 'Próxima curva: à $lado; depois, à $ladoProxima.'
+            : 'Próxima curva: à $lado.';
 
     if (distanciaAteCurva <= 10) {
       unawaited(

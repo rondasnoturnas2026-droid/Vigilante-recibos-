@@ -1930,10 +1930,13 @@ void _orientarPelaRota(Position posicao) {
     pontoFinal.longitude,
   );
 
+            final toleranciaFim =
+          (posicao.accuracy * 1.5).clamp(35.0, 50.0).toDouble();
+
       if (rota.length >= 4 &&
-      (_indiceProximoPontoRota >= rota.length - 3 ||
-          indiceMaisProximo >= rota.length - 3) &&
-      distanciaAoFinal <= 35) {
+          (_indiceProximoPontoRota >= rota.length - 10 ||
+              indiceMaisProximo >= rota.length - 10) &&
+          distanciaAoFinal <= toleranciaFim) {
     setState(() {
       _percursoIniciado = false;
       _navegacaoParaInicioEscolhida = false;

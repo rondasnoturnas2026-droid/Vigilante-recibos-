@@ -2047,7 +2047,7 @@ void _orientarPelaRota(Position posicao) {
       });
     }
           if (indiceMaisProximo > indiceCurva + 2) {
-      for (var i = indiceMaisProximo + intervalo;
+      for (var i = indiceCurva + (intervalo * 2) + 1;
           i + intervalo < rota.length &&
               i <= indiceMaisProximo + 40;
           i++) {

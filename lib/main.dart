@@ -2,7 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
-
+import 'package:path_provider/path_provider.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';

@@ -9461,7 +9461,21 @@ Future<void> carregarBairrosERuas() async {
     }
 Future<void> salvarDadosVigilante() async {
   final prefs = await SharedPreferences.getInstance();
+  vigilanteLogo = await _garantirLogoLocal(
+    prefs,
+    vigilanteLogo,
+    'vigilanteLogo',
+    'vigilanteLogoBytes',
+    'logo_vigilante_padrao',
+  );
 
+  vigilanteLogoPretoBranco = await _garantirLogoLocal(
+    prefs,
+    vigilanteLogoPretoBranco,
+    'vigilanteLogoPretoBranco',
+    'vigilanteLogoPretoBrancoBytes',
+    'logo_vigilante_preto_branco',
+  );
   await prefs.setString('vigilanteNome', vigilanteNome);
   await prefs.setString('vigilanteEndereco', vigilanteEndereco);
   await prefs.setString('vigilanteContato', vigilanteContato);

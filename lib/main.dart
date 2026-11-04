@@ -9425,6 +9425,40 @@ Future<void> carregarBairrosERuas() async {
 
   int proximoBairroId = 1;
   int proximoMoradorId = 1;
+    Future<String> _garantirLogoLocal(
+  SharedPreferences prefs,
+  String caminhoAtual,
+  String chaveCaminho,
+  String chaveBytes,
+  String nomeArquivo,
+) async {
+  final caminho = caminhoAtual.trim();
+  final pasta = await getApplicationDocumentsDirectory();
+  final destino = File('${pasta.path}/$nomeArquivo');
+
+  if (caminho.isNotEmpty) {
+    final origem = File(caminho);
+    if (await origem.exists()) {
+      final bytes = await origem.readAsBytes();
+
+      if (origem.absolute.path != destino.absolute.path) {
+        await destino.writeAsBytes(bytes, flush: true);
+      }
+
+      await prefs.setString(chaveCaminho, destino.path);
+      await prefs.setString(chaveBytes, base64Encode(bytes));
+      return destino.path;
+    }
+  }
+
+  final backup = prefs.getString(chaveBytes) ?? '';
+  if (backup.isEmpty) return '';
+
+  final bytes = base64Decode(backup);
+  await destino.writeAsBytes(bytes, flush: true);
+  await prefs.setString(chaveCaminho, destino.path);
+  return destino.path;
+    }
 Future<void> salvarDadosVigilante() async {
   final prefs = await SharedPreferences.getInstance();
 

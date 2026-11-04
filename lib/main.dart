@@ -9520,7 +9520,14 @@ Future<void> carregarDadosVigilante() async {
   vigilanteChavePix = prefs.getString('vigilanteChavePix') ?? '';
   vigilanteTipoChavePix =
       prefs.getString('vigilanteTipoChavePix') ?? 'Telefone';
-  vigilanteLogo = prefs.getString('vigilanteLogo') ?? '';    vigilanteNomeFantasia =
+  vigilanteLogo = await _garantirLogoLocal(
+  prefs,
+  prefs.getString('vigilanteLogo') ?? '',
+  'vigilanteLogo',
+  'vigilanteLogoBytes',
+  'logo_vigilante_padrao',
+);
+vigilanteNomeFantasia =
         prefs.getString('vigilanteNomeFantasia') ?? '';
     vigilanteSegmentoMercado =
         prefs.getString('vigilanteSegmentoMercado') ?? '';

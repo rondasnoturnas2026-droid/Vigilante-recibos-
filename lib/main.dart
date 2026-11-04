@@ -9089,7 +9089,8 @@ if (mesVencimento == 11 && avisoDecimoTerceiroAtivo) {
       (prefsRecibo.getString('recibo_decimo_terceiro_mensagem') ??
               DecimoTerceiroPersonalizacaoTab.mensagemPadrao)
           .replaceAll('{nome do cliente}', nomeMorador);
-
+linhasRecibo.add('--------------------------------');
+linhasRecibo.add('AVISO');
   linhasRecibo.addAll(
     mensagemDecimoTerceiro
         .split('\n')

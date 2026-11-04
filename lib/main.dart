@@ -9099,8 +9099,14 @@ if (mesVencimento == 11 && avisoDecimoTerceiroAtivo) {
 }
 
 
-final caminhoLogoTermico =
+var caminhoLogoTermico =
     prefsRecibo.getString('vigilanteLogoPretoBranco') ?? '';
+
+if (caminhoLogoTermico.isEmpty ||
+    !await File(caminhoLogoTermico).exists()) {
+  caminhoLogoTermico =
+      prefsRecibo.getString('vigilanteLogo') ?? '';
+}
 
 try {
   if (mostrarCampo('logo', true) &&

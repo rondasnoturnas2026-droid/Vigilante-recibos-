@@ -9121,33 +9121,9 @@ try {
         final perfilLogo = await CapabilityProfile.load();
         final geradorLogo = Generator(PaperSize.mm58, perfilLogo);
 
-        final imagemRedimensionada = imagemLogo.width > 100
+        final imagemAjustada = imagemLogo.width > 100
     ? img.copyResize(imagemLogo, width: 100)
     : imagemLogo;
-
-final fundoBranco = img.Image(
-  width: imagemRedimensionada.width,
-  height: imagemRedimensionada.height,
-  numChannels: 3,
-);
-img.fill(fundoBranco, color: img.ColorRgb8(255, 255, 255));
-img.compositeImage(fundoBranco, imagemRedimensionada);
-
-final imagemAjustada = img.grayscale(fundoBranco);
-final cantos = [
-  imagemAjustada.getPixel(0, 0).r,
-  imagemAjustada.getPixel(imagemAjustada.width - 1, 0).r,
-  imagemAjustada.getPixel(0, imagemAjustada.height - 1).r,
-  imagemAjustada
-      .getPixel(imagemAjustada.width - 1, imagemAjustada.height - 1)
-      .r,
-];
-final brilhoFundo =
-    cantos.reduce((a, b) => a + b) / cantos.length;
-
-if (brilhoFundo < 127) {
-  img.invert(imagemAjustada);
-}
 
         await PrintBluetoothThermal.writeBytes([
           ...geradorLogo.image(

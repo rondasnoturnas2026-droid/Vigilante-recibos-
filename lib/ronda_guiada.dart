@@ -1543,7 +1543,7 @@ bool _percursoIniciado = false;
       return null;
     }
     }
-      Future<void> _anunciarInstrucao(
+        Future<void> _anunciarInstrucao(
     String instrucao,
     Object chave, {
     PontoRonda? pontoDaRua,
@@ -1560,26 +1560,38 @@ bool _percursoIniciado = false;
     _ultimaChaveInstrucaoFalado = chaveTexto;
 
     final sequencia = ++_sequenciaInstrucao;
-    final rua = pontoDaRua == null
-        ? null
-        : await _buscarNomeRuaDoPonto(pontoDaRua);
-
     final instrucaoSemPonto =
         instrucao.replaceFirst(RegExp(r'[.!?]+$'), '');
-    final fala = rua == null || rua.isEmpty
-        ? instrucao
-        : '$instrucaoSemPonto na $rua.';
+    final falaImediata = '$instrucaoSemPonto.';
 
     if (!mounted || sequencia != _sequenciaInstrucao) return;
 
     setState(() {
-      _instrucaoAtual = fala;
+      _instrucaoAtual = falaImediata;
     });
 
     await _fala.stop();
     if (!mounted || sequencia != _sequenciaInstrucao) return;
-    await _fala.speak(fala);
-      }
+    await _fala.speak(falaImediata);
+
+    if (pontoDaRua == null ||
+        !mounted ||
+        sequencia != _sequenciaInstrucao) {
+      return;
+    }
+
+    final rua = await _buscarNomeRuaDoPonto(pontoDaRua);
+    if (rua == null ||
+        rua.isEmpty ||
+        !mounted ||
+        sequencia != _sequenciaInstrucao) {
+      return;
+    }
+
+    setState(() {
+      _instrucaoAtual = '$instrucaoSemPonto na $rua.';
+    });
+        }
 
   
 

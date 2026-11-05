@@ -2811,6 +2811,23 @@ final totalMensalidades = mensalidadesFiltradas.fold<double>(
     return soma + (incluirDecimoTerceiro ? valorBase * 2 : valorBase);
   },
 );
+                  final totaisPorMesAno = <String, double>{};
+
+for (final mensalidade in mensalidadesFiltradas) {
+  final mes = int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
+  final ano = (mensalidade['ano'] ?? '').toString();
+  final mesAno = '${mes.toString().padLeft(2, '0')}/$ano';
+  final valorBase = valorParaNumero(mensalidade['valor']);
+  final incluirDecimoTerceiro =
+      mes == 12 &&
+      _decimoTerceiroDobrado &&
+      mensalidade['incluirDecimoTerceiro'] != false;
+  final valorCalculado =
+      incluirDecimoTerceiro ? valorBase * 2 : valorBase;
+
+  totaisPorMesAno[mesAno] =
+      (totaisPorMesAno[mesAno] ?? 0.0) + valorCalculado;
+}
                   if (abaAtual == 0 || abaAtual == 1) {
   mensalidadesFiltradas.sort((a, b) {
     final anoA = int.tryParse((a['ano'] ?? '0').toString()) ?? 0;

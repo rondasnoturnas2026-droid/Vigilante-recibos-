@@ -2895,6 +2895,36 @@ return ListView.builder(
     }
 
     final itemLista = listaAgrupada[index - 1];
+      if (itemLista.containsKey('totalMes')) {
+  final mesAno = itemLista['totalMes'].toString();
+  final totalMes = totaisPorMesAno[mesAno] ?? 0.0;
+  final partesTotal = totalMes.toStringAsFixed(2).split('.');
+  final inteiroTotalFormatado = partesTotal[0].replaceAllMapped(
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
+    (match) => '.',
+  );
+  final totalFormatado = '$inteiroTotalFormatado,${partesTotal[1]}';
+
+  return Card(
+    child: ListTile(
+      title: const Text('Total do mês'),
+      subtitle: Text(
+        totalVisivel ? 'R\$ $totalFormatado' : 'R\$ •••••',
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      trailing: IconButton(
+        icon: Icon(
+          totalVisivel ? Icons.visibility_off : Icons.visibility,
+        ),
+        onPressed: () {
+          setState(() {
+            totalVisivel = !totalVisivel;
+          });
+        },
+      ),
+    ),
+  );
+      }
 
     if (itemLista.containsKey('separadorMes')) {
       return Padding(

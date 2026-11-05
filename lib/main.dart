@@ -2330,7 +2330,7 @@ const espacoAntesQr = 64.0;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Não foi possível preparar a cobrança com QR.'),
+        content: Text('Erro no QR: $e'),
       ),
     );
   }

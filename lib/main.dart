@@ -2329,7 +2329,7 @@ const espacoAntesQr = 64.0;
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text('Erro no QR: $e'),
       ),
     );

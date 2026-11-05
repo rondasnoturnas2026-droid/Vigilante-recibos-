@@ -2798,19 +2798,7 @@ double valorParaNumero(Object? valorBruto) {
   return double.tryParse(texto) ?? 0.0;
 }
 
-final totalMensalidades = mensalidadesFiltradas.fold<double>(
-  0.0,
-  (soma, mensalidade) {
-    final valorBase = valorParaNumero(mensalidade['valor']);
-    final mes = int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
-    final incluirDecimoTerceiro =
-        mes == 12 &&
-        _decimoTerceiroDobrado &&
-        mensalidade['incluirDecimoTerceiro'] != false;
 
-    return soma + (incluirDecimoTerceiro ? valorBase * 2 : valorBase);
-  },
-);
                   final totaisPorMesAno = <String, double>{};
 
 for (final mensalidade in mensalidadesFiltradas) {

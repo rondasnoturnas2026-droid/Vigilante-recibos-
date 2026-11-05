@@ -2289,7 +2289,7 @@ const espacoAntesQr = 64.0;
       throw Exception('Não foi possível montar a cobrança com QR.');
     }
 
-        final diretorioCobranca = await getApplicationDocumentsDirectory();
+        final diretorioCobranca = await getTemporaryDirectory();
     final arquivo = File(
       '${diretorioCobranca.path}/cobranca_pix_${DateTime.now().millisecondsSinceEpoch}.png',
     );

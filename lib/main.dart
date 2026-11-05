@@ -2867,33 +2867,8 @@ return ListView.builder(
   itemCount: listaAgrupada.length + 1,
   itemBuilder: (context, index) {
         if (index == 0) {
-      final partesTotal = totalMensalidades.toStringAsFixed(2).split('.');
-      final inteiroTotalFormatado = partesTotal[0].replaceAllMapped(
-        RegExp(r'\B(?=(\d{3})+(?!\d))'),
-        (match) => '.',
-      );
-      final totalFormatado = '$inteiroTotalFormatado,${partesTotal[1]}';
-
-      return Card(
-        child: ListTile(
-          title: const Text('Total das mensalidades'),
-          subtitle: Text(
-            totalVisivel ? 'R\$ $totalFormatado' : 'R\$ •••••',
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          trailing: IconButton(
-            icon: Icon(
-              totalVisivel ? Icons.visibility_off : Icons.visibility,
-            ),
-            onPressed: () {
-              setState(() {
-                totalVisivel = !totalVisivel;
-              });
-            },
-          ),
-        ),
-      );
-    }
+  return const SizedBox.shrink();
+}
 
     final itemLista = listaAgrupada[index - 1];
       if (itemLista.containsKey('totalMes')) {

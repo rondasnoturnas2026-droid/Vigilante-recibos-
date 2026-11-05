@@ -2856,6 +2856,7 @@ for (final mensalidade in mensalidadesFiltradas) {
 
   if (mesAno != mesAnterior) {
     listaAgrupada.add({'separadorMes': mesAno});
+      listaAgrupada.add({'totalMes': mesAno});
     mesAnterior = mesAno;
   }
 

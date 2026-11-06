@@ -40,6 +40,13 @@ final ValueNotifier<String?> roteiroCompartilhadoPendente =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+      _canalRotaCompartilhada.setMethodCallHandler((chamada) async {
+    if (chamada.method == 'sharedRouteReceived' &&
+        chamada.arguments is String) {
+      roteiroCompartilhadoPendente.value =
+          chamada.arguments as String;
+    }
+  });
       await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: 'AIzaSyBrYerqTWP8wWX8AxMgSn_Zj0n_F8XRl9Y',

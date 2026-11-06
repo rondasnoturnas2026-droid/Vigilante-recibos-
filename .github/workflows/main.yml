@@ -122,6 +122,123 @@ jobs:
               )
               manifesto.write_text(texto, encoding="utf-8")
           PY
+                - name: Preparar recebimento de roteiro JSON
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          atividades = list(Path("android/app/src/main").rglob("MainActivity.kt"))
+          if len(atividades) != 1:
+              raise SystemExit("Não encontrei exatamente um MainActivity.kt.")
+
+          arquivo = atividades[0]
+          linhas = arquivo.read_text(encoding="utf-8").splitlines()
+          pacote = next((linha for linha in linhas if linha.startswith("package ")), None)
+          if pacote is None:
+              raise SystemExit("Não encontrei o pacote da MainActivity.")
+
+          codigo = """
+          import android.content.Intent
+          import android.net.Uri
+          import io.flutter.embedding.android.FlutterFragmentActivity
+          import io.flutter.embedding.engine.FlutterEngine
+          import io.flutter.plugin.common.MethodChannel
+
+          class MainActivity : FlutterFragmentActivity() {
+              private val nomeCanal = "br.com.vigilanterecibos/rota_compartilhada"
+              private var roteiroPendente: String? = null
+              private var canalFlutter: MethodChannel? = null
+
+              override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+                  super.configureFlutterEngine(flutterEngine)
+                  canalFlutter = MethodChannel(
+                      flutterEngine.dartExecutor.binaryMessenger,
+                      nomeCanal
+                  )
+                  canalFlutter?.setMethodCallHandler { chamada, resposta ->
+                      if (chamada.method == "getPendingRoute") {
+                          resposta.success(roteiroPendente)
+                          roteiroPendente = null
+                      } else {
+                          resposta.notImplemented()
+                      }
+                  }
+                  receberRoteiro(intent)
+              }
+
+              override fun onNewIntent(intent: Intent) {
+                  super.onNewIntent(intent)
+                  setIntent(intent)
+                  receberRoteiro(intent)
+              }
+
+              private fun receberRoteiro(intent: Intent?) {
+                  if (intent == null) return
+
+                  @Suppress("DEPRECATION")
+                  val uri: Uri? = when (intent.action) {
+                      Intent.ACTION_VIEW -> intent.data
+                      Intent.ACTION_SEND ->
+                          intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+                              ?: intent.data
+                      else -> null
+                  } ?: intent.clipData?.getItemAt(0)?.uri
+
+                  if (uri == null ||
+                      !uri.lastPathSegment.orEmpty().endsWith(".json", ignoreCase = true)
+                  ) return
+
+                  try {
+                      val conteudo = contentResolver.openInputStream(uri)
+                          ?.bufferedReader(Charsets.UTF_8)
+                          ?.use { it.readText() }
+                          ?: return
+                      roteiroPendente = conteudo
+                      canalFlutter?.invokeMethod("sharedRouteReceived", conteudo)
+                  } catch (_: Exception) {
+                      // O app mostrará a mensagem de erro ao tentar importar.
+                  }
+              }
+          }
+          """
+          arquivo.write_text(pacote + "\n\n" + codigo, encoding="utf-8")
+
+          manifesto = Path("android/app/src/main/AndroidManifest.xml")
+          texto = manifesto.read_text(encoding="utf-8")
+          padrao = re.compile(
+              r'(?s)(^[ \t]*<activity\b(?=[^>]*android:name="[^"]*MainActivity")[^>]*>)(.*?)(^[ \t]*</activity>)',
+              re.MULTILINE,
+          )
+          atividade = padrao.search(texto)
+          if atividade is None:
+              raise SystemExit("Não encontrei a atividade MainActivity no manifesto.")
+
+          abertura = atividade.group(1)
+          if "android:launchMode=" not in abertura:
+              nova_abertura = abertura[:-1] + ' android:launchMode="singleTop">'
+              texto = texto[:atividade.start(1)] + nova_abertura + texto[atividade.end(1):]
+              atividade = padrao.search(texto)
+
+          marcador = "<!-- recebimento de roteiro JSON -->"
+          if marcador not in atividade.group(2):
+              filtros = """
+                      <!-- recebimento de roteiro JSON -->
+                      <intent-filter>
+                          <action android:name="android.intent.action.VIEW" />
+                          <category android:name="android.intent.category.DEFAULT" />
+                          <data android:scheme="content" android:mimeType="application/json" />
+                      </intent-filter>
+                      <intent-filter>
+                          <action android:name="android.intent.action.SEND" />
+                          <category android:name="android.intent.category.DEFAULT" />
+                          <data android:mimeType="application/json" />
+                      </intent-filter>
+              """
+              texto = texto[:atividade.start(3)] + filtros + "\n" + texto[atividade.start(3):]
+
+          manifesto.write_text(texto, encoding="utf-8")
+          PY
       - name: Limpar projeto
         run: flutter clean
 

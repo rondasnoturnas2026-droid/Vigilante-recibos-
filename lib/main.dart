@@ -910,6 +910,10 @@ class _TelaPrincipalState extends State<TelaPrincipal>
   @override
   void initState() {
     super.initState();
+          roteiroCompartilhadoPendente.addListener(_abrirRondasCompartilhadas);
+    if (roteiroCompartilhadoPendente.value != null) {
+      paginaAtual = 2;
+    }
     WidgetsBinding.instance.addObserver(this);
 
     store.carregarDadosVigilante();

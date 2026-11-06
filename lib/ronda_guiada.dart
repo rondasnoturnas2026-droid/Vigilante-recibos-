@@ -960,6 +960,18 @@ List<RoteiroRonda> _rondasFeitas = [];
       await _carregarRoteiros();
       return;
     }
+          if (!_roteiroTemPercurso(execucao)) {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove(_chaveExecucaoPausada);
+  if (!mounted) return;
+  setState(() => _execucaoPausada = null);
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Ronda não registrada: percurso insuficiente.'),
+    ),
+  );
+  return;
+          }
 
     final rondasAtualizadas = [execucao, ..._rondasFeitas];
     final prefs = await SharedPreferences.getInstance();

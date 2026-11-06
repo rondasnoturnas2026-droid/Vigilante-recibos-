@@ -1056,7 +1056,9 @@ class TelaRondas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const RondaGuiadaPage();
+        return RondaGuiadaPage(
+      roteiroCompartilhadoPendente: roteiroCompartilhadoPendente,
+    );
   }
 }
 

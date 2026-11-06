@@ -940,6 +940,12 @@ class _TelaPrincipalState extends State<TelaPrincipal>
 
     _reconectarImpressora();
   }
+      void _abrirRondasCompartilhadas() {
+    if (!mounted || roteiroCompartilhadoPendente.value == null) return;
+    if (paginaAtual != 2) {
+      setState(() => paginaAtual = 2);
+    }
+      }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

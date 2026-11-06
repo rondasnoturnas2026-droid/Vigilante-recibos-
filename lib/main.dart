@@ -1002,6 +1002,7 @@ class _TelaPrincipalState extends State<TelaPrincipal>
 
   @override
   void dispose() {
+          roteiroCompartilhadoPendente.removeListener(_abrirRondasCompartilhadas);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

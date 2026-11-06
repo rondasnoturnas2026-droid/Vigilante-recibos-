@@ -399,20 +399,27 @@ List<RoteiroRonda> _rondasFeitas = [];
       );
     }
     }
-    Future<void> _importarRoteiro() async {
+        Future<void> _importarRoteiro({String? conteudoCompartilhado}) async {
     try {
-      final escolha = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-        withData: true,
-      );
+      String textoJson;
+      if (conteudoCompartilhado != null) {
+        textoJson = conteudoCompartilhado;
+      } else {
+        final escolha = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+          withData: true,
+        );
 
-      if (escolha == null) return;
+        if (escolha == null) return;
 
-      final bytes = escolha.files.single.bytes;
-      if (bytes == null) throw const FormatException();
+        final bytes = escolha.files.single.bytes;
+        if (bytes == null) throw const FormatException();
 
-      final conteudo = jsonDecode(utf8.decode(bytes));
+        textoJson = utf8.decode(bytes);
+      }
+
+      final conteudo = jsonDecode(textoJson);
       if (conteudo is! Map) throw const FormatException();
 
       final dados = Map<String, dynamic>.from(conteudo);

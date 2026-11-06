@@ -1011,12 +1011,14 @@ class _TelaPrincipalState extends State<TelaPrincipal>
             selectedIcon: Icon(Icons.settings),
             label: 'Config.',
           ),
-        ],
-      ),
-    );
+        class TelaRondas extends StatelessWidget {
+  const TelaRondas({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const RondaGuiadaPage();
   }
-}
-class TelaRondas extends StatelessWidget {
+        }
   const TelaRondas({super.key});
 
   void _mostrarExplicacao(

@@ -79,6 +79,17 @@ void main() async {
   }
 
   runApp(const VigilanteRecibosApp());
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+    try {
+      final conteudo =
+          await _canalRotaCompartilhada.invokeMethod<String>(
+        'getPendingRoute',
+      );
+      if (conteudo != null && conteudo.isNotEmpty) {
+        roteiroCompartilhadoPendente.value = conteudo;
+      }
+    } catch (_) {}
+  });
 }
 
 class VigilanteRecibosApp extends StatelessWidget {

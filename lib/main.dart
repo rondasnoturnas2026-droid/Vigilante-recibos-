@@ -32,6 +32,11 @@ final ValueNotifier<ThemeMode> temaApp =
     ValueNotifier<ThemeMode>(ThemeMode.system);
 final ValueNotifier<bool> exigirLoginDaConta =
     ValueNotifier<bool>(false);
+const MethodChannel _canalRotaCompartilhada =
+    MethodChannel('br.com.vigilanterecibos/rota_compartilhada');
+
+final ValueNotifier<String?> roteiroCompartilhadoPendente =
+    ValueNotifier<String?>(null);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

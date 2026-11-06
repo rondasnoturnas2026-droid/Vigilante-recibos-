@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-
+      - integrar-ronda-compartilhamento
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -122,7 +122,7 @@ jobs:
               )
               manifesto.write_text(texto, encoding="utf-8")
           PY
-            - name: Preparar recebimento de roteiro JSON
+        - name: Preparar recebimento de roteiro JSON
         run: |
           python3 - <<'PY'
           from pathlib import Path

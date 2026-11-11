@@ -1658,11 +1658,13 @@ bool _percursoIniciado = false;
         }
             }
   final anterior = _pontos.isEmpty ? null : _pontos.last;
-      if (anterior == null && posicao.accuracy > 25) {
-    _ultimaPosicao = posicao;
-    _acompanharPosicao(posicao);
-    return;
-  }
+            if (anterior == null &&
+          posicao.accuracy > 25 &&
+          widget.rotaPrincipal == null) {
+        _ultimaPosicao = posicao;
+        _acompanharPosicao(posicao);
+        return;
+      }
   var trechoMetros = 0.0;
 
   if (anterior != null) {

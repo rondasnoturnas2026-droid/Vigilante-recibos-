@@ -1973,7 +1973,10 @@ void _orientarPelaRota(Position posicao) {
     const intervalo = 2;
 
   
-
+  if (_indiceCurvaEmAndamento != null &&
+      _indiceProximoPontoRota > _indiceCurvaEmAndamento!) {
+    _indiceCurvaEmAndamento = null;
+  }
   if (_indiceCurvaEmAndamento == null) {
     final primeiroIndiceCurva =
         (_indiceProximoPontoRota + intervalo)

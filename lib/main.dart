@@ -2816,20 +2816,25 @@ double valorParaNumero(Object? valorBruto) {
   return double.tryParse(texto) ?? 0.0;
 }
 
-final totalMensalidades = mensalidadesFiltradas.fold<double>(
-  0.0,
-  (soma, mensalidade) {
-    final valorBase = valorParaNumero(mensalidade['valor']);
-    final mes = int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
-    final incluirDecimoTerceiro =
-        mes == 12 &&
-        _decimoTerceiroDobrado &&
-        mensalidade['incluirDecimoTerceiro'] != false;
+final totaisPorMesAno = <String, double>{};
 
-    return soma + (incluirDecimoTerceiro ? valorBase * 2 : valorBase);
-  },
-);
-                  if (abaAtual == 0 || abaAtual == 1) {
+for (final mensalidade in mensalidadesFiltradas) {
+  final mes = int.tryParse((mensalidade['mes'] ?? '').toString()) ?? 0;
+  final ano = (mensalidade['ano'] ?? '').toString();
+  final mesAno = '${mes.toString().padLeft(2, '0')}/$ano';
+  final valorBase = valorParaNumero(mensalidade['valor']);
+  final incluirDecimoTerceiro =
+      mes == 12 &&
+      _decimoTerceiroDobrado &&
+      mensalidade['incluirDecimoTerceiro'] != false;
+  final valorCalculado =
+      incluirDecimoTerceiro ? valorBase * 2 : valorBase;
+
+  totaisPorMesAno[mesAno] =
+      (totaisPorMesAno[mesAno] ?? 0.0) + valorCalculado;
+}
+
+if (abaAtual == 0 || abaAtual == 1) {
   mensalidadesFiltradas.sort((a, b) {
     final anoA = int.tryParse((a['ano'] ?? '0').toString()) ?? 0;
     final anoB = int.tryParse((b['ano'] ?? '0').toString()) ?? 0;
@@ -2845,7 +2850,7 @@ final totalMensalidades = mensalidadesFiltradas.fold<double>(
     final diaB = int.tryParse((b['dia'] ?? '0').toString()) ?? 0;
     return diaA.compareTo(diaB);
   });
-                  }
+}
 
 final listaAgrupada = <Map<String, dynamic>>[];
 String? mesAnterior;
@@ -2857,6 +2862,7 @@ for (final mensalidade in mensalidadesFiltradas) {
 
   if (mesAno != mesAnterior) {
     listaAgrupada.add({'separadorMes': mesAno});
+    listaAgrupada.add({'totalMes': mesAno});
     mesAnterior = mesAno;
   }
 
@@ -2864,10 +2870,14 @@ for (final mensalidade in mensalidadesFiltradas) {
 }
 
 return ListView.builder(
-  itemCount: listaAgrupada.length + 1,
+  itemCount: listaAgrupada.length,
   itemBuilder: (context, index) {
-        if (index == 0) {
-      final partesTotal = totalMensalidades.toStringAsFixed(2).split('.');
+    final itemLista = listaAgrupada[index];
+
+    if (itemLista.containsKey('totalMes')) {
+      final mesAno = itemLista['totalMes'].toString();
+      final totalMes = totaisPorMesAno[mesAno] ?? 0.0;
+      final partesTotal = totalMes.toStringAsFixed(2).split('.');
       final inteiroTotalFormatado = partesTotal[0].replaceAllMapped(
         RegExp(r'\B(?=(\d{3})+(?!\d))'),
         (match) => '.',
@@ -2876,7 +2886,7 @@ return ListView.builder(
 
       return Card(
         child: ListTile(
-          title: const Text('Total das mensalidades'),
+          title: const Text('Total do mês'),
           subtitle: Text(
             totalVisivel ? 'R\$ $totalFormatado' : 'R\$ •••••',
             style: const TextStyle(fontWeight: FontWeight.w600),
@@ -2894,8 +2904,6 @@ return ListView.builder(
         ),
       );
     }
-
-    final itemLista = listaAgrupada[index - 1];
 
     if (itemLista.containsKey('separadorMes')) {
       return Padding(

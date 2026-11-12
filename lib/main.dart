@@ -10990,6 +10990,7 @@ class TelaProdutosAfiliados extends StatelessWidget {
     nomeController.dispose();
     linkController.dispose();
     descricaoController.dispose();
+        fotoController.dispose();
   }
 
   Future<void> _excluirProduto(

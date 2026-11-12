@@ -10854,3 +10854,248 @@ class _PizzaRecebidosPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _PizzaRecebidosPainter oldDelegate) => true;
 }
+class TelaProdutosAfiliados extends StatelessWidget {
+  const TelaProdutosAfiliados({super.key});
+
+  static const String _uidDono = 'wIUKOEsoMrhgTgzGfTvJP6l0VYh1';
+
+  bool get _souDono =>
+      FirebaseAuth.instance.currentUser?.uid == _uidDono;
+
+  Future<void> _editarProduto(
+    BuildContext context, {
+    DocumentSnapshot<Map<String, dynamic>>? documento,
+  }) async {
+    final nomeController = TextEditingController(
+      text: documento?.data()?['nome']?.toString() ?? '',
+    );
+    final linkController = TextEditingController(
+      text: documento?.data()?['url']?.toString() ?? '',
+    );
+    final descricaoController = TextEditingController(
+      text: documento?.data()?['descricao']?.toString() ?? '',
+    );
+    final formKey = GlobalKey<FormState>();
+
+    final salvar = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(documento == null ? 'Adicionar produto' : 'Editar produto'),
+        content: Form(
+          key: formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: nomeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome do produto',
+                  ),
+                  validator: (valor) =>
+                      valor == null || valor.trim().isEmpty
+                          ? 'Digite o nome do produto'
+                          : null,
+                ),
+                TextFormField(
+                  controller: linkController,
+                  decoration: const InputDecoration(
+                    labelText: 'Seu link de afiliado',
+                  ),
+                  keyboardType: TextInputType.url,
+                  validator: (valor) {
+                    final uri = Uri.tryParse(valor?.trim() ?? '');
+                    if (uri == null ||
+                        uri.scheme != 'https' ||
+                        uri.host.isEmpty) {
+                      return 'Cole um link válido começando com https://';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: descricaoController,
+                  decoration: const InputDecoration(
+                    labelText: 'Descrição (opcional)',
+                  ),
+                  maxLines: 2,
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(dialogContext, true);
+              }
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+
+    if (salvar == true) {
+      final dados = <String, dynamic>{
+        'nome': nomeController.text.trim(),
+        'url': linkController.text.trim(),
+        'descricao': descricaoController.text.trim(),
+        'atualizadoEm': FieldValue.serverTimestamp(),
+      };
+
+      final colecao =
+          FirebaseFirestore.instance.collection('links_afiliados');
+
+      if (documento == null) {
+        dados['criadoEm'] = FieldValue.serverTimestamp();
+        await colecao.add(dados);
+      } else {
+        await documento.reference.update(dados);
+      }
+    }
+
+    nomeController.dispose();
+    linkController.dispose();
+    descricaoController.dispose();
+  }
+
+  Future<void> _excluirProduto(
+    BuildContext context,
+    DocumentSnapshot<Map<String, dynamic>> documento,
+  ) async {
+    final excluir = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Excluir produto?'),
+        content: const Text('Esse produto será removido da lista.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+
+    if (excluir == true) {
+      await documento.reference.delete();
+    }
+  }
+
+  Future<void> _abrirLink(String link) async {
+    final uri = Uri.tryParse(link);
+    if (uri != null) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Produtos para vigilantes'),
+      ),
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Links de afiliado do responsável pelo aplicativo. '
+              'Uma compra pode gerar comissão para ele.',
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: FirebaseFirestore.instance
+                  .collection('links_afiliados')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Não foi possível carregar os produtos.'),
+                  );
+                }
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final produtos = snapshot.data!.docs;
+
+                if (produtos.isEmpty) {
+                  return const Center(
+                    child: Text('Ainda não há produtos cadastrados.'),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: produtos.length,
+                  itemBuilder: (context, index) {
+                    final documento = produtos[index];
+                    final dados = documento.data();
+                    final nome = dados['nome']?.toString() ?? 'Produto';
+                    final descricao =
+                        dados['descricao']?.toString() ?? '';
+                    final link = dados['url']?.toString() ?? '';
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      child: ListTile(
+                        title: Text(nome),
+                        subtitle: descricao.isEmpty ? null : Text(descricao),
+                        onTap: () => _abrirLink(link),
+                        trailing: _souDono
+                            ? PopupMenuButton<String>(
+                                onSelected: (opcao) {
+                                  if (opcao == 'editar') {
+                                    _editarProduto(
+                                      context,
+                                      documento: documento,
+                                    );
+                                  } else if (opcao == 'excluir') {
+                                    _excluirProduto(context, documento);
+                                  }
+                                },
+                                itemBuilder: (context) => const [
+                                  PopupMenuItem(
+                                    value: 'editar',
+                                    child: Text('Editar'),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'excluir',
+                                    child: Text('Excluir'),
+                                  ),
+                                ],
+                              )
+                            : const Icon(Icons.open_in_new),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: _souDono
+          ? FloatingActionButton.extended(
+              onPressed: () => _editarProduto(context),
+              icon: const Icon(Icons.add),
+              label: const Text('Adicionar produto'),
+            )
+          : null,
+    );
+  }
+}

@@ -11104,6 +11104,19 @@ class TelaProdutosAfiliados extends StatelessWidget {
                         vertical: 6,
                       ),
                       child: ListTile(
+                                                leading: fotoUrl.isEmpty
+                            ? const Icon(Icons.shopping_bag_outlined, size: 32)
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  fotoUrl,
+                                  width: 56,
+                                  height: 56,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.broken_image_outlined),
+                                ),
+                              ),
                         title: Text(nome),
                         subtitle: descricao.isEmpty ? null : Text(descricao),
                         onTap: () => _abrirLink(link),

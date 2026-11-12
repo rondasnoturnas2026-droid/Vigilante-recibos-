@@ -10972,6 +10972,7 @@ class TelaProdutosAfiliados extends StatelessWidget {
         'nome': nomeController.text.trim(),
         'url': linkController.text.trim(),
         'descricao': descricaoController.text.trim(),
+                'fotoUrl': fotoController.text.trim(),
         'atualizadoEm': FieldValue.serverTimestamp(),
       };
 

@@ -931,8 +931,7 @@ class TelaMinhaConta extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 12),
-const SizedBox(height: 12),
-              const SizedBox(height: 12),
+
               Card(
                 child: ListTile(
                   leading: const Icon(Icons.workspace_premium_outlined),

@@ -862,66 +862,75 @@ class TelaMinhaConta extends StatelessWidget {
                 subtitle: Text(usuario.email ?? ''),
               ),
               subtitle: Text(usuario.email ?? ''),
-),
-ListTile(
-  leading: const Icon(Icons.delete_forever_outlined),
-  title: const Text('Solicitar exclusão da conta'),
-  subtitle: const Text('Pedir a remoção da conta e dos dados associados'),
-  onTap: () async {
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Solicitar exclusão da conta?'),
-        content: const Text(
-          'Seu pedido será enviado ao responsável pelo aplicativo. '
-          'A conta e os dados associados serão removidos após o '
-          'processamento. Este pedido não apaga a conta imediatamente.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Enviar pedido'),
-          ),
-        ],
-      ),
-    );
+              ListTile(
+                leading: const Icon(Icons.account_circle_outlined),
+                title: const Text('Conta'),
+                subtitle: Text(usuario.email ?? ''),
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete_forever_outlined),
+                title: const Text('Solicitar exclusão da conta'),
+                subtitle: const Text(
+                  'Pedir a remoção da conta e dos dados associados',
+                ),
+                onTap: () async {
+                  final confirmar = await showDialog<bool>(
+                    context: context,
+                    builder: (dialogContext) => AlertDialog(
+                      title: const Text('Solicitar exclusão da conta?'),
+                      content: const Text(
+                        'Seu pedido será enviado ao responsável pelo aplicativo. '
+                        'A conta e os dados associados serão removidos após o '
+                        'processamento. Este pedido não apaga a conta imediatamente.',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(dialogContext, false),
+                          child: const Text('Cancelar'),
+                        ),
+                        FilledButton(
+                          onPressed: () =>
+                              Navigator.pop(dialogContext, true),
+                          child: const Text('Enviar pedido'),
+                        ),
+                      ],
+                    ),
+                  );
 
-    if (confirmar != true) return;
+                  if (confirmar != true) return;
 
-    try {
-      await FirebaseFirestore.instance
-          .collection('solicitacoes_exclusao')
-          .doc(usuario.uid)
-          .set({
-        'uid': usuario.uid,
-        'email': usuario.email ?? '',
-        'solicitadoEm': FieldValue.serverTimestamp(),
-        'status': 'pendente',
-      });
+                  try {
+                    await FirebaseFirestore.instance
+                        .collection('solicitacoes_exclusao')
+                        .doc(usuario.uid)
+                        .set({
+                      'uid': usuario.uid,
+                      'email': usuario.email ?? '',
+                      'solicitadoEm': FieldValue.serverTimestamp(),
+                      'status': 'pendente',
+                    });
 
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Pedido de exclusão enviado.'),
-        ),
-      );
-    } on FirebaseException {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Não foi possível enviar o pedido. '
-            'Confira a conexão e tente novamente.',
-          ),
-        ),
-      );
-    }
-  },
-),
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Pedido de exclusão enviado.'),
+                      ),
+                    );
+                  } on FirebaseException {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Não foi possível enviar o pedido. '
+                          'Confira a conexão e tente novamente.',
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
 const SizedBox(height: 12),
               const SizedBox(height: 12),
               Card(

@@ -7197,32 +7197,7 @@ if (restaurou) {
                 },
               ),
             ],
-            ListTile(
-              leading: const Icon(Icons.cloud_outlined),
-              title: const Text('Testar conexão com Firestore'),
-              subtitle: const Text('Teste temporário de leitura e gravação'),
-              onTap: () async {
-                try {
-                  await widget.store.testarConexaoFirestore();
-
-                  if (!mounted) return;
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Conexão com Firestore confirmada.'),
-                    ),
-                  );
-                } catch (erro) {
-                  if (!mounted) return;
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Falha no teste do Firestore: $erro'),
-                    ),
-                  );
-                }
-              },
-            ),
+            
                         ListTile(
   leading: const Icon(Icons.sync),
   title: const Text('Sincronizar entre celulares'),

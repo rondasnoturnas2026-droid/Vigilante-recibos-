@@ -11026,6 +11026,27 @@ class TelaProdutosAfiliados extends StatelessWidget {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
+    String _urlFotoExibicao(String link) {
+    final texto = link.trim();
+    final uri = Uri.tryParse(texto);
+    if (uri == null) return texto;
+
+    if (uri.host == 'drive.google.com') {
+      final segmentos = uri.pathSegments;
+      final indiceD = segmentos.indexOf('d');
+      final idDoCaminho =
+          indiceD >= 0 && indiceD + 1 < segmentos.length
+              ? segmentos[indiceD + 1]
+              : null;
+      final id = idDoCaminho ?? uri.queryParameters['id'];
+
+      if (id != null && id.isNotEmpty) {
+        return 'https://drive.google.com/thumbnail?id=$id&sz=w800';
+      }
+    }
+
+    return texto;
+    }
 
   @override
   Widget build(BuildContext context) {

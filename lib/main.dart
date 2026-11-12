@@ -10937,6 +10937,15 @@ class TelaProdutosAfiliados extends StatelessWidget {
                   ),
                   maxLines: 2,
                 ),
+                                TextFormField(
+                  controller: fotoController,
+                  decoration: const InputDecoration(
+                    labelText: 'Link da foto no Google Drive (opcional)',
+                    helperText:
+                        'A foto precisa estar compartilhada para quem tem o link.',
+                  ),
+                  keyboardType: TextInputType.url,
+                ),
               ],
             ),
           ),

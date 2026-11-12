@@ -11095,7 +11095,7 @@ class TelaProdutosAfiliados extends StatelessWidget {
                     final descricao =
                         dados['descricao']?.toString() ?? '';
                     final link = dados['url']?.toString() ?? '';
-                                        final fotoUrl =
+                                                            final fotoUrl =
                         _urlFotoExibicao(dados['fotoUrl']?.toString() ?? '');
 
                     return Card(

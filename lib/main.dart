@@ -861,12 +861,7 @@ class TelaMinhaConta extends StatelessWidget {
                 title: const Text('Conta'),
                 subtitle: Text(usuario.email ?? ''),
               ),
-              subtitle: Text(usuario.email ?? ''),
-              ListTile(
-                leading: const Icon(Icons.account_circle_outlined),
-                title: const Text('Conta'),
-                subtitle: Text(usuario.email ?? ''),
-              ),
+              
               ListTile(
                 leading: const Icon(Icons.delete_forever_outlined),
                 title: const Text('Solicitar exclusão da conta'),

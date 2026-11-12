@@ -10886,8 +10886,11 @@ class TelaProdutosAfiliados extends StatelessWidget {
     final linkController = TextEditingController(
       text: documento?.data()?['url']?.toString() ?? '',
     );
-    final descricaoController = TextEditingController(
+        final descricaoController = TextEditingController(
       text: documento?.data()?['descricao']?.toString() ?? '',
+    );
+    final fotoController = TextEditingController(
+      text: documento?.data()?['fotoUrl']?.toString() ?? '',
     );
     final formKey = GlobalKey<FormState>();
 

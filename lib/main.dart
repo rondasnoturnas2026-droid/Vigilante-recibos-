@@ -9171,8 +9171,8 @@ try {
         final perfilLogo = await CapabilityProfile.load();
         final geradorLogo = Generator(PaperSize.mm58, perfilLogo);
 
-        final imagemAjustada = imagemLogo.width > 80
-    ? img.copyResize(imagemLogo, width: 80)
+        final imagemAjustada = imagemLogo.width > 100
+    ? img.copyResize(imagemLogo, width: 100)
     : imagemLogo;
 
         await PrintBluetoothThermal.writeBytes([

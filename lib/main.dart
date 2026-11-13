@@ -9610,9 +9610,13 @@ Future<void> carregarDadosVigilante() async {
     vigilanteDomingo =
         prefs.getBool('vigilanteDomingo') ?? false;
 
-    vigilanteLogoPretoBranco =
-        prefs.getString('vigilanteLogoPretoBranco') ?? '';
-}
+        vigilanteLogoPretoBranco = await _garantirLogoLocal(
+      prefs,
+      prefs.getString('vigilanteLogoPretoBranco') ?? '',
+      'vigilanteLogoPretoBranco',
+      'vigilanteLogoPretoBrancoBytes',
+      'logo_vigilante_preto_branco',
+    );
 
 Future<void> adicionarBairro(String nome) async {
   bairros.add(

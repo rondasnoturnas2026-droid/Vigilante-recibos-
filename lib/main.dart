@@ -2316,22 +2316,34 @@ const espacoAntesQr = 64.0;
       flush: true,
     );
 
-            await SharePlus.instance.share(
-      ShareParams(
-        title: 'Cobrança da mensalidade',
-        text: pixCopiaECola,
-        files: [
-          XFile(arquivo.path, mimeType: 'image/png'),
-        ],
-      ),
-    );
+                if (telefone.isEmpty) {
+      await SharePlus.instance.share(
+        ShareParams(
+          title: 'Cobrança da mensalidade',
+          text: pixCopiaECola,
+          files: [
+            XFile(arquivo.path, mimeType: 'image/png'),
+          ],
+        ),
+      );
 
-    await SharePlus.instance.share(
-      ShareParams(
-        title: 'Chave Pix',
-        text: widget.store.vigilanteChavePix.trim(),
-      ),
-    );
+      await SharePlus.instance.share(
+        ShareParams(
+          title: 'Chave Pix',
+          text: widget.store.vigilanteChavePix.trim(),
+        ),
+      );
+    } else {
+      final telefoneInternacional =
+          telefone.startsWith('55') ? telefone : '55$telefone';
+
+      await WhatsappDirectSend.shareToChat(
+        phone: telefoneInternacional,
+        text: '$pixCopiaECola\n\nChave Pix: '
+            '${widget.store.vigilanteChavePix.trim()}',
+        filePath: arquivo.path,
+      );
+                }
       } catch (e) {
     if (!mounted) return;
 

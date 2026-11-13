@@ -2308,8 +2308,9 @@ const espacoAntesQr = 64.0;
       throw Exception('Não foi possível montar a cobrança com QR.');
     }
 
+        final diretorioCobranca = await getTemporaryDirectory();
     final arquivo = File(
-      '${Directory.systemTemp.path}/cobranca_pix_${DateTime.now().millisecondsSinceEpoch}.png',
+      '${diretorioCobranca.path}/cobranca_pix_${DateTime.now().millisecondsSinceEpoch}.png',
     );
     await arquivo.writeAsBytes(
       dadosImagem.buffer.asUint8List(),

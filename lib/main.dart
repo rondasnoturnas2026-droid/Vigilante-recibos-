@@ -9275,7 +9275,13 @@ if (mostrarQrTermico &&
 }
 
 
-
+if (!mostrarQrTermico ||
+    !mostrarCampo('pix', true) ||
+    chavePixQr.trim().isEmpty) {
+  await PrintBluetoothThermal.writeBytes(
+    geradorRecibo.feed(4),
+  );
+}
 return resultado;
   }
 }

@@ -9617,7 +9617,7 @@ Future<void> carregarDadosVigilante() async {
       'vigilanteLogoPretoBrancoBytes',
       'logo_vigilante_preto_branco',
     );
-
+}
 Future<void> adicionarBairro(String nome) async {
   bairros.add(
     Bairro(

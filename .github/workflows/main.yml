@@ -93,7 +93,7 @@ jobs:
           manifesto = Path("android/app/src/main/AndroidManifest.xml")
           texto = manifesto.read_text(encoding="utf-8")
 
-                    permissoes = [
+          permissoes = [
               "android.permission.ACCESS_COARSE_LOCATION",
               "android.permission.ACCESS_FINE_LOCATION",
               "android.permission.CAMERA",

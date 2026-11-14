@@ -878,8 +878,10 @@ class TelaMinhaConta extends StatelessWidget {
                 subtitle: Text(usuario.email ?? ''),
               ),
               const SizedBox(height: 12),
-              Card(
-                                  title: Text(
+                            Card(
+                child: ListTile(
+                  leading: const Icon(Icons.workspace_premium_outlined),
+                  title: Text(
                     planoAtivo
                         ? 'Plano ativo'
                         : expirou
@@ -894,9 +896,6 @@ class TelaMinhaConta extends StatelessWidget {
                         : expirou
                             ? 'Terminou em $dataFormatada. Escolha um plano para continuar.'
                             : 'Válido até $dataFormatada.',
-                  ),
-                        ? 'Terminou em $dataFormatada. Escolha um plano para continuar.'
-                        : 'Válido até $dataFormatada.',
                   ),
                 ),
               ),

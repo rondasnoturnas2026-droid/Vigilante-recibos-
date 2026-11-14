@@ -7116,8 +7116,7 @@ Future<void> _abrirTema() async {
   );
 },
 ),
-            ListTile(
-  leading: const Icon(Icons.account_circle_outlined),
+            
                                 ListTile(
             leading: const Icon(Icons.account_circle_outlined),
             title: const Text('Minha conta'),

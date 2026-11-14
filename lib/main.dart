@@ -879,13 +879,22 @@ class TelaMinhaConta extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Card(
-                child: ListTile(
-                  leading: const Icon(Icons.workspace_premium_outlined),
-                  title: Text(
-                    expirou ? 'Período grátis encerrado' : 'Teste grátis ativo',
+                                  title: Text(
+                    planoAtivo
+                        ? 'Plano ativo'
+                        : expirou
+                            ? (statusConta == 'plano_ativo'
+                                ? 'Plano vencido'
+                                : 'Período grátis encerrado')
+                            : 'Teste grátis ativo',
                   ),
                   subtitle: Text(
-                    expirou
+                    planoAtivo
+                        ? 'Pago até $dataFormatada.'
+                        : expirou
+                            ? 'Terminou em $dataFormatada. Escolha um plano para continuar.'
+                            : 'Válido até $dataFormatada.',
+                  ),
                         ? 'Terminou em $dataFormatada. Escolha um plano para continuar.'
                         : 'Válido até $dataFormatada.',
                   ),

@@ -912,6 +912,17 @@ class TelaMinhaConta extends StatelessWidget {
                 icon: const Icon(Icons.list_alt),
                 label: const Text('Ver planos'),
               ),
+                              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const TelaProdutosAfiliados(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.shopping_bag_outlined),
+                label: const Text('Produtos para vigilantes'),
+              ),
             ],
           );
         },

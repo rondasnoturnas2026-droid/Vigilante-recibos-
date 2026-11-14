@@ -346,17 +346,12 @@ class GateSessaoConta extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          if (FirebaseAuth.instance.currentUser == null &&
-              !exigirLoginDaConta.value) {
-            return const TelaPrincipal();
-          }
-
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (snapshot.hasError && exigirLoginDaConta.value) {
+        if (snapshot.hasError) {
           return const Scaffold(
             body: Center(
               child: Padding(
@@ -370,11 +365,11 @@ class GateSessaoConta extends StatelessWidget {
           );
         }
 
-        if (snapshot.data != null || !exigirLoginDaConta.value) {
-          return const TelaPrincipal();
+        if (snapshot.data == null) {
+          return const TelaAcesso();
         }
 
-        return const TelaAcesso();
+        return const TelaPrincipal();
       },
     );
   }

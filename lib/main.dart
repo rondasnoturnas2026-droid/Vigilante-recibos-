@@ -11208,8 +11208,11 @@ class _PizzaRecebidosPainter extends CustomPainter {
           const Padding(
             padding: EdgeInsets.all(16),
             child: Text(
-              'Links de afiliado do responsável pelo aplicativo. '
-              'Uma compra pode gerar comissão para ele.',
+              'Encontre produtos úteis para o dia a dia do vigilante. '
+'Indico principalmente itens que conheço e recomendo, e dou '
+'preferência a vendedores que costumam entregar no prazo. '
+'Alguns links são de afiliado; se você comprar por eles, '
+'posso receber uma comissão, sem custo extra para você.',
             ),
           ),
           Expanded(

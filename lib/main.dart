@@ -747,9 +747,23 @@ class _TelaAcessoState extends State<TelaAcesso> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                                        const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: _carregando
+                          ? null
+                          : () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const TelaProdutosAfiliados(),
+                                ),
+                              );
+                            },
+                      icon: const Icon(Icons.shopping_bag_outlined),
+                      label: const Text('Ver produtos para vigilantes'),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
-                      'A conta ainda não sincroniza os dados do app entre celulares.',
+                      'Os produtos podem ser vistos sem conta. Para usar o app, entre ou crie sua conta.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 12),
                     ),

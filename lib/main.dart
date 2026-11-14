@@ -7525,21 +7525,7 @@ const Divider(),
   },
 ),
 const Divider(),
-            ListTile(
-  leading: const Icon(Icons.shopping_bag_outlined),
-  title: const Text('Links de afiliado'),
-  subtitle: const Text('Produtos para vigilantes'),
-  trailing: const Icon(Icons.chevron_right),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const TelaProdutosAfiliados(),
-      ),
-    );
-  },
-),
-const Divider(),
+            
           ListTile(
   leading: const Icon(Icons.palette_outlined),
   title: const Text('Tema do aplicativo'),

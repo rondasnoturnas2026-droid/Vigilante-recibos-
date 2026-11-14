@@ -369,7 +369,49 @@ class GateSessaoConta extends StatelessWidget {
           return const TelaAcesso();
         }
 
-        return const TelaPrincipal();
+                return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+          stream: FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(snapshot.data!.uid)
+              .collection('dados')
+              .doc('_periodo_gratis')
+              .snapshots(),
+          builder: (context, planoSnapshot) {
+            if (planoSnapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (planoSnapshot.hasError) {
+              return const Scaffold(
+                body: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Text(
+                      'Não foi possível verificar seu plano. Confira a conexão e tente novamente.',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final dados = planoSnapshot.data?.data();
+            final valorTermino = dados?['termino'];
+            final status = dados?['status']?.toString();
+
+            final acessoAtivo = valorTermino is Timestamp &&
+                valorTermino.toDate().isAfter(DateTime.now()) &&
+                (status == 'teste_gratis' || status == 'plano_ativo');
+
+            if (acessoAtivo) {
+              return const TelaPrincipal();
+            }
+
+            return const TelaMinhaConta();
+          },
+        );
       },
     );
   }

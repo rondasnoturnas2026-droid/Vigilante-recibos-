@@ -861,7 +861,9 @@ class TelaMinhaConta extends StatelessWidget {
           }
 
           final termino = valorTermino.toDate();
-          final expirou = !termino.isAfter(DateTime.now());
+                    final expirou = !termino.isAfter(DateTime.now());
+          final statusConta = dados['status']?.toString();
+          final planoAtivo = statusConta == 'plano_ativo' && !expirou;
           final dataFormatada =
               '${termino.day.toString().padLeft(2, '0')}/'
               '${termino.month.toString().padLeft(2, '0')}/'

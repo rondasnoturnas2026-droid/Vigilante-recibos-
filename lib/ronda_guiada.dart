@@ -29,6 +29,111 @@ const String _chaveSessaoRondaCompartilhada =
     'sessaoRondaCompartilhadaV1';
 const String _chaveExecucaoPausada = 'execucaoPausadaRondaV1';
 const double _distanciaMinimaRoteiroMetros = 50;
+const int _limiteTesteRondaSegundos = 4 * 60 * 60;
+const String _uidDonoTesteRonda =
+    'wIUKOEsoMrhgTgzGfTvJP6l0VYh1';
+
+Future<Duration?> _reservarUsoTesteRonda(String uid) async {
+  if (uid == _uidDonoTesteRonda) return null;
+
+  final referencia = FirebaseFirestore.instance
+      .collection('usuarios')
+      .doc(uid)
+      .collection('dados')
+      .doc('_periodo_gratis');
+
+  Duration? restante;
+
+  await FirebaseFirestore.instance.runTransaction((transacao) async {
+    final documento = await transacao.get(referencia);
+    final dados = documento.data();
+    final valorTermino = dados?['termino'];
+
+    if (dados == null ||
+        valorTermino is! Timestamp ||
+        !valorTermino.toDate().isAfter(DateTime.now())) {
+      restante = Duration.zero;
+      return;
+    }
+
+    final status = dados['status']?.toString();
+
+    if (status == 'plano_ativo') {
+      restante = null;
+      return;
+    }
+
+    if (status != 'teste_gratis') {
+      restante = Duration.zero;
+      return;
+    }
+
+    var usados =
+        (dados['rondaSegundosUsados'] as num?)?.toInt() ?? 0;
+    final agora = DateTime.now();
+    final inicioAtivo = dados['rondaInicioAtivo'];
+
+    if (inicioAtivo is Timestamp) {
+      final decorridos = agora.difference(inicioAtivo.toDate()).inSeconds;
+      if (decorridos > 0) usados += decorridos;
+    }
+
+    final segundosRestantes = _limiteTesteRondaSegundos - usados;
+
+    if (segundosRestantes <= 0) {
+      transacao.update(referencia, {
+        'rondaSegundosUsados': _limiteTesteRondaSegundos,
+        'rondaInicioAtivo': FieldValue.delete(),
+      });
+      restante = Duration.zero;
+      return;
+    }
+
+    transacao.update(referencia, {
+      'rondaSegundosUsados': usados,
+      'rondaInicioAtivo': Timestamp.fromDate(agora),
+    });
+    restante = Duration(seconds: segundosRestantes);
+  });
+
+  return restante;
+}
+
+Future<void> _encerrarUsoTesteRonda(String uid) async {
+  if (uid == _uidDonoTesteRonda) return;
+
+  final referencia = FirebaseFirestore.instance
+      .collection('usuarios')
+      .doc(uid)
+      .collection('dados')
+      .doc('_periodo_gratis');
+
+  await FirebaseFirestore.instance.runTransaction((transacao) async {
+    final documento = await transacao.get(referencia);
+    final dados = documento.data();
+    if (dados == null) return;
+
+    final inicioAtivo = dados['rondaInicioAtivo'];
+    if (inicioAtivo is! Timestamp) return;
+
+    var usados =
+        (dados['rondaSegundosUsados'] as num?)?.toInt() ?? 0;
+    final status = dados['status']?.toString();
+
+    if (status == 'teste_gratis') {
+      final decorridos =
+          DateTime.now().difference(inicioAtivo.toDate()).inSeconds;
+      if (decorridos > 0) usados += decorridos;
+    }
+
+    transacao.update(referencia, {
+      'rondaSegundosUsados': usados > _limiteTesteRondaSegundos
+          ? _limiteTesteRondaSegundos
+          : usados,
+      'rondaInicioAtivo': FieldValue.delete(),
+    });
+  });
+}
 
 bool _roteiroTemPercurso(RoteiroRonda roteiro) {
   final pontosDoPercurso = roteiro.pontos

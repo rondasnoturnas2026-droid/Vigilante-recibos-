@@ -1851,6 +1851,7 @@ bool _percursoIniciado = false;
   bool forcar = false,
   bool ignorarDistancia = false,
 }) {
+          if (_aguardarGpsEstavel(posicao)) return;
             unawaited(_enviarLocalizacaoCompartilhada(posicao));
             if (widget.rotaPrincipal != null) {
         _ultimaPosicao = posicao;

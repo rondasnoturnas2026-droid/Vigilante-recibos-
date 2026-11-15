@@ -1577,6 +1577,30 @@ bool _percursoIniciado = false;
       });
     }
   }
+      Future<void> _pararAoAtingirLimiteRonda() async {
+    if (!_gravando) return;
+
+    _timerLimiteRonda?.cancel();
+    _timerLimiteRonda = null;
+
+    await _assinatura?.cancel();
+    _assinatura = null;
+
+    final uid = _uidRondaReservada;
+    if (uid != null) {
+      await _encerrarUsoTesteRonda(uid);
+      _uidRondaReservada = null;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _gravando = false;
+      _erro =
+          'Você atingiu as 4 horas de teste da Ronda Guiada. '
+          'Contrate o plano para continuar.';
+    });
+      }
   List<PontoRonda> get _pontosDaRotaSalva {
     final roteiro = widget.rotaPrincipal;
   if (roteiro == null || !_roteiroTemPercurso(roteiro)) {

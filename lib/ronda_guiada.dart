@@ -1809,6 +1809,43 @@ bool _percursoIniciado = false;
       _ultimaAtualizacaoCompartilhada = null;
     }
   }
+      bool _aguardarGpsEstavel(Position posicao) {
+    if (_gpsEstabilizado) return false;
+
+    if (!posicao.accuracy.isFinite || posicao.accuracy > 25) {
+      _ultimaPosicaoGpsPendente = null;
+      _leiturasGpsEstaveis = 0;
+      return true;
+    }
+
+    final anterior = _ultimaPosicaoGpsPendente;
+
+    if (anterior == null) {
+      _ultimaPosicaoGpsPendente = posicao;
+      _leiturasGpsEstaveis = 1;
+      return true;
+    }
+
+    final distanciaEntreLeituras = Geolocator.distanceBetween(
+      anterior.latitude,
+      anterior.longitude,
+      posicao.latitude,
+      posicao.longitude,
+    );
+
+    if (distanciaEntreLeituras > 20) {
+      _ultimaPosicaoGpsPendente = posicao;
+      _leiturasGpsEstaveis = 1;
+      return true;
+    }
+
+    _leiturasGpsEstaveis++;
+
+    if (_leiturasGpsEstaveis < 2) return true;
+
+    _gpsEstabilizado = true;
+    return false;
+      }
     void _registrarPosicao(
   Position posicao, {
   bool forcar = false,

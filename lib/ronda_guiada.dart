@@ -2494,7 +2494,14 @@ void _orientarPelaRota(Position posicao) {
         ],
       ),
     );
+    _timerLimiteRonda?.cancel();
+    _timerLimiteRonda = null;
 
+    final uidReservado = _uidRondaReservada;
+    if (uidReservado != null) {
+      await _encerrarUsoTesteRonda(uidReservado);
+      _uidRondaReservada = null;
+    }
     if (pausar != true || !mounted) return;
 
     await _salvarProgressoPausado();

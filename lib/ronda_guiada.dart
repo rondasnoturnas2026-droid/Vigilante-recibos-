@@ -2494,6 +2494,8 @@ void _orientarPelaRota(Position posicao) {
         ],
       ),
     );
+    
+    if (pausar != true || !mounted) return;
     _timerLimiteRonda?.cancel();
     _timerLimiteRonda = null;
 
@@ -2502,8 +2504,6 @@ void _orientarPelaRota(Position posicao) {
       await _encerrarUsoTesteRonda(uidReservado);
       _uidRondaReservada = null;
     }
-    if (pausar != true || !mounted) return;
-
     await _salvarProgressoPausado();
             await _encerrarAcompanhamento();
     await _assinatura?.cancel();

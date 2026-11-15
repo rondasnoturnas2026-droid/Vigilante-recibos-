@@ -2514,8 +2514,18 @@ void _orientarPelaRota(Position posicao) {
     }
 
   Future<void> _finalizar() async {
-          await _encerrarAcompanhamento();
+              _timerLimiteRonda?.cancel();
+    _timerLimiteRonda = null;
     await _assinatura?.cancel();
+    _assinatura = null;
+
+    final uidReservado = _uidRondaReservada;
+    if (uidReservado != null) {
+      await _encerrarUsoTesteRonda(uidReservado);
+      _uidRondaReservada = null;
+    }
+
+    await _encerrarAcompanhamento();
 
     final agora = DateTime.now();
     final roteiro = RoteiroRonda(

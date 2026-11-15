@@ -1591,6 +1591,16 @@ bool _percursoIniciado = false;
       }
             
     } catch (erro) {
+              _timerLimiteRonda?.cancel();
+      _timerLimiteRonda = null;
+      await _assinatura?.cancel();
+      _assinatura = null;
+
+      final uidReservado = _uidRondaReservada;
+      if (uidReservado != null) {
+        await _encerrarUsoTesteRonda(uidReservado);
+        _uidRondaReservada = null;
+      }
       if (!mounted) return;
       setState(() {
         _carregando = false;

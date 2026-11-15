@@ -1546,7 +1546,22 @@ bool _percursoIniciado = false;
       final primeiraPosicao = await Geolocator.getCurrentPosition(
         locationSettings: configuracao,
       );
-      
+            final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) {
+        throw Exception('Entre na sua conta para usar a Ronda Guiada.');
+      }
+
+      final restante = await _reservarUsoTesteRonda(uid);
+      if (restante != null && restante.inSeconds <= 0) {
+        throw Exception(
+          'Você atingiu as 4 horas de teste da Ronda Guiada. '
+          'Contrate o plano para continuar.',
+        );
+      }
+
+      if (restante != null) {
+        _uidRondaReservada = uid;
+      }
 
       _registrarPosicao(primeiraPosicao, forcar: true);
 

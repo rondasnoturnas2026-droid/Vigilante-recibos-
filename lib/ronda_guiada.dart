@@ -1384,6 +1384,8 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage>
     String? _ladoProximaCurva;
   bool _carregando = true;
   bool _gravando = false;
+      Timer? _timerLimiteRonda;
+  String? _uidRondaReservada;
   bool _podeSair = false;
   String? _erro;
 int _indiceProximoPontoRota = 0;

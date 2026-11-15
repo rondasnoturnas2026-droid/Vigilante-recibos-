@@ -1378,6 +1378,9 @@ class _RondaEmAndamentoPageState extends State<RondaEmAndamentoPage>
   bool _mapaPronto = false;
     StreamSubscription<Position>? _assinatura;
   Position? _ultimaPosicao;
+      Position? _ultimaPosicaoGpsPendente;
+  int _leiturasGpsEstaveis = 0;
+  bool _gpsEstabilizado = false;
   DateTime? _ultimaAtualizacaoCompartilhada;
   double _distanciaMetros = 0;
   int? _distanciaAteProximaCurva;

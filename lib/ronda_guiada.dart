@@ -2069,9 +2069,8 @@ void _orientarPelaRota(Position posicao) {
     pontoAtual.longitude,
   );
 
-  final margemAvanco = (posicao.accuracy * 0.5)
-      .clamp(5.0, 20.0)
-      .toDouble();
+    final margemAvanco =
+      (posicao.accuracy * 0.1).clamp(1.0, 3.0).toDouble();
 
   if (distanciaAoPontoAtual - menorDistancia >= margemAvanco) {
     _indiceProximoPontoRota =

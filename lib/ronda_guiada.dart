@@ -1581,6 +1581,13 @@ bool _percursoIniciado = false;
           _carregando = false;
           _gravando = true;
         });
+                  if (restante != null) {
+          _timerLimiteRonda?.cancel();
+          _timerLimiteRonda = Timer(
+            restante,
+            () => unawaited(_pararAoAtingirLimiteRonda()),
+          );
+                  }
       }
             
     } catch (erro) {

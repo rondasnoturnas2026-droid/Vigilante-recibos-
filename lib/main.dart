@@ -1039,13 +1039,59 @@ class _TelaPrincipalState extends State<TelaPrincipal>
     store.carregarBairrosERuas();
           ControleSessaoDispositivo.verificarAoAbrir().catchError((_) {});
 
-    paginas = [
-  TelaMensalidades(store: store),
-  TelaClientes(store: store),
-  const RondaGuiadaPage(),
-  TelaRelatorio(store: store),
-  TelaConfiguracoes(store: store),
-];
+        if (widget.acessoNormal) {
+      paginas = [
+        TelaMensalidades(store: store),
+        TelaClientes(store: store),
+        const RondaGuiadaPage(),
+        TelaRelatorio(store: store),
+        TelaConfiguracoes(store: store),
+      ];
+      destinos = const [
+        NavigationDestination(
+          icon: Icon(Icons.receipt_long_outlined),
+          selectedIcon: Icon(Icons.receipt_long),
+          label: 'Mensalidades',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.people_outline),
+          selectedIcon: Icon(Icons.people),
+          label: 'Clientes',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.route_outlined),
+          selectedIcon: Icon(Icons.route),
+          label: 'Rondas',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.bar_chart_outlined),
+          selectedIcon: Icon(Icons.bar_chart),
+          label: 'Relatório',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.settings_outlined),
+          selectedIcon: Icon(Icons.settings),
+          label: 'Config.',
+        ),
+      ];
+    } else {
+      paginas = [
+        const RondaGuiadaPage(),
+        TelaConfiguracoes(store: store),
+      ];
+      destinos = const [
+        NavigationDestination(
+          icon: Icon(Icons.route_outlined),
+          selectedIcon: Icon(Icons.route),
+          label: 'Rondas',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.settings_outlined),
+          selectedIcon: Icon(Icons.settings),
+          label: 'Config.',
+        ),
+      ];
+        }
           if (FirebaseAuth.instance.currentUser != null) {
       SincronizacaoFirestoreService.sincronizarAoEntrar().then(
         (restaurou) async {

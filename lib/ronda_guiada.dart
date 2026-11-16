@@ -1468,6 +1468,7 @@ class RondaEmAndamentoPage extends StatefulWidget {
   final RoteiroRonda? rotaPrincipal;
   final Map<String, dynamic>? execucaoPausada;
   final String? sessaoCompartilhadaId;
+      final bool modoConvidado;
   @override
   State<RondaEmAndamentoPage> createState() =>
       _RondaEmAndamentoPageState();

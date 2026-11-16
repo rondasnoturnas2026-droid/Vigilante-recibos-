@@ -1027,6 +1027,7 @@ class _TelaPrincipalState extends State<TelaPrincipal>
 
   final AppStore store = AppStore();
   late final List<Widget> paginas;
+      late final List<NavigationDestination> destinos;
   bool _reconectandoImpressora = false;
 
   @override

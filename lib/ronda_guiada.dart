@@ -151,7 +151,12 @@ bool _roteiroTemPercurso(RoteiroRonda roteiro) {
       pontosDoPercurso >= 2;
 }
 class RondaGuiadaPage extends StatefulWidget {
-  const RondaGuiadaPage({super.key});
+  const RondaGuiadaPage({
+    super.key,
+    this.modoConvidado = false,
+  });
+
+  final bool modoConvidado;
 
   @override
   State<RondaGuiadaPage> createState() => _RondaGuiadaPageState();

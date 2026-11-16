@@ -9807,6 +9807,7 @@ class ControleSessaoDispositivo {
   }
 
   static Future<void> verificarAoAbrir() async {
+      if (_loginEmAndamento) return;
     final usuario = FirebaseAuth.instance.currentUser;
 
     if (usuario == null) {

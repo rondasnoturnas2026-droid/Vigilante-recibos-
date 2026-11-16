@@ -657,6 +657,9 @@ List<RoteiroRonda> _rondasFeitas = [];
               final sessaoId = dados['sessaoId']?.toString() ?? '';
               if (widget.modoConvidado) {
         if (sessaoId.isEmpty) throw const FormatException();
+                          if (!await _sessaoConvidadaValida(sessaoId)) {
+          throw const FormatException();
+                          }
 
         await prefs.setString(_chaveSessaoRondaCompartilhada, sessaoId);
 

@@ -150,6 +150,33 @@ bool _roteiroTemPercurso(RoteiroRonda roteiro) {
   return roteiro.distanciaMetros >= _distanciaMinimaRoteiroMetros &&
       pontosDoPercurso >= 2;
 }
+Future<bool> _sessaoConvidadaValida(String sessaoId) async {
+  final usuario = FirebaseAuth.instance.currentUser;
+  if (usuario == null || sessaoId.isEmpty) return false;
+
+  final documento = await FirebaseFirestore.instance
+      .collection(_colecaoRondasCompartilhadas)
+      .doc(sessaoId)
+      .get();
+
+  if (!documento.exists) return false;
+
+  final dados = documento.data();
+  if (dados == null) return false;
+
+  final uidPrincipal = dados['principalUid']?.toString() ?? '';
+  final uidNovatoAprovado = dados['novatoUid']?.toString();
+  final status = dados['status']?.toString();
+  final expiraEm = dados['expiraEm'];
+
+  return uidPrincipal.isNotEmpty &&
+      uidPrincipal != usuario.uid &&
+      (status == 'aguardando' || status == 'aprovado') &&
+      expiraEm is Timestamp &&
+      expiraEm.toDate().isAfter(DateTime.now()) &&
+      (uidNovatoAprovado == null ||
+          uidNovatoAprovado == usuario.uid);
+}
 class RondaGuiadaPage extends StatefulWidget {
   const RondaGuiadaPage({
     super.key,

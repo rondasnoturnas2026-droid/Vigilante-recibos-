@@ -620,6 +620,7 @@ class _TelaAcessoState extends State<TelaAcesso> {
         'Ocorreu um erro. Confira sua conexão e tente novamente.',
       );
     } finally {
+        ControleSessaoDispositivo._loginEmAndamento = false;
       if (mounted) setState(() => _carregando = false);
     }
   }

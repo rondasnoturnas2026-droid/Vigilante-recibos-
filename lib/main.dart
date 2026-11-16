@@ -1008,7 +1008,14 @@ class TelaMinhaConta extends StatelessWidget {
 }
 
 class TelaPrincipal extends StatefulWidget {
-  const TelaPrincipal({super.key});
+  const TelaPrincipal({
+    super.key,
+    this.acessoNormal = true,
+    this.acessoRondaGuida = true,
+  });
+
+  final bool acessoNormal;
+  final bool acessoRondaGuida;
 
   @override
   State<TelaPrincipal> createState() => _TelaPrincipalState();

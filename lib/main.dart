@@ -971,6 +971,32 @@ class TelaMinhaConta extends StatelessWidget {
                 icon: const Icon(Icons.logout),
                 label: const Text('Sair da conta'),
               ),
+                              const SizedBox(height: 4),
+              TextButton.icon(
+                onPressed: () async {
+                  final abriu = await launchUrl(
+                    Uri.parse(
+                      'https://docs.google.com/forms/d/e/1FAIpQLSdu1uCs4KunB9xlfFCTmMdZjKsW5K0-dcBJCZ6jg_8cV364sQ/viewform?usp=preview',
+                    ),
+                    mode: LaunchMode.externalApplication,
+                  );
+
+                  if (!abriu && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Não foi possível abrir o formulário.',
+                        ),
+                      ),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.delete_outline),
+                label: const Text('Solicitar exclusão da conta'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
+              ),
             ],
           );
         },

@@ -1229,6 +1229,36 @@ List<RoteiroRonda> _rondasFeitas = [];
       _execucaoPausada = null;
     });
     }
+      Widget _buildModoConvidado() {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        const Text(
+          'Importe o roteiro compartilhado pelo titular para seguir a ronda.',
+          style: TextStyle(fontSize: 16),
+        ),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: _carregando ? null : _importarRoteiro,
+          icon: const Icon(Icons.file_open_outlined),
+          label: const Text('Importar roteiro recebido'),
+        ),
+        if (_rotaPrincipal != null) ...[
+          const SizedBox(height: 12),
+          ListTile(
+            leading: const Icon(Icons.route_outlined),
+            title: Text(_rotaPrincipal!.nome),
+            subtitle: Text(_rotaPrincipal!.area),
+          ),
+          FilledButton.icon(
+            onPressed: _carregando ? null : _iniciarExecucao,
+            icon: const Icon(Icons.navigation),
+            label: const Text('Seguir roteiro'),
+          ),
+        ],
+      ],
+    );
+      }
 
   @override
   Widget build(BuildContext context) {

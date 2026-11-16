@@ -952,6 +952,19 @@ class TelaMinhaConta extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
+                      builder: (_) => const RondaGuiadaPage(
+                        modoConvidado: true,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.file_open_outlined),
+                label: const Text('Tenho um roteiro compartilhado'),
+              ),
+                              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
                       builder: (_) => const TelaProdutosAfiliados(),
                     ),
                   );

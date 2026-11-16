@@ -939,6 +939,38 @@ class TelaMinhaConta extends StatelessWidget {
                 icon: const Icon(Icons.shopping_bag_outlined),
                 label: const Text('Produtos para vigilantes'),
               ),
+                              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () async {
+                  final confirmou = await showDialog<bool>(
+                    context: context,
+                    builder: (dialogContext) => AlertDialog(
+                      title: const Text('Sair da conta?'),
+                      content: const Text(
+                        'Você poderá entrar novamente nesta conta ou usar outro Gmail. Seus dados não serão apagados.',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(dialogContext, false),
+                          child: const Text('Cancelar'),
+                        ),
+                        FilledButton(
+                          onPressed: () =>
+                              Navigator.pop(dialogContext, true),
+                          child: const Text('Sair'),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmou == true) {
+                    await FirebaseAuth.instance.signOut();
+                  }
+                },
+                icon: const Icon(Icons.logout),
+                label: const Text('Sair da conta'),
+              ),
             ],
           );
         },

@@ -585,6 +585,7 @@ class _TelaAcessoState extends State<TelaAcesso> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _carregando = true);
+      ControleSessaoDispositivo._loginEmAndamento = true;
 
     try {
       final email = _emailController.text.trim();

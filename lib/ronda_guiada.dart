@@ -1114,6 +1114,7 @@ List<RoteiroRonda> _rondasFeitas = [];
                     area: rota.area,
           rotaPrincipal: rota,
                       sessaoCompartilhadaId: sessaoIdParaAcompanhar,
+                      modoConvidado: widget.modoConvidado,
         ),
       ),
     );

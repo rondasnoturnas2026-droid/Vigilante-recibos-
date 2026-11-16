@@ -496,6 +496,8 @@ class _TelaAcessoState extends State<TelaAcesso> {
         inicio.add(const Duration(days: 30)),
       ),
       'status': 'teste_gratis',
+              'planoNormalAte': null,
+      'planoRondaGuidaAte': null,
       'boasVindasExibida': false,
     });
   });

@@ -174,17 +174,17 @@ List<RoteiroRonda> _rondasFeitas = [];
     super.initState();
     _carregarRoteiros();
   }
-        if (widget.modoConvidado) {
+          Future<void> _carregarRoteiros() async {
+    if (widget.modoConvidado) {
       _roteiros = [];
       _rondasFeitas = [];
       _rotaPrincipal = null;
       _execucaoPausada = null;
       _carregando = false;
       return;
-        }
+    }
 
-  Future<void> _carregarRoteiros() async {
-  try {
+    try {
     final prefs = await SharedPreferences.getInstance();
 
     List<RoteiroRonda> converterLista(String? salvo) {

@@ -295,6 +295,32 @@ List<RoteiroRonda> _rondasFeitas = [];
     if (usuario == null) {
       throw StateError('Entre na sua conta para compartilhar uma ronda.');
     }
+            if (usuario.uid != _uidDonoTesteRonda) {
+      final planoSnapshot = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(usuario.uid)
+          .collection('dados')
+          .doc('_periodo_gratis')
+          .get();
+
+      final dadosPlano = planoSnapshot.data();
+      final agora = DateTime.now();
+      final fimRonda = dadosPlano?['planoRondaGuidaAte'];
+      final fimLegado = dadosPlano?['termino'];
+      final statusPlano = dadosPlano?['status']?.toString();
+
+      final planoRondaAtivo =
+          fimRonda is Timestamp && fimRonda.toDate().isAfter(agora);
+      final planoLegadoAtivo = statusPlano == 'plano_ativo' &&
+          fimLegado is Timestamp &&
+          fimLegado.toDate().isAfter(agora);
+
+      if (!planoRondaAtivo && !planoLegadoAtivo) {
+        throw StateError(
+          'O titular precisa ter o plano Ronda Guida ativo para compartilhar.',
+        );
+      }
+            }
 
     final sessao = FirebaseFirestore.instance
         .collection(_colecaoRondasCompartilhadas)

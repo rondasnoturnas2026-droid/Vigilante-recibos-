@@ -1027,6 +1027,29 @@ List<RoteiroRonda> _rondasFeitas = [];
       );
       return;
             }
+              if (widget.modoConvidado) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final sessaoId =
+            prefs.getString(_chaveSessaoRondaCompartilhada);
+
+        if (sessaoId == null ||
+            sessaoId != rota.id ||
+            !await _sessaoConvidadaValida(sessaoId)) {
+          throw const FormatException();
+        }
+      } catch (_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Não foi possível validar o convite. Peça ao titular para compartilhar novamente.',
+            ),
+          ),
+        );
+        return;
+      }
+              }
 
     final campoNome = TextEditingController();
 

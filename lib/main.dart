@@ -400,16 +400,34 @@ class GateSessaoConta extends StatelessWidget {
               );
             }
 
-            final dados = planoSnapshot.data?.data();
+                        final dados = planoSnapshot.data?.data();
             final valorTermino = dados?['termino'];
             final status = dados?['status']?.toString();
+            final agora = DateTime.now();
 
-            final acessoAtivo = valorTermino is Timestamp &&
-                valorTermino.toDate().isAfter(DateTime.now()) &&
-                (status == 'teste_gratis' || status == 'plano_ativo');
+            bool estaVigente(dynamic valor) {
+              return valor is Timestamp && valor.toDate().isAfter(agora);
+            }
 
-            if (acessoAtivo) {
-              return const TelaPrincipal();
+            final testeNormalAtivo =
+                status == 'teste_gratis' && estaVigente(valorTermino);
+            final planoLegadoAtivo =
+                status == 'plano_ativo' && estaVigente(valorTermino);
+            final planoNormalAtivo =
+                estaVigente(dados?['planoNormalAte']);
+            final planoRondaAtivo =
+                estaVigente(dados?['planoRondaGuidaAte']);
+
+            final acessoNormal =
+                testeNormalAtivo || planoNormalAtivo || planoLegadoAtivo;
+            final acessoRondaGuida =
+                testeNormalAtivo || planoRondaAtivo || planoLegadoAtivo;
+
+            if (acessoNormal || acessoRondaGuida) {
+              return TelaPrincipal(
+                acessoNormal: acessoNormal,
+                acessoRondaGuida: acessoRondaGuida,
+              );
             }
 
             return const TelaMinhaConta();

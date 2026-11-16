@@ -602,6 +602,7 @@ class _TelaAcessoState extends State<TelaAcesso> {
           password: senha,
         );
       }
+        await ControleSessaoDispositivo.assumirNoLogin();
         await _garantirPeriodoGratis();
         await _mostrarBoasVindasSeNecessario();
               final prefs = await SharedPreferences.getInstance();

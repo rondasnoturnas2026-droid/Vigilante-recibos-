@@ -47,30 +47,38 @@ Future<Duration?> _reservarUsoTesteRonda(String uid) async {
   await FirebaseFirestore.instance.runTransaction((transacao) async {
     final documento = await transacao.get(referencia);
     final dados = documento.data();
-    final valorTermino = dados?['termino'];
 
-    if (dados == null ||
-        valorTermino is! Timestamp ||
-        !valorTermino.toDate().isAfter(DateTime.now())) {
+    if (dados == null) {
       restante = Duration.zero;
       return;
     }
 
+    final agora = DateTime.now();
     final status = dados['status']?.toString();
+    final valorTermino = dados['termino'];
+    final terminoRonda = dados['planoRondaGuidaAte'];
 
-    if (status == 'plano_ativo') {
+    final planoRondaAtivo =
+        terminoRonda is Timestamp && terminoRonda.toDate().isAfter(agora);
+    final planoLegadoAtivo = status == 'plano_ativo' &&
+        valorTermino is Timestamp &&
+        valorTermino.toDate().isAfter(agora);
+
+    if (planoRondaAtivo || planoLegadoAtivo) {
       restante = null;
       return;
     }
 
-    if (status != 'teste_gratis') {
+    final testeNormalAtivo = status == 'teste_gratis' &&
+        valorTermino is Timestamp &&
+        valorTermino.toDate().isAfter(agora);
+
+    if (!testeNormalAtivo) {
       restante = Duration.zero;
       return;
     }
 
-    var usados =
-        (dados['rondaSegundosUsados'] as num?)?.toInt() ?? 0;
-    final agora = DateTime.now();
+    var usados = (dados['rondaSegundosUsados'] as num?)?.toInt() ?? 0;
     final inicioAtivo = dados['rondaInicioAtivo'];
 
     if (inicioAtivo is Timestamp) {

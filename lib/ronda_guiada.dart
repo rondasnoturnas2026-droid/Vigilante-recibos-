@@ -1683,7 +1683,9 @@ bool _percursoIniciado = false;
         throw Exception('Entre na sua conta para usar a Ronda Guiada.');
       }
 
-      final restante = await _reservarUsoTesteRonda(uid);
+            final restante = widget.modoConvidado
+          ? null
+          : await _reservarUsoTesteRonda(uid);
       if (restante != null && restante.inSeconds <= 0) {
         throw Exception(
           'Você atingiu as 4 horas de teste da Ronda Guiada. '

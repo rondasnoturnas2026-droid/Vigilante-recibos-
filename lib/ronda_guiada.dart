@@ -836,10 +836,7 @@ List<RoteiroRonda> _rondasFeitas = [];
         }
 
         final prefs = await SharedPreferences.getInstance();
-    final roteirosAtualizados = [
-      roteiro,
-      ..._roteiros.where((item) => item.id != roteiro.id),
-    ];
+        final roteirosAtualizados = [roteiro];
     final salvoLista = await prefs.setString(
       _chaveRoteiros,
       jsonEncode(roteirosAtualizados.map((item) => item.toMap()).toList()),

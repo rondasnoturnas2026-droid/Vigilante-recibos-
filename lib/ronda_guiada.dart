@@ -628,6 +628,26 @@ List<RoteiroRonda> _rondasFeitas = [];
 
       final prefs = await SharedPreferences.getInstance();
               final sessaoId = dados['sessaoId']?.toString() ?? '';
+              if (widget.modoConvidado) {
+        if (sessaoId.isEmpty) throw const FormatException();
+
+        await prefs.setString(_chaveSessaoRondaCompartilhada, sessaoId);
+
+        if (!mounted) return;
+
+        setState(() {
+          _roteiros = [rotaImportada];
+          _rotaPrincipal = rotaImportada;
+          _execucaoPausada = null;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Roteiro recebido. Toque em Seguir ronda.'),
+          ),
+        );
+        return;
+              }
 
       if (sessaoId.isEmpty) {
         await prefs.remove(_chaveSessaoRondaCompartilhada);

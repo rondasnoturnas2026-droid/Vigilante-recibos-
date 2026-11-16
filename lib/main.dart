@@ -9752,6 +9752,7 @@ Future<void> adicionarRua(Bairro bairro, String nome) async {
 }
 class ControleSessaoDispositivo {
   static dynamic _assinatura;
+    static bool _loginEmAndamento = false;
   static const String _chaveIdLocal = 'idDispositivoInstalacaoVR';
 
   static Future<String> _obterIdLocal(String uid) async {

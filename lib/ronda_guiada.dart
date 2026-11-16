@@ -1264,7 +1264,9 @@ List<RoteiroRonda> _rondasFeitas = [];
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Rondas')),
-      body: ListView(
+            body: widget.modoConvidado
+          ? _buildModoConvidado()
+          : ListView(
         padding: const EdgeInsets.all(16),
         children: [
           const Text(

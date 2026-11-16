@@ -219,6 +219,29 @@ List<RoteiroRonda> _rondasFeitas = [];
 
     try {
     final prefs = await SharedPreferences.getInstance();
+            final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final chavesAntigas = <String, String>{
+        'roteirosRondaGuiadaV1': _chaveRoteiros,
+        'rotaPrincipalRondaV1': _chaveRotaPrincipal,
+        'rondasFeitasRondaV1': _chaveRondasFeitas,
+        'sessaoRondaCompartilhadaV1': _chaveSessaoRondaCompartilhada,
+        'execucaoPausadaRondaV1': _chaveExecucaoPausada,
+      };
+
+      for (final entrada in chavesAntigas.entries) {
+        final valorAntigo = prefs.getString(entrada.key);
+        if (valorAntigo == null) continue;
+
+        if (prefs.containsKey(entrada.value)) {
+          await prefs.remove(entrada.key);
+          continue;
+        }
+
+        final salvou = await prefs.setString(entrada.value, valorAntigo);
+        if (salvou) await prefs.remove(entrada.key);
+      }
+    }
 
     List<RoteiroRonda> converterLista(String? salvo) {
       if (salvo == null) return [];

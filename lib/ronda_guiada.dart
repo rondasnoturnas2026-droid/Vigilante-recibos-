@@ -21,13 +21,19 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'rondas/models/roteiro_ronda.dart';
 
-const String _chaveRoteiros = 'roteirosRondaGuiadaV1';
-const String _chaveRotaPrincipal = 'rotaPrincipalRondaV1';
-const String _chaveRondasFeitas = 'rondasFeitasRondaV1';
+String get _uidArmazenamentoRonda =>
+    FirebaseAuth.instance.currentUser?.uid ?? 'sem_conta';
+String get _chaveRoteiros =>
+    'roteirosRondaGuiadaV1_$_uidArmazenamentoRonda';
+String get _chaveRotaPrincipal =>
+    'rotaPrincipalRondaV1_$_uidArmazenamentoRonda';
+String get _chaveRondasFeitas =>
+    'rondasFeitasRondaV1_$_uidArmazenamentoRonda';
 const String _colecaoRondasCompartilhadas = 'rondas_compartilhadas';
-const String _chaveSessaoRondaCompartilhada =
-    'sessaoRondaCompartilhadaV1';
-const String _chaveExecucaoPausada = 'execucaoPausadaRondaV1';
+String get _chaveSessaoRondaCompartilhada =>
+    'sessaoRondaCompartilhadaV1_$_uidArmazenamentoRonda';
+String get _chaveExecucaoPausada =>
+    'execucaoPausadaRondaV1_$_uidArmazenamentoRonda';
 const double _distanciaMinimaRoteiroMetros = 50;
 const int _limiteTesteRondaSegundos = 4 * 60 * 60;
 const String _uidDonoTesteRonda =

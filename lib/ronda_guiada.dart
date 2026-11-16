@@ -1460,6 +1460,7 @@ class RondaEmAndamentoPage extends StatefulWidget {
     this.rotaPrincipal,
     this.execucaoPausada,
     this.sessaoCompartilhadaId,
+          this.modoConvidado = false,
   });
 
   final String nome;

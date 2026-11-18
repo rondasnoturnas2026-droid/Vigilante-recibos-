@@ -4064,6 +4064,11 @@ final clientesFiltrados =
                                       _modoGeracaoAtual = valor;
                                     });
                                     atualizarDialogo(() {});
+                                                                                                                                              if (_geracaoAutomaticaAtiva) {
+                                      await _gerarMensalidadesAutomaticas();
+                                      await widget.store.carregarMensalidades();
+                                      if (mounted) setState(() {});
+                                                                                                                                              }
                                   },
                                 ),
                                 const SizedBox(height: 6),

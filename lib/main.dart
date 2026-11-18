@@ -4103,7 +4103,7 @@ final clientesFiltrados =
                                     'Exemplo: 4 dias gera a mensalidade 4 dias antes do vencimento.',
                                 border: OutlineInputBorder(),
                               ),
-                                                                                          onChanged: (valor) async {
+                                                                                                                        onChanged: (valor) async {
                                 final dias = int.tryParse(valor) ?? 0;
                                 final prefs =
                                     await SharedPreferences.getInstance();
@@ -4111,15 +4111,6 @@ final clientesFiltrados =
                                   'diasAntecedenciaMensalidade',
                                   dias,
                                 );
-
-                                if (FirebaseAuth.instance.currentUser !=
-                                    null) {
-                                  try {
-                                    await SincronizacaoFirestoreService
-                                        .enviarDadosLocais();
-                                  } catch (_) {}
-                                }
-
                                 if (!mounted) return;
                                 setState(() {
                                   _diasAntecedenciaAtual = dias;

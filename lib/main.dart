@@ -1416,8 +1416,17 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   await widget.store.carregarClientes();
   await widget.store.carregarMensalidades();
         final prefsDecimo = await SharedPreferences.getInstance();
-  _decimoTerceiroDobrado =
+    _decimoTerceiroDobrado =
       prefsDecimo.getBool('recibo_decimo_terceiro_dobrado') ?? false;
+  _modoGeracaoAtual =
+      prefsDecimo.getString('modoGeracaoMensalidade') ?? 'ao_longo_do_mes';
+  _diasAntecedenciaAtual =
+      prefsDecimo.getInt('diasAntecedenciaMensalidade') ?? 0;
+  final geracaoAtivaSalva =
+      prefsDecimo.getBool('geracaoAutomaticaMensalidadeAtiva');
+  _geracaoAutomaticaAtiva = geracaoAtivaSalva ??
+      (_modoGeracaoAtual == 'mes_completo' ||
+          (_diasAntecedenciaAtual >= 1 && _diasAntecedenciaAtual <= 31));
   if (!mounted) return;
       await _gerarMensalidadesAutomaticas();
   setState(() {});

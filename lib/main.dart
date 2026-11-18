@@ -1437,7 +1437,12 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
       prefs.getString('modoGeracaoMensalidade') ?? 'ao_longo_do_mes';
   final diasAntes =
       prefs.getInt('diasAntecedenciaMensalidade') ?? 0;
-  final gerarMesInteiro = modo == 'mes_completo';
+    final gerarMesInteiro = modo == 'mes_completo';
+  final ativaSalva = prefs.getBool('geracaoAutomaticaMensalidadeAtiva');
+  final ativa = ativaSalva ??
+      (gerarMesInteiro || (diasAntes >= 1 && diasAntes <= 31));
+
+  if (!ativa) return;
 
   if (!gerarMesInteiro && (diasAntes < 1 || diasAntes > 31)) {
     return;

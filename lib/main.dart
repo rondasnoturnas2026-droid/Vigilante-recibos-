@@ -4116,7 +4116,15 @@ final clientesFiltrados =
                                   _diasAntecedenciaAtual = dias;
                                 });
                               },
-                                                              onEditingComplete: () async {
+                                                                                            onEditingComplete: () async {
+                                if (FirebaseAuth.instance.currentUser !=
+                                    null) {
+                                  try {
+                                    await SincronizacaoFirestoreService
+                                        .enviarDadosLocais();
+                                  } catch (_) {}
+                                }
+
                                 if (!_geracaoAutomaticaAtiva) return;
                                 await _gerarMensalidadesAutomaticas();
                                 await widget.store.carregarMensalidades();

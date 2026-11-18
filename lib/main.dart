@@ -2999,7 +2999,25 @@ const espacoAntesQr = 64.0;
       ),
     ],
   ),
-          ),    
+          ),
+                                Card(
+            margin: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+            child: SwitchListTile(
+              dense: true,
+              secondary: const Icon(Icons.autorenew),
+              title: const Text('Geração automática'),
+              subtitle: Text(
+                _geracaoAutomaticaAtiva
+                    ? (_modoGeracaoAtual == 'mes_completo'
+                        ? 'Ativa • Mês inteiro de uma vez'
+                        : 'Ativa • Ao longo do mês • '
+                            '$_diasAntecedenciaAtual dias antes')
+                    : 'Desativada',
+              ),
+              value: _geracaoAutomaticaAtiva,
+              onChanged: _alterarGeracaoAutomatica,
+            ),
+          ),
                     Expanded(
             child: Builder(
               builder: (context) {

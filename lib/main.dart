@@ -10207,8 +10207,9 @@ class SincronizacaoFirestoreService {
         chave == 'bairros_ruas' ||
         chave == 'cobranca_mensagem' ||
         chave == 'aviso_texto_mensagem' ||
-        chave == 'modoGeracaoMensalidade' ||
-        chave == 'diasAntecedenciaMensalidade') {
+                chave == 'modoGeracaoMensalidade' ||
+        chave == 'diasAntecedenciaMensalidade' ||
+        chave == 'geracaoAutomaticaMensalidadeAtiva') {
       return true;
     }
 

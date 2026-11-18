@@ -4042,7 +4042,7 @@ final clientesFiltrados =
                                       child: Text('Mês inteiro de uma vez'),
                                     ),
                                   ],
-                                                                    onChanged: (valor) async {
+                                                                                                      onChanged: (valor) async {
                                     if (valor == null) return;
                                     final prefs =
                                         await SharedPreferences.getInstance();
@@ -4050,6 +4050,15 @@ final clientesFiltrados =
                                       'modoGeracaoMensalidade',
                                       valor,
                                     );
+
+                                    if (FirebaseAuth.instance.currentUser !=
+                                        null) {
+                                      try {
+                                        await SincronizacaoFirestoreService
+                                            .enviarDadosLocais();
+                                      } catch (_) {}
+                                    }
+
                                     if (!mounted) return;
                                     setState(() {
                                       _modoGeracaoAtual = valor;

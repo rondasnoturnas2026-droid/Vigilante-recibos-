@@ -1438,7 +1438,11 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
   String normalizar(Object? valor) =>
       (valor ?? '').toString().trim().toLowerCase();
 
-  for (final cliente in widget.store.clientes) {
+    for (final cliente in widget.store.clientes) {
+    final clienteAtivo =
+        (cliente['ativo'] ?? 'true').toString().toLowerCase() != 'false';
+    if (!clienteAtivo) continue;
+
     final dia = int.tryParse((cliente['dia'] ?? '').toString());
     if (dia == null || dia < 1 || dia > 31) continue;
 

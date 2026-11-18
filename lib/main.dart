@@ -3926,7 +3926,9 @@ final clientesFiltrados =
   final cliente = entrada.value;
   final bairroCliente = (cliente['bairro'] ?? '').toString();
   final ruaCliente = (cliente['rua'] ?? '').toString();
-  final diaCliente = (cliente['dia'] ?? '').toString();
+    final clienteAtivo =
+      (cliente['ativo'] ?? 'true').toString().toLowerCase() != 'false';
+  if (!clienteAtivo) return false;
 
   return (bairroSelecionado == 'Todos os bairros' ||
           bairroCliente == bairroSelecionado) &&

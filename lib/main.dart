@@ -4125,6 +4125,12 @@ final clientesFiltrados =
                                   _diasAntecedenciaAtual = dias;
                                 });
                               },
+                                                              onEditingComplete: () async {
+                                if (!_geracaoAutomaticaAtiva) return;
+                                await _gerarMensalidadesAutomaticas();
+                                await widget.store.carregarMensalidades();
+                                if (mounted) setState(() {});
+                              },
                             );
                           },
                         ),

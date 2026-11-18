@@ -1431,6 +1431,47 @@ class _TelaMensalidadesState extends State<TelaMensalidades> {
       await _gerarMensalidadesAutomaticas();
   setState(() {});
   }
+      Future<void> _alterarGeracaoAutomatica(bool ativar) async {
+    final prefs = await SharedPreferences.getInstance();
+    final modo =
+        prefs.getString('modoGeracaoMensalidade') ?? _modoGeracaoAtual;
+    final diasAntes =
+        prefs.getInt('diasAntecedenciaMensalidade') ?? _diasAntecedenciaAtual;
+
+    if (ativar &&
+        modo != 'mes_completo' &&
+        (diasAntes < 1 || diasAntes > 31)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Defina de 1 a 31 dias antes do vencimento para ativar.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    await prefs.setBool('geracaoAutomaticaMensalidadeAtiva', ativar);
+
+    if (FirebaseAuth.instance.currentUser != null) {
+      try {
+        await SincronizacaoFirestoreService.enviarDadosLocais();
+      } catch (_) {}
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _geracaoAutomaticaAtiva = ativar;
+      _modoGeracaoAtual = modo;
+      _diasAntecedenciaAtual = diasAntes;
+    });
+
+    if (ativar) {
+      await _gerarMensalidadesAutomaticas();
+      await widget.store.carregarMensalidades();
+      if (mounted) setState(() {});
+    }
+      }
       Future<void> _gerarMensalidadesAutomaticas() async {
   final prefs = await SharedPreferences.getInstance();
   final modo =

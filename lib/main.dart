@@ -4089,13 +4089,18 @@ final clientesFiltrados =
                                     'Exemplo: 4 dias gera a mensalidade 4 dias antes do vencimento.',
                                 border: OutlineInputBorder(),
                               ),
-                              onChanged: (valor) async {
+                                                            onChanged: (valor) async {
+                                final dias = int.tryParse(valor) ?? 0;
                                 final prefs =
                                     await SharedPreferences.getInstance();
                                 await prefs.setInt(
                                   'diasAntecedenciaMensalidade',
-                                  int.tryParse(valor) ?? 0,
+                                  dias,
                                 );
+                                if (!mounted) return;
+                                setState(() {
+                                  _diasAntecedenciaAtual = dias;
+                                });
                               },
                             );
                           },

@@ -2791,13 +2791,13 @@ void _orientarPelaRota(Position posicao) {
     .map((ponto) => LatLng(ponto.latitude, ponto.longitude))
     .toList();
     final centroInicial = coordenadasRota.isNotEmpty
-        ? coordenadasRota.first
-        : _ultimaPosicao != null
-            ? LatLng(
-                _ultimaPosicao!.latitude,
-                _ultimaPosicao!.longitude,
-              )
-            : const LatLng(-15.7801, -47.9292);
+    ? coordenadasRota.first
+    : _ultimaPosicao == null
+        ? null
+        : LatLng(
+            _ultimaPosicao!.latitude,
+            _ultimaPosicao!.longitude,
+          );
     return PopScope<RoteiroRonda>(
       canPop: _podeSair,
       onPopInvokedWithResult: (didPop, resultado) {

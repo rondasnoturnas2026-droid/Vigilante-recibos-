@@ -2994,6 +2994,9 @@ void _orientarPelaRota(Position posicao) {
   urlTemplate:
       'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   userAgentPackageName: 'br.com.vigilanterecibos.vigilante_recibos',
+                          tileProvider: NetworkTileProvider(
+    headers: {'User-Agent': 'VigilanteRecibos/1.0.1'},
+  ),
 ),
 RichAttributionWidget(
   attributions: [

@@ -2994,7 +2994,12 @@ void _orientarPelaRota(Position posicao) {
   urlTemplate:
       'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   userAgentPackageName: 'br.com.vigilanterecibos.vigilante_recibos',
-                          
+  errorTileCallback: (tile, error, stackTrace) {
+  if (!mounted || _erro != null) return;
+  setState(() {
+    _erro = 'Falha ao carregar mapa: $error';
+  });
+},                        
 ),
 RichAttributionWidget(
   attributions: [

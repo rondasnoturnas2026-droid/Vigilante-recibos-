@@ -2980,11 +2980,10 @@ void _orientarPelaRota(Position posicao) {
                     initialCenter: centroInicial,
                     initialZoom: 16,
                                         onMapReady: () {
-  Future<void>.delayed(const Duration(seconds: 1), () {
-    if (!mounted) return;
-    _mapaPronto = true;
+  _mapaPronto = true;
+  WidgetsBinding.instance.addPostFrameCallback((_) {
     final posicao = _ultimaPosicao;
-    if (posicao == null) return;
+    if (!mounted || posicao == null) return;
     _acompanharPosicao(posicao);
   });
 },

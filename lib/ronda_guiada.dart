@@ -2980,14 +2980,14 @@ void _orientarPelaRota(Position posicao) {
                     initialCenter: centroInicial,
                     initialZoom: 16,
                                         onMapReady: () {
-                                          _mapaPronto = true;
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        final posicao = _ultimaPosicao;
-                        if (!mounted || posicao == null) return;
-
-                                                _acompanharPosicao(posicao);
-                      });
-                    },
+  Future<void>.delayed(const Duration(seconds: 1), () {
+    if (!mounted) return;
+    _mapaPronto = true;
+    final posicao = _ultimaPosicao;
+    if (posicao == null) return;
+    _acompanharPosicao(posicao);
+  });
+},
                   ),
                   children: [
                     TileLayer(

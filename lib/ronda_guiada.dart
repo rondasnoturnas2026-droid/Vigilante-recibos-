@@ -3048,7 +3048,21 @@ void _orientarPelaRota(Position posicao) {
     .toDouble(),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(18),
-                child: FlutterMap(
+                child: centroInicial == null
+    ? Container(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        child: const Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 12),
+              Text('Obtendo GPS para carregar o mapa...'),
+            ],
+          ),
+        ),
+      )
+    : FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(
                     initialCenter: centroInicial,

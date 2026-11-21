@@ -10350,6 +10350,14 @@ class SincronizacaoFirestoreService {
       'quantidadeBlocos': quantidadeBlocos,
       'atualizadoEm': FieldValue.serverTimestamp(),
     });
+  static Future<void> limparDadosLocaisSincronizados() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  for (final chave in prefs.getKeys().toList()) {
+    if (_sincronizarChave(chave)) {
+      await prefs.remove(chave);
+    }
+  }
   }
 
   static Future<Map<String, dynamic>> lerDadosDaNuvem() async {

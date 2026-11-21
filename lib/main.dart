@@ -10365,6 +10365,7 @@ class SincronizacaoFirestoreService {
       'quantidadeBlocos': quantidadeBlocos,
       'atualizadoEm': FieldValue.serverTimestamp(),
     });
+  }
   static Future<void> limparDadosLocaisSincronizados() async {
   final prefs = await SharedPreferences.getInstance();
 

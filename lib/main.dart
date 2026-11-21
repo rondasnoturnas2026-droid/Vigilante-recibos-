@@ -998,7 +998,22 @@ class TelaMinhaConta extends StatelessWidget {
                   );
 
                   if (confirmou == true) {
-                    await FirebaseAuth.instance.signOut();
+  try {
+    await SincronizacaoFirestoreService.enviarDadosLocais();
+    await SincronizacaoFirestoreService.limparDadosLocaisSincronizados();
+    await FirebaseAuth.instance.signOut();
+  } catch (_) {
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Não foi possível salvar os dados na nuvem. '
+          'Confira a internet e tente novamente.',
+        ),
+      ),
+    );
+  }
                   }
                 },
                 icon: const Icon(Icons.logout),

@@ -7467,9 +7467,9 @@ Future<void> _abrirTema() async {
             leading: const Icon(Icons.account_circle_outlined),
             title: const Text('Minha conta'),
             subtitle: Text(
-              FirebaseAuth.instance.currentUser?.email ??
-                  'Criar conta ou entrar',
-            ),
+  FirebaseAuth.instance.currentUser?.email ??
+      'Criar conta ou entrar',
+),
             trailing: const Icon(Icons.chevron_right),
             onTap: () async {
               final emailAntes =
